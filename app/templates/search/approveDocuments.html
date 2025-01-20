@@ -1,0 +1,161 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Transactions {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+
+  <div class="d-block mb-4 mb-md-0">
+    <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+
+      <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+        <li class="breadcrumb-item">
+          <a href="#">
+            <svg class="icon icon-xxs" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+              </path>
+            </svg>
+          </a>
+        </li>
+        <li class="breadcrumb-item"><a href="#">NSTL</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Documents</li>
+        <li class="breadcrumb-item active" aria-current="page">Approval</li>
+      </ol>
+    </nav>
+    <h2 class="h4">Document Approval</h2>
+    <p class="mb-0">Only for Administrator</p>
+  </div>
+
+</div>
+
+<div class="card card-body border-0 shadow table-wrapper table-responsive">
+  <div class="d-flex flex-row justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="card-title">Pending for approval</h4>
+    </div>
+    <div>
+      <div class="btn-group ms-2 ms-lg-3">
+        {% for number in list_number_of_documents_per_page %}
+        {% if number == number_of_documents_per_page %}
+        <a type="button" class="btn btn-sm btn-outline-gray-600 active"
+          href="{{ url_for('documentApproval.approval', docppag=number) }} ">{{number}}</a>
+        {% else %}
+        <a type="button" class="btn btn-sm btn-outline-gray-600"
+          href="{{ url_for('documentApproval.approval', docppag=number) }} ">{{number}}</a>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="table-responsive">
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th class="border-gray-200">#</th>
+          <th class="border-gray-200">Uploaded At</th>
+          <th class="border-gray-200">Uploaded By</th>
+          <th class="border-gray-200">Title</th>
+          <th class="border-gray-200">Author</th>
+          <th class="border-gray-200">Year</th>
+          <th class="border-gray-200">Division</th>
+          <th class="border-gray-200">Type</th>
+          <th class="border-gray-200">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Item -->
+
+
+
+        {% for i in range(notApprovedDocumentsLen) %}
+        <tr>
+          <td>
+            <a href="#" class="fw-bold">
+              {{ number_of_documents_per_page * current_page + i + 1}}
+            </a>
+          </td>
+          <td>
+            <span class="fw-normal">{{notApprovedDocuments[i]["uploaded_at"].strftime("%d/%m/%Y, %H:%M:%S")}}</span>
+          </td>
+          <td>
+            <span class="fw-normal">{{ user_collection.find_one({"_id":
+              notApprovedDocuments[i]["uploadedBy"]})["email"]
+              }}</span>
+          </td>
+          <td>
+            <span class="fw-normal">{{notApprovedDocuments[i]["title"]}}</span>
+          </td>
+          <td><span class="fw-normal">{{notApprovedDocuments[i]["author"]}}</span></td>
+          <td><span class="fw-normal">{{notApprovedDocuments[i]["year"]}}</span></td>
+          <td><span class="fw-bold">{{notApprovedDocuments[i]["division"]}}</span></td>
+          <td><span class="fw-bold">{{notApprovedDocuments[i]["reportType"]}}</span></td>
+          <td class="">
+            <a class="animate-up-2"
+              href="{{url_for('documentApproval.approvalDocumentDetails', id=notApprovedDocuments[i]['_id'])}}">-></a>
+          </td>
+        </tr>
+        {% endfor %}
+
+
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer px-3 border-0 d-flex flex-column flex-lg-row align-items-center justify-content-between">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination mb-0">
+
+
+        {% if current_page == 0 %}
+        <li class="page-item disabled">
+          <a class="page-link" href="#">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('documentApproval.approval', page=current_page - 1) }}">Previous</a>
+        </li>
+        {% endif %}
+
+        {% for i in range(number_of_pages) %}
+        {% if i == current_page %}
+        <li class="page-item active">
+          <a class="page-link" href="{{ url_for('documentApproval.approval', page=i) }}"> {{ i + 1 }}
+          </a>
+        </li>
+        {% else %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('documentApproval.approval', page=i) }}"> {{ i + 1 }}
+          </a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if current_page == number_of_pages - 1 %}
+        <li class="page-item disabled">
+          <a class="page-link" href="#">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('documentApproval.approval', page=current_page + 1) }}">Next</a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    <div class="fw-normal small mt-4 mt-lg-0">Showing <b>{{notApprovedDocumentsLen}}</b> out of
+      <b>{{totalNumberOfDocuments}}</b> entries
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="{{ url_for('static', filename='assets/js/approveDocumentsScript.js') }}"></script>
+{% endblock javascripts %}

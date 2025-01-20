@@ -1,0 +1,326 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Settings {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+{% for message in messages %}
+<div class="alert alert-danger" role="alert">
+    {{message}}
+</div>
+{% endfor %}
+
+{% endif %}
+{% endwith %}
+{% block body %}{% endblock %}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+    data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="d-flex flex-column align-items-center justify-content-between">
+                    <div class="text-center mb-3">
+                        <h3>Applying OCR layer to PDF</h3>
+                        <h3>Please wait</h3>
+                    </div>
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h1 class="fw-bold mb-1 mt-2">Upload</h1>
+<form method="post" enctype="multipart/form-data" id="uploadForm">
+    <div class="row">
+        <div class="col-12 col-xl-8">
+            <div class="card card-body border-0 shadow mb-4">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div>
+                            <label for="document_title">Title</label>
+                            <input name="document_title" class="form-control" id="first_name" type="text"
+                                placeholder="Enter document title" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div>
+                            <label for="document_number">Document Number</label>
+                            <input name="document_number" class="form-control" id="first_name" type="text"
+                                placeholder="Enter Document number">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div>
+                            <label for="document_year">Year</label>
+                            <select name="document_year" class="form-select mb-0" id="document_year"
+                                aria-label="Document year select" required>
+                                <option selected disabled value="">Year</option>
+                                {% for i in range(1950, current_year + 1) %}
+                                <option value="{{i}}">{{i}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md-6 mb-3">
+                        <div>
+                            <label for="division">Division</label>
+                            <select name="division" class="form-select mb-0" id="division"
+                                aria-label="Gender select example" required>
+                                <option selected disabled value="">Division</option>
+                                {% for division in divisionList %}
+                                <option value="{{division['name']}}">{{division['name']}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="report_type">Report Type</label>
+                        <select name="report_type" class="form-select mb-0" id="gender"
+                            aria-label="Gender select example" required>
+                            <option selected disabled value="">Type</option>
+                            {% for reportType in parentReportTypeList %}
+                            <option value="{{reportType['name']}}">{{reportType['name']}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+                <div class="row mb-3" id="author-section">
+
+                    <div class="col-md-6 mb-3">
+                        <div>
+                            <label for="author_name">Author</label>
+                            <input name="author_name[]" class="form-control" id="first_name" type="text"
+                                placeholder="Enter Author name" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label for="email">Author Email</label>
+                            <input name="email[]" class="form-control" id="email" type="email" placeholder="Email">
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-6 mb-3 mt-4">
+                        <div>
+
+                            <button class="btn btn-gray-800 mt-2 animate-up-2" type="button">Add Author</button>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="true" id="flexCheckDefault"
+                                name="ocrValue">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                Apply OCR on the PDF
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-row justify-content-between mt-3">
+                    <div>
+                        <input class="btn btn-gray-800 mt-2 animate-up-2" type="submit" value="Upload"
+                            id="uploadButton"></input>
+                    </div>
+
+                    <div class="d-flex flex-row gap-3">
+                        <div>
+                            <button class="btn btn-gray-800 mt-2 animate-up-2" type="button" id="addAuthorBtn">Add
+                                Author</button>
+                        </div>
+                        <div>
+                            <input class="btn btn-outline-gray-800 mt-2 animate-up-2" type="reset"
+                                value="Reset"></input>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <div class="row">
+                <div class="col-12 mb-4 scanDocument">
+                    <div class="card shadow border-0 text-center p-0 d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4"
+                        id="file-name-card">
+                        No document <br>uploaded
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card card-body border-0 shadow mb-4">
+                        <h2 class="h5 mb-4">Select document</h2>
+                        <div class="d-flex align-items-center">
+                            <div class="file-field">
+                                <div class="d-flex justify-content-xl-center ms-xl-3">
+                                    <div class="d-flex">
+                                        <svg class="icon text-gray-500 me-2" fill="currentColor" viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <input type="file" class="formFile form-control file-uploader" name="documents"
+                                            onChange="upload();" id="uploadedFile" required>
+                                        <div class="d-md-block text-left">
+                                            <div class="fw-normal text-dark mb-1">Browse document</div>
+                                            <div class="text-gray small">PDF or DOCX. Max size of 40MB</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-body border-0 shadow">
+            <div class="d-flex flex-row justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="card-title">Recent Uploads</h4>
+                    <h6 class="card-subtitle text-muted"></h6>
+                </div>
+                <div>
+                    <div class="btn-group ms-2 ms-lg-3">
+                        {% for number in list_number_of_documents_per_page %}
+                        {% if number == number_of_documents_per_page %}
+                        <a type="button" class="btn btn-sm btn-outline-gray-600 active"
+                            href="{{ url_for('documents.upload', docppag=number) }} ">{{number}}</a>
+                        {% else %}
+                        <a type="button" class="btn btn-sm btn-outline-gray-600"
+                            href="{{ url_for('documents.upload', docppag=number) }} ">{{number}}</a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover text-center">
+                    <thead>
+                        <tr>
+                            <th class="border-gray-200">#</th>
+                            <th class="border-gray-200">Upload Date</th>
+                            <th class="border-gray-200">Title</th>
+                            <th class="border-gray-200">Author</th>
+                            <th class="border-gray-200">Year</th>
+                            <th class="border-gray-200">Division</th>
+                            <th class="border-gray-200">Type</th>
+                            <th class="border-gray-200">Approval Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(uploadedDocumentsLen) %}
+                        <tr>
+                            <td><span class="fw-normal">{{number_of_documents_per_page * current_page + i + 1}}</span>
+                            </td>
+                            <td><span class="fw-normal">{{uploadedDocuments[i]["uploaded_at"].strftime("%d/%m/%Y,
+                                    %H:%M:%S")}}</span></td>
+                            <td>
+                                <span class="fw-normal d-inline-block text-truncate"
+                                    style="max-width: 200px;">{{uploadedDocuments[i]["title"]}}</span>
+                            </td>
+                            <td><span class="fw-normal">{{uploadedDocuments[i]["author"]}}</span></td>
+                            <td><span class="fw-normal">{{uploadedDocuments[i]["year"]}}</span></td>
+                            <td><span class="fw-normal">{{uploadedDocuments[i]["division"]}}</span></td>
+                            <td><span class="fw-normal">{{uploadedDocuments[i]["reportType"]}}</span></td>
+
+                            {% if uploadedDocuments[i]["isApproved"] == 1%}
+                            <td><span class="fw-bold text-success">Approved</span></td>
+                            {% elif uploadedDocuments[i]["isApproved"] == 0%}
+                            <td><span class="fw-bold text-warning">Pending</span></td>
+                            {% else %}
+                            <td><span class="fw-bold text-danger">Denied</span></td>
+                            {% endif %}
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div
+                    class="card-footer px-3 border-0 d-flex flex-column flex-lg-row align-items-center justify-content-between">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination mb-0">
+
+                            {% if current_page == 0 %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Previous</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="{{ url_for('documents.upload', page=current_page - 1) }}">Previous</a>
+                            </li>
+                            {% endif %}
+
+
+                            {% for i in range(number_of_pages) %}
+                            {% if i == current_page %}
+                            <li class="page-item active">
+                                <a class="page-link" href="{{ url_for('documents.upload', page=i) }}"> {{ i + 1 }}
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('documents.upload', page=i) }}"> {{ i + 1 }}
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if current_page == number_of_pages - 1 %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="{{ url_for('documents.upload', page=current_page + 1) }}">Next</a>
+                            </li>
+                            {% endif %}
+
+                        </ul>
+                    </nav>
+                    <div class="fw-normal small mt-4 mt-lg-0">Showing <b>{{uploadedDocumentsLen}}</b> out of
+                        <b>{{totalNumberOfDocuments}}</b> entries
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="{{ url_for('static', filename='assets/js/uploadDocuments.js') }}"></script>
+
+{% endblock javascripts %}

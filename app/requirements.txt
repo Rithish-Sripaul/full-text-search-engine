@@ -1,0 +1,12 @@
+click
+Flask
+Flask_Login
+flask_wtf
+Jinja2
+pymongo
+pypdf
+Requests
+Werkzeug
+WTForms
+waitress
+flask-pymongo
