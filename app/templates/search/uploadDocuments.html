@@ -77,7 +77,7 @@
                     </div>
 
                 </div>
-                <div class="row align-items-center">
+                <div class="row align-items-center" id="reportTypeContainer">
                     <div class="col-md-6 mb-3">
                         <div>
                             <label for="division">Division</label>
@@ -92,16 +92,16 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="report_type">Report Type</label>
-                        <select name="report_type" class="form-select mb-0" id="gender"
-                            aria-label="Gender select example" required>
+                        <select name="report_type" class="form-select mb-0" id="reportType"
+                            aria-label="Gender select example" onchange="displaySubReportType()" required>
                             <option selected disabled value="">Type</option>
                             {% for reportType in parentReportTypeList %}
-                            <option value="{{reportType['name']}}">{{reportType['name']}}</option>
+                            <option value="{{reportType['_id']}}">{{reportType['name']}}</option>
                             {% endfor %}
                         </select>
                     </div>
-
                 </div>
+
                 <div class="row mb-3" id="author-section">
 
                     <div class="col-md-6 mb-3">
@@ -157,6 +157,7 @@
             </div>
         </div>
 
+        <!-- UPLOAD DOCUMENTS -->
         <div class="col-12 col-xl-4">
             <div class="row">
                 <div class="col-12 mb-4 scanDocument">
@@ -195,6 +196,7 @@
     </div>
 </form>
 
+<!-- RECENT UPLOADS TABLE -->
 <div class="row">
     <div class="col-12">
         <div class="card card-body border-0 shadow">
@@ -322,5 +324,72 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script src="{{ url_for('static', filename='assets/js/uploadDocuments.js') }}"></script>
+<script>
+    async function fetchData() {
+        console.log("We're in")
+        const response = await fetch("/upload/getReportTypes");
+        const data = await response.json();
+        return data;
+    }
 
+    async function displaySubReportType() {
+        let reportTypeContainer = document.getElementById("reportTypeContainer");
+        let reportType = document.getElementById("reportType");
+        let reportTypeID = reportType.options[reportType.selectedIndex].value;
+        let reportTypeList = await fetchData();
+
+        let subReportTypeContainer = `<div class="row align-items center" id="subReportTypeContainer">
+                    <div class="col-md-6 mb-3">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="sub_report_type">Sub Report Type</label>
+                        <select name="sub_report_type" class="form-select mb-0" id="subReportTypeSelect"
+                            aria-label="Gender select example">
+                            <option selected disabled value="" id="defaultSelectOption">Type</option>
+                        </select>
+                    </div>
+                </div>`;
+
+
+        // Checking if the selected report type has sub report types
+        let hasSubReportType = reportTypeList.find((item) => item["_id"].$oid === reportTypeID)?.hasSubReportType;
+
+        if (hasSubReportType) {
+            if (document.getElementById("subReportTypeContainer") === null) {
+                reportTypeContainer.insertAdjacentHTML('afterend', subReportTypeContainer);
+
+                let subReportTypeSelect = document.getElementById("subReportTypeSelect");
+
+                // Populating the select field with Sub Reports
+                for (let i in reportTypeList) {
+                    console.log("IN")
+                    console.log()
+                    if (reportTypeList[i].parentReportType?.$oid == reportTypeID) {
+                        subReportTypeSelect.insertAdjacentHTML('beforeend', `<option value="${reportTypeList[i]._id.$oid}">${reportTypeList[i].name}</option>`);
+                    }
+                }
+            } else {
+                // Removing all child nodes exept the default one
+                while (subReportTypeSelect.lastChild.id != "defaultSelectOption") {
+                    subReportTypeSelect.removeChild(subReportTypeSelect.lastChild);
+                }
+
+                // Populating the select field with Sub Reports
+                for (let i in reportTypeList) {
+                    console.log("IN")
+                    console.log()
+                    if (reportTypeList[i].parentReportType?.$oid == reportTypeID) {
+                        subReportTypeSelect.insertAdjacentHTML('beforeend', `<option value="${reportTypeList[i]._id.$oid}">${reportTypeList[i].name}</option>`);
+                    }
+                }
+            }
+        } else {
+            // Removing the sub report type container if it exists
+            if (document.getElementById("subReportTypeContainer") !== null) {
+                document.getElementById("subReportTypeContainer").remove();
+            }
+        }
+
+    }
+</script>
 {% endblock javascripts %}

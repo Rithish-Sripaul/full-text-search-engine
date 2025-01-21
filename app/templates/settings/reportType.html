@@ -56,7 +56,7 @@
                   <select name="parent_report_type" class="form-select mb-0" id="gender"
                     aria-label="Gender select example" required>
                     <option selected disabled value="">Type</option>
-                    {% for reportType in reportTypesList %}
+                    {% for reportType in parentReportTypeList %}
                     <option value="{{reportType['_id']}}">{{reportType['name']}}</option>
                     {% endfor %}
                   </select>

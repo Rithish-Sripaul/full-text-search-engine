@@ -22,8 +22,13 @@ def reportType():
   db = get_db()
   report_collection = db["reportType"]
   divisions_collection = db["divisions"]
+ 
+  # Get the list of existing Parent report types
+  parentReportTypeList = list(
+    report_collection.find({"isSubReportType": False})
+  )
 
-  # Get the list of  existing report types
+  # Get the list of existing report types
   reportTypesListLen = report_collection.count_documents({})
 
   # Setting up pagination details
@@ -71,6 +76,7 @@ def reportType():
       document_metadata = {
         "name": reportTypeName,
         "uploaded_by": ObjectId(session["user_id"]),
+        "hasSubReportType": False,
         "isSubReportType": False,
         "parentReportType": None,
         "documentCount": 0,
@@ -88,29 +94,38 @@ def reportType():
       parentReportType = request.form["parent_report_type"]
       subReportTypeName = request.form["sub_report_type"]
       print(parentReportType)
+  
       document_metadata = {
         "name": subReportTypeName,
         "uploaded_by": ObjectId(session["user_id"]),
+        "hasSubReportType": False,
         "isSubReportType": True,
         "parentReportType": ObjectId(parentReportType),
         "documentCount": 0,
         "uploadedAt": datetime.datetime.now(),
       }
 
+      # Upload sub report type and update parent report type
       try:
         report_collection.insert_one(document_metadata)
+        report_collection.update_one(
+          { "_id": ObjectId(parentReportType) },
+          {
+            "$set": {
+              "hasSubReportType": True
+            }
+          }
+        )
         return redirect(url_for("settings.reportType"))
       except:
         print("Couldn't upload sub report type")
-
-
-
 
   return render_template(
     "settings/reportType.html",
     backPageUrl = backPageUrl,
     reportTypesList = reportTypesList,
     reportTypesListLen = len(reportTypesList),
+    parentReportTypeList = parentReportTypeList,
     number_of_pages = number_of_pages,
     list_number_of_documents_per_page = list_number_of_documents_per_page,
     number_of_documents_per_page = number_of_documents_per_page,

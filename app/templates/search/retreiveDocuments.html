@@ -115,7 +115,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="reportTypeContainer">
                         <div class="col-md-6 mb-3">
                             <div>
                                 <label for="division">Division</label>
@@ -145,7 +145,7 @@
                             <div>
                                 <label for="reportType">Report Type</label>
                                 <select name="reportType" class="form-select mb-0" id="reportType"
-                                    aria-label="Gender select example">
+                                    aria-label="Gender select example" onchange="displaySubReportType()">
 
                                     {% if refreshReportType == "" %}
                                     <option selected value="">Select type</option>
@@ -153,11 +153,11 @@
                                     <option value="">Select type</option>
                                     {% endif %}
 
-                                    {% for reportType in reportTypeList %}
+                                    {% for reportType in parentReportTypeList %}
                                     {% if refreshReportType == reportType["name"] %}
-                                    <option value="{{reportType['name']}}" selected>{{reportType['name']}}</option>
+                                    <option value="{{reportType['_id']}}" selected>{{reportType['name']}}</option>
                                     {% else %}
-                                    <option value="{{reportType['name']}}">{{reportType['name']}}</option>
+                                    <option value="{{reportType['_id']}}">{{reportType['name']}}</option>
                                     {% endif %}
                                     {% endfor %}
                                 </select>
@@ -523,5 +523,69 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
+
+<script>
+    async function fetchData() {
+        console.log("We're in")
+        const response = await fetch("/upload/getReportTypes");
+        const data = await response.json();
+        return data;
+    }
+
+    async function displaySubReportType() {
+        let reportTypeContainer = document.getElementById("reportTypeContainer");
+        let reportType = document.getElementById("reportType");
+        let reportTypeID = reportType.options[reportType.selectedIndex].value;
+        let reportTypeList = await fetchData();
+        let refreshSubReportType = "{{refreshSubReportType}}";
+
+        let subReportTypeContainer = `<div class="row align-items center" id="subReportTypeContainer">
+                    <div class="col-md-6 mb-3">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="subReportType">Sub Report Type</label>
+                        <select name="subReportType" class="form-select mb-0" id="subReportTypeSelect"
+                            aria-label="Gender select example">
+                            <option selected value="" id="defaultSelectOption">Type</option>
+                        </select>
+                    </div>
+                </div>`;
+
+
+        // Checking if the selected report type has sub report types
+        let hasSubReportType = reportTypeList.find((item) => item["_id"].$oid === reportTypeID)?.hasSubReportType;
+
+        if (hasSubReportType) {
+            if (document.getElementById("subReportTypeContainer") === null) {
+                reportTypeContainer.insertAdjacentHTML('afterend', subReportTypeContainer);
+                let subReportTypeSelect = document.getElementById("subReportTypeSelect");
+            } else {
+                // Removing all child nodes exept the default one
+                while (subReportTypeSelect.lastChild.id != "defaultSelectOption") {
+                    subReportTypeSelect.removeChild(subReportTypeSelect.lastChild);
+                }
+            }
+            // Populating the select field with Sub Reports
+            for (let i in reportTypeList) {
+                console.log("IN")
+                console.log()
+                if (reportTypeList[i].parentReportType?.$oid == reportTypeID) {
+                    if (reportTypeList[i].name == refreshSubReportType) {
+                        subReportTypeSelect.insertAdjacentHTML('beforeend', `<option value="${reportTypeList[i]._id.$oid}" selected>${reportTypeList[i].name}</option>`);
+                    } else {
+                        subReportTypeSelect.insertAdjacentHTML('beforeend', `<option value="${reportTypeList[i]._id.$oid}">${reportTypeList[i].name}</option>`);
+                    }
+                }
+            }
+        } else {
+            // Removing the sub report type container if it exists
+            if (document.getElementById("subReportTypeContainer") !== null) {
+                document.getElementById("subReportTypeContainer").remove();
+            }
+        }
+
+    }
+    displaySubReportType();
+</script>
 <script src="{{ url_for('static', filename='assets/js/retreiveDocumentsScript.js') }}"></script>
 {% endblock javascripts %}

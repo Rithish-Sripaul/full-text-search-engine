@@ -13,6 +13,7 @@ document.getElementById("formReset").addEventListener("click", (e) => {
   year.value = "";
   division.selectedIndex = 0;
   reportType.selectedIndex = 0;
+  displaySubReportType();
 });
 
 // RESET Sort Form

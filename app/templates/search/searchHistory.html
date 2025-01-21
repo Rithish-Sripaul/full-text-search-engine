@@ -1,0 +1,79 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Settings {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<h1 class="fw-bold mb-3 mt-3">Search History</h1>
+
+
+<!-- ADDING REPORT TYPES -->
+
+<!-- TABLE FOR EXISTING REPORTING TYPES -->
+<div class="col-12">
+  <div class="row">
+    <div class="col-12">
+      <div class="card card-body border-0 shadow mb-4">
+        <div class="d-flex flex-row justify-content-between align-items-center mb-3">
+
+          <div>
+            <h2 class="h4 mb-4"></h2>
+          </div>
+          <div>
+            <!-- PAGINATION -->
+            <div class="btn-group ms-2 ms-lg-3">
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+
+          <table class="table align-middle table-hover">
+            <thead>
+              <tr>
+                <th class="col">#</th>
+                <th class="col">Searched At</th>
+                <th class="col">Doc ID</th>
+                <th class="col">Title</th>
+                <th class="col">Author</th>
+                <th class="col">Division</th>
+                <th class="col">Report Type</th>
+                <th class="col">Continue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in range(searchHistoryListLen) %}
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ searchHistoryList[i]["timestamp"].strftime("%H:%M:%S, %d/%m/%Y") }}</td>
+                <td>{{ searchHistoryList[i]["document_details"]["document_number"] }}</td>
+                <td class="text-truncate" style="max-width: 300px;">{{ searchHistoryList[i]["document_details"]["title"]
+                  }}</td>
+                <td>{{ searchHistoryList[i]["document_details"]["author"] }}</td>
+                <td>{{ searchHistoryList[i]["document_details"]["division"] }}</td>
+                <td>{{ searchHistoryList[i]["document_details"]["reportType"] }}</td>
+                <td><a href="{{ url_for('documents.details', id=searchHistoryList[i]['_id']) }}">-></a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="card-footer px-3 border-0 d-flex flex-column flex-lg-row align-items-center justify-content-between">
+          <nav aria-label="Page navigation example">
+
+          </nav>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

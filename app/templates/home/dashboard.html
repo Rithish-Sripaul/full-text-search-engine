@@ -41,7 +41,14 @@
 
 
 
-<h1 class="fw-bold mb-1 mt-3">Welcome, {{session["username"]}}</h1>
+<h1 class="fw-bold mb-1 mt-3 d-flex flex-row justify-content-between">
+    <div class="d-inline">
+        Welcome, {{session["username"]}}
+    </div>
+    {% if isAdmin %}
+    <div class="fw-light d-inline me-4">Admin</div>
+    {% endif %}
+</h1>
 <h4 class="fw-light">Personal Analytics</h4>
 
 
@@ -56,7 +63,7 @@
                         <h2 class="fs-5 fw-bold mb-0">Search History</h2>
                     </div>
                     <div class="col text-end">
-                        <a href="#" class="btn btn-sm btn-primary">See all</a>
+                        <a href="{{ url_for('documents.searchHistory') }}" class="btn btn-sm btn-primary">See all</a>
                     </div>
                 </div>
             </div>
@@ -485,13 +492,13 @@
                         </div>
                         <div class="d-sm-none">
                             <h2 class="h5">Wind Tunnel</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_wind_tunnel["document_count"] }}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ division_wind_tunnel["documentCount"] }}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 text-gray-400 mb-0">Wind Tunnel</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_wind_tunnel["document_count"] }}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ division_wind_tunnel["documentCount"] }}</h3>
                         </div>
                         <div class="small d-flex mt-1">
                             <div># of users: <span class="text-success fw-bolder">22</span></div>
@@ -519,13 +526,13 @@
                         </div>
                         <div class="d-sm-none">
                             <h2 class="fw-extrabold h5">HSTT</h2>
-                            <h3 class="mb-1 text_center">{{ division_hstt["document_count"] }}</h3>
+                            <h3 class="mb-1 text_center">{{ division_hstt["documentCount"] }}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 text-gray-400 mb-0">HSTT</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_hstt["document_count"] }}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ division_hstt["documentCount"] }}</h3>
                         </div>
                         <div class="small d-flex mt-1">
                             <div># of users: <span class="text-success fw-bolder">22</span></div>
@@ -553,13 +560,13 @@
                         </div>
                         <div class="d-sm-none">
                             <h2 class="fw-extrabold h5">SMB</h2>
-                            <h3 class="mb-1">{{ division_smb["document_count"] }}</h3>
+                            <h3 class="mb-1">{{ division_smb["documentCount"] }}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 text-gray-400 mb-0">SMB</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_smb["document_count"] }}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ division_smb["documentCount"] }}</h3>
                         </div>
                         <div class="small d-flex mt-1">
                             <div># of users: <span class="text-success fw-bolder">22</span></div>
@@ -587,13 +594,13 @@
                         </div>
                         <div class="d-sm-none">
                             <h2 class="fw-extrabold h5">CT</h2>
-                            <h3 class="mb-1">{{ division_ct["document_count"] }}</h3>
+                            <h3 class="mb-1">{{ division_ct["documentCount"] }}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 text-gray-400 mb-0">CT</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_ct["document_count"] }}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ division_ct["documentCount"] }}</h3>
                         </div>
                         <div class="small d-flex mt-1">
                             <div># of users: <span class="text-success fw-bolder">22</span></div>
@@ -621,13 +628,13 @@
                         </div>
                         <div class="d-sm-none">
                             <h2 class="fw-extrabold h5">CFD</h2>
-                            <h3 class="mb-1">{{ division_cfd["document_count"] }}</h3>
+                            <h3 class="mb-1">{{ division_cfd["documentCount"] }}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 text-gray-400 mb-0">CFD</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_cfd["document_count"] }}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ division_cfd["documentCount"] }}</h3>
                         </div>
                         <div class="small d-flex mt-1">
                             <div># of users: <span class="text-success fw-bolder">22</span></div>

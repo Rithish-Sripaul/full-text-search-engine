@@ -7,7 +7,7 @@ import math
 import requests
 import io
 
-from flask import render_template, send_file, redirect, request, url_for, Blueprint, flash, session, make_response
+from flask import render_template, send_file, redirect, request, url_for, Blueprint, flash, session, make_response, jsonify, Response
 from flask_login import (
     current_user,
     login_user,
@@ -18,6 +18,7 @@ import pymongo
 from database import get_db
 from authentication import login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from bson import json_util
 from bson.objectid import ObjectId
 
 import gridfs
@@ -42,6 +43,15 @@ def search():
     report_type_collection = db["reportType"]
     reportTypeList = list(report_type_collection.find())
 
+    # Parent Report Types
+    parentReportTypeList = list(
+        report_type_collection.find(
+            {
+                "isSubReportType": False
+            }
+        )
+    )
+
     # Division types
     divisions_collection = db["divisions"]
     divisionList = list(divisions_collection.find())
@@ -62,6 +72,7 @@ def search():
     refreshDocumentYear = ""
     refreshDivision = ""
     refreshReportType = ""
+    refreshSubReportType = ""
     
     # document_title
     if request.args.get("document_title", default = "") != "":
@@ -95,11 +106,17 @@ def search():
         searchMetaData.pop("division", None)
     # report type
     if request.args.get("reportType", default = "") != "":
-        searchMetaData["reportType"] = request.args.get("reportType")
-        refreshReportType = request.args.get("reportType")
+        searchMetaData["reportType"] = report_type_collection.find_one({"_id": ObjectId(request.args.get("reportType"))})["name"]
+        refreshReportType = report_type_collection.find_one({"_id": ObjectId(request.args.get("reportType"))})["name"]
     else:
         searchMetaData.pop("reportType", None)
-
+    # sub report type
+    if request.args.get("subReportType", default = "") != "":
+        searchMetaData["subReportType"] = report_type_collection.find_one({"_id": ObjectId(request.args.get("subReportType"))})["name"]
+        refreshSubReportType = report_type_collection.find_one({"_id": ObjectId(request.args.get("subReportType"))})["name"]
+    else:
+        searchMetaData.pop("subReportType", None)
+    
     # CONSTRUCTING SORTING META DATA
     sortMetaData = {}
     refreshSortData = {}
@@ -120,52 +137,6 @@ def search():
         sortMetaData["year"] = 1
     elif request.args.get("sortBy", default="") == "year_desc":
         sortMetaData["year"] = -1
-
-
-
-    # document_title
-    # if request.args.get("sortDocumentTitle", default="") == "asc":
-    #     sortMetaData["document_title"] = 1
-    #     refreshSortData["document_title"] = request.args.get("sortDocumentTitle")
-    # elif request.args.get("sortDocumentTitle", default="") == "desc":
-    #     sortMetaData["document_title"] = -1
-    #     refreshSortData["document_title"] = request.args.get("sortDocumentTitle")
-    # else:
-    #     sortMetaData.pop("document_title", None)
-    #     refreshSortData.pop("document_title", None)
-        
-    # # author
-    # if request.args.get("sortAuthor", default="") == "asc":
-    #     sortMetaData["author"] = 1
-    #     refreshSortData["author"] = request.args.get("sortAuthor")
-    # elif request.args.get("sortAuthor", default="") == "desc":
-    #     sortMetaData["author"] = -1
-    #     refreshSortData["author"] = request.args.get("sortAuthor")
-    # else:
-    #     sortMetaData.pop("author", None)
-    #     refreshSortData.pop("author", None)
-    
-    # # year
-    # if request.args.get("sortYear", default="") == "asc":
-    #     sortMetaData["year"] = 1
-    #     refreshSortData["year"] = request.args.get("sortYear")
-    # elif request.args.get("sortYear", default="") == "desc":
-    #     sortMetaData["year"] = -1
-    #     refreshSortData["year"] = request.args.get("sortYear")
-    # else:
-    #     sortMetaData.pop("year", None)
-    #     refreshSortData.pop("year", None)
-    
-    # # uploaded_at
-    # if request.args.get("sortUploadedAt", default="") == "asc":
-    #     sortMetaData["uploaded_at"] = 1
-    #     refreshSortData["uploaded_at"] = request.args.get("sortUploadedAt")
-    # elif request.args.get("sortUploadedAt", default="") == "desc":
-    #     sortMetaData["uploaded_at"] = -1
-    #     refreshSortData["uploaded_at"] = request.args.get("sortUploadedAt")
-    # else:
-    #     sortMetaData.pop("uploaded_at", None)
-    #     refreshSortData.pop("uploaded_at", None)
     
     if sortMetaData == {}:
         sortMetaData["uploaded_at"] = -1
@@ -173,6 +144,7 @@ def search():
     print(sortMetaData)
     print(refreshSortData)
     print(searchMetaData)
+    print(refreshReportType)
     # OPEN/CLOSE the SORT COLLAPSIBLE
     sortCollapse = ""
     if refreshSortData == {}:
@@ -208,6 +180,7 @@ def search():
         searchResults = searchResultsTrimmed, 
         lenSearchResults = searchResultsTrimmedLen,
         reportTypeList = reportTypeList,
+        parentReportTypeList = parentReportTypeList,
         divisionList = divisionList,
         number_of_pages = number_of_pages,
         list_number_of_documents_per_page = list_number_of_documents_per_page,
@@ -219,6 +192,7 @@ def search():
         refreshDocumentYear = refreshDocumentYear,
         refreshDivision = refreshDivision,
         refreshReportType = refreshReportType,
+        refreshSubReportType = refreshSubReportType,
         refreshSortDocumentTitle = refreshSortData.get("document_title", ""),
         refreshSortAuthor = refreshSortData.get("author", ""),
         refreshSortYear = refreshSortData.get("year", ""),
@@ -296,10 +270,21 @@ def upload():
         division = request.form["division"]
         author_list = request.form.getlist("author_name[]")
         email_list = request.form.getlist("email[]")
-        reportType = request.form["report_type"]
+
+        reportTypeId = ObjectId(request.form["report_type"])
+        if request.form.get("sub_report_type", False) != False:
+            subReportTypeId = ObjectId(request.form["sub_report_type"])
+        else:
+            subReportTypeId = None
+
         file_data = request.files["documents"]
         ocrValue = request.form.getlist("ocrValue")
-        print(ocrValue)
+        
+        reportType = report_type_collection.find_one({"_id": reportTypeId})["name"]
+        if subReportTypeId != None:
+            subReportType = report_type_collection.find_one({"_id": subReportTypeId})["name"]
+        else:
+            subReportType = None
         
         author = author_list[0]
         email = email_list[0]
@@ -337,6 +322,7 @@ def upload():
                 "division": division,
                 "author": author,
                 "reportType": reportType,
+                "subReportType": subReportType,
                 "email": email,
                 "author_list": author_list,
                 "email_list": email_list,
@@ -358,25 +344,32 @@ def upload():
                     },
                     {
                         "$inc": {
-                            "document_count": 1
+                            "documentCount": 1
                         }
                     }
                 )
-                divisions_collection.update_one(
+
+                report_type_collection.update_one(
                     {
-                        "name": division
+                        "name": str(reportType)
                     },
                     {
                         "$inc": {
-                            "reportTypes.$[type].document_count": 1
+                            "documentCount": 1
                         }
-                    },
-                    array_filters = [
-                            {
-                                "type.name": reportType
-                            }
-                        ]
+                    }
                 )
+                if subReportType != None:
+                    report_type_collection.update_one(
+                        {
+                            "name": str(subReportType)
+                        },
+                        {
+                            "$inc": {
+                                "documentCount": 1
+                            }
+                        }
+                    )
                 print("Successfully uploaded the document")
             except:
                 print("some error")
@@ -397,11 +390,23 @@ def upload():
         divisionList = divisionList,
         current_year = dt.now().year
     )
+
+
+# ----------------- Bacend Function for getting Report Types in JS -----------------
+@bp.route("/upload/getReportTypes")
+@login_required
+def getReportTypes():
+    db = get_db()
+    report_type_collection = db["reportType"]
+    reportTypeList = list(report_type_collection.find())
     
+    return Response(json_util.dumps(reportTypeList), mimetype="application/json")
+
+
+# ----------------- DETAILS -----------------
 @bp.route("/details/")
 @bp.route("/details/<id>")
 @login_required
-
 def details(id=None):
     backPageUrl = "documents.search"
     db = get_db()
@@ -427,9 +432,10 @@ def details(id=None):
         isAdmin = session["isAdmin"]
     )
 
+
+# ----------------- DOWNLOAD DOCUMENT -----------------
 @bp.route("/download/<id>")
 @login_required
-
 def download(id = None):
     db = get_db()
     grid_fs = GridFS(db)
@@ -442,4 +448,61 @@ def download(id = None):
         as_attachment=True,
         download_name=file_data.filename,
         mimetype=file_data.content_type
+    )
+
+
+# ----------------- SEARCH HISTORY -----------------
+@bp.route("/search/searchHistory/")
+@login_required
+def searchHistory():
+    backPageUrl = "documents.search"
+    db = get_db()
+    searchHistory_collection = db["searchHistory"]
+    document_collection = db["documents"]
+    user_collection = db["users"]
+
+    searchHistoryList = list(
+        searchHistory_collection
+        .aggregate([
+        {
+            "$match": { "user_id": ObjectId(session["user_id"]) }
+        },
+        {
+            "$lookup": {
+                "from": "documents",
+                "localField": "document_id",
+                "foreignField": "_id",
+                "as": "document_details"
+            }
+        },
+        {
+            "$unwind": "$document_details"
+        },
+        {
+            "$project": {
+                "document_details.title": 1,
+                "document_details.document_number": 1,
+                "document_details.year": 1,
+                "document_details.author": 1,
+                "document_details.division": 1,
+                "document_details.reportType": 1,
+                "document_details.uploaded_at": 1,
+                "timestamp": 1
+            }
+        },
+        {
+            "$sort": {
+            "timestamp": -1
+            }
+        }
+        ])
+    )
+
+    print(searchHistoryList)
+    searchHistoryListLen = len(searchHistoryList)
+    return render_template(
+        "search/searchHistory.html",
+        backPageUrl = backPageUrl,
+        searchHistoryList = searchHistoryList,
+        searchHistoryListLen = searchHistoryListLen
     )
