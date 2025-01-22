@@ -34,7 +34,7 @@ bp = Blueprint("documents", __name__, url_prefix='')
 @bp.route("/search/", methods=["GET", "POST"])
 @login_required
 def search():
-    backPageUrl = "documents.search"
+    backPageUrl = "dashboard.home"
 
     db = get_db()
     document_collection = db["documents"]
@@ -460,7 +460,8 @@ def searchHistory():
     searchHistory_collection = db["searchHistory"]
     document_collection = db["documents"]
     user_collection = db["users"]
-
+    
+    # Search History of Current User
     searchHistoryList = list(
         searchHistory_collection
         .aggregate([
@@ -490,19 +491,63 @@ def searchHistory():
                 "timestamp": 1
             }
         },
-        {
-            "$sort": {
-            "timestamp": -1
-            }
-        }
+        { "$sort": { "timestamp": -1 } },
         ])
     )
-
-    print(searchHistoryList)
     searchHistoryListLen = len(searchHistoryList)
+
+    # Setting up pagination details
+    list_number_of_documents_per_page = [5, 10, 20, 40, 60, 80]
+    if request.args.get("docppag") is not None:
+        session["number_of_documents_per_page"] = request.args.get("docppag", type=int)
+    number_of_documents_per_page = session["number_of_documents_per_page"]
+    current_page = request.args.get('page', default=0, type=int)
+    number_of_pages = math.ceil(searchHistoryListLen / number_of_documents_per_page)
+
+    searchHistoryList = list(
+        searchHistory_collection
+        .aggregate([
+        {
+            "$match": { "user_id": ObjectId(session["user_id"]) }
+        },
+        {
+            "$lookup": {
+                "from": "documents",
+                "localField": "document_id",
+                "foreignField": "_id",
+                "as": "document_details"
+            }
+        },
+        {
+            "$unwind": "$document_details"
+        },
+        {
+            "$project": {
+                "document_id": 1,
+                "document_details.title": 1,
+                "document_details.document_number": 1,
+                "document_details.year": 1,
+                "document_details.author": 1,
+                "document_details.division": 1,
+                "document_details.reportType": 1,
+                "document_details.uploaded_at": 1,
+                "timestamp": 1
+            }
+        },
+        { "$sort": { "timestamp": -1 } },
+        { "$skip": number_of_documents_per_page * current_page },
+        { "$limit": number_of_documents_per_page },
+        ])
+    )
+    searchHistoryListLen = len(searchHistoryList)
+
     return render_template(
         "search/searchHistory.html",
         backPageUrl = backPageUrl,
         searchHistoryList = searchHistoryList,
-        searchHistoryListLen = searchHistoryListLen
+        searchHistoryListLen = searchHistoryListLen,
+        number_of_pages = number_of_pages,
+        list_number_of_documents_per_page = list_number_of_documents_per_page,
+        number_of_documents_per_page = number_of_documents_per_page,
+        current_page = current_page
     )

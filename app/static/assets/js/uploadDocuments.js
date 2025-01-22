@@ -42,3 +42,11 @@ var ocrModal = new bootstrap.Modal(document.getElementById("exampleModal"), {
 uploadForm.addEventListener("submit", () => {
   ocrModal.toggle();
 });
+
+// Reset the form
+function resetForm() {
+  let subReportTypeContainer = document.getElementById(
+    "subReportTypeContainer"
+  );
+  subReportTypeContainer.remove();
+}

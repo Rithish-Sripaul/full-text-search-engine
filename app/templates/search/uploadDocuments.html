@@ -148,8 +148,8 @@
                                 Author</button>
                         </div>
                         <div>
-                            <input class="btn btn-outline-gray-800 mt-2 animate-up-2" type="reset"
-                                value="Reset"></input>
+                            <input class="btn btn-outline-gray-800 mt-2 animate-up-2" type="reset" value="Reset"
+                                onclick="resetForm()"></input>
                         </div>
                     </div>
 
@@ -228,12 +228,13 @@
                         <tr>
                             <th class="border-gray-200">#</th>
                             <th class="border-gray-200">Upload Date</th>
+                            <th class="border-gray-200">Doc #</th>
                             <th class="border-gray-200">Title</th>
                             <th class="border-gray-200">Author</th>
                             <th class="border-gray-200">Year</th>
                             <th class="border-gray-200">Division</th>
                             <th class="border-gray-200">Type</th>
-                            <th class="border-gray-200">Approval Status</th>
+                            <th class="border-gray-200">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -243,23 +244,25 @@
                             </td>
                             <td><span class="fw-normal">{{uploadedDocuments[i]["uploaded_at"].strftime("%d/%m/%Y,
                                     %H:%M:%S")}}</span></td>
+
+                            {% if uploadedDocuments[i]["document_number"] == "" %}
+                            <td><span class="fw-bold">-</span></td>
+                            {% else %}
+                            <td><span class="fw-bold">{{uploadedDocuments[i]["document_number"]}}</span></td>
+
+                            {% endif %}
+
                             <td>
-                                <span class="fw-normal d-inline-block text-truncate"
+                                <span class="fw-bold d-inline-block text-truncate"
                                     style="max-width: 200px;">{{uploadedDocuments[i]["title"]}}</span>
                             </td>
                             <td><span class="fw-normal">{{uploadedDocuments[i]["author"]}}</span></td>
                             <td><span class="fw-normal">{{uploadedDocuments[i]["year"]}}</span></td>
                             <td><span class="fw-normal">{{uploadedDocuments[i]["division"]}}</span></td>
                             <td><span class="fw-normal">{{uploadedDocuments[i]["reportType"]}}</span></td>
-
-                            {% if uploadedDocuments[i]["isApproved"] == 1%}
-                            <td><span class="fw-bold text-success">Approved</span></td>
-                            {% elif uploadedDocuments[i]["isApproved"] == 0%}
-                            <td><span class="fw-bold text-warning">Pending</span></td>
-                            {% else %}
-                            <td><span class="fw-bold text-danger">Denied</span></td>
-                            {% endif %}
-
+                            <td>
+                                <a href="{{ url_for('documents.details', id=uploadedDocuments[i]['_id']) }}"
+                                    class="fw-bold">-></a>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -345,7 +348,7 @@
                         <label for="sub_report_type">Sub Report Type</label>
                         <select name="sub_report_type" class="form-select mb-0" id="subReportTypeSelect"
                             aria-label="Gender select example">
-                            <option selected disabled value="" id="defaultSelectOption">Type</option>
+                            <option selected value="" id="defaultSelectOption">Type</option>
                         </select>
                     </div>
                 </div>`;
