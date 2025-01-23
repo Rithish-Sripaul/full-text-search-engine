@@ -68,7 +68,9 @@
   <link type="text/css" href="/static/assets/css/volt.css" rel="stylesheet">
 
   <!-- Specific Page JS goes HERE  -->
-  {% block stylesheets %}{% endblock stylesheets %}
+  {% block stylesheets %}
+
+  {% endblock stylesheets %}
 
 </head>
 
@@ -82,7 +84,34 @@
 
     {% block content %}{% endblock content %}
 
-    {% include 'includes/settings-box.html' %}
+    <!-- Toast Container -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 2000;">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="toast toastCommon" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000"
+        data-bs-autohide="true">
+        <div class="toast-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-exclamation-circle-fill text-danger" viewBox="0 0 16 16">
+            <path
+              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4m.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2">
+            </path>
+          </svg>
+
+          <strong class="me-auto ms-2">{{category.title()}}</strong>
+          <small>Now</small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          {{ message }}
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+    </div>
+
 
     {% include 'includes/footer.html' %}
 
@@ -96,5 +125,6 @@
   {% endblock javascripts %}
 
 </body>
+
 
 </html>

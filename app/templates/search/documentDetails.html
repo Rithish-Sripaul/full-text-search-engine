@@ -9,7 +9,7 @@
 
 <!-- TOAST -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 2000">
-    <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+    <div id="liveToast" class="toast hide toastDel" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                 class="bi bi-exclamation-circle-fill text-danger" viewBox="0 0 16 16">
@@ -73,7 +73,14 @@
             <h2 class="display-4 mb-4">Details</h2>
             <dl class="row">
                 <dt class="col-sm-3">Doc #</dt>
+
+                {% if searchResults["document_number"] == "" %}
+                <dd class="col-sm-9 fw-bold">-</dd>
+                {% else %}
                 <dd class="col-sm-9 fw-bold">{{searchResults["document_number"]}}</dd>
+                {% endif %}
+
+
 
                 <dt class="col-sm-3">Title</dt>
                 <dd class="col-sm-9 fw-bold">{{searchResults["title"]}}</dd>
@@ -218,7 +225,7 @@
         if (deleteConfirmInput === "delete") {
             window.location.href = "{{url_for('documents.deleteDocument', id=searchResults['_id'])}}";
         } else {
-            var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+            var toastElList = [].slice.call(document.querySelectorAll('.toastDel'))
             var toastList = toastElList.map(function (toastEl) {
                 return new bootstrap.Toast(toastEl, { delay: 5000, autohide: true, animation: true })
             })
@@ -226,5 +233,7 @@
         }
     });
 </script>
+
+<script src="{{ url_for('static', filename='assets/js/toastScript.js') }}"></script>
 
 {% endblock javascripts %}

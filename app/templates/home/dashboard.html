@@ -683,9 +683,18 @@
                                     <td class="fw-bolder text-gray-500">
                                         {{ document["uploaded_at"].strftime("%d/%m, %H:%M:%S") }}
                                     </td>
+
+                                    {% if document["document_number"] == "" %}
+                                    <td class="fw-bolder text-gray-500">
+                                        -
+                                    </td>
+                                    {% else %}
                                     <td class="fw-bolder text-gray-500">
                                         {{ document["document_number"] }}
                                     </td>
+                                    {% endif %}
+
+
                                     <th class="text-gray-900 text-truncate" style="max-width: 150px" scope="row">
                                         {{ document["title"] }}
                                     </th>

@@ -539,7 +539,39 @@ def editDocument(id = None):
 def deleteDocument(id = None):
     db = get_db()
     document_collection = db["documents"]
+    report_collection = db["reportType"]
+    divisions_collection = db["divisions"]
 
+    divisions_collection.update_one(
+        {
+            "name": document_collection.find_one({"_id": ObjectId(id)})["division"]
+        },
+        {
+            "$inc": {
+                "documentCount": -1
+            }
+        }
+    )
+    report_collection.update_one(
+        {
+            "name": document_collection.find_one({"_id": ObjectId(id)})["reportType"]
+        }, 
+        {
+            "$inc": {
+                "documentCount": -1
+            }
+        }
+    )
+    report_collection.update_one(
+        {
+            "name": document_collection.find_one({"_id": ObjectId(id)})["subReportType"]
+        }, 
+        {
+            "$inc": {
+                "documentCount": -1
+            }
+        }
+    )
     document_collection.delete_one({"_id": ObjectId(id)})
     print("Deleted document confirmation")
     return redirect(url_for("documents.search"))
