@@ -88,7 +88,7 @@ def search():
         searchMetaData.pop("document_number", None)
     # author_name
     if request.args.get("author", default = "") != "":
-        searchMetaData["author"] = request.args.get("author")
+        searchMetaData["author_list"] = request.args.get("author")
         refreshAuthorName = request.args.get("author")
     else:
         searchMetaData.pop("author", None)
@@ -317,7 +317,7 @@ def upload():
             document_metadata = {
                 "uploadedBy": ObjectId(session["user_id"]),
                 "title": title,
-                "year": year,
+                "year": int(year),
                 "document_number": document_number,
                 "division": division,
                 "author": author,
@@ -392,7 +392,160 @@ def upload():
     )
 
 
-# ----------------- Bacend Function for getting Report Types in JS -----------------
+# ----------------- EDIT DOCUMENTS -----------------
+@bp.route("/details/editDocument/", methods=["GET", "POST"])
+@bp.route("/details/editDocument/<id>", methods=["GET", "POST"])
+@login_required
+def editDocument(id = None):
+    backPageUrl = "documents.search"
+    db = get_db()
+    document_collection = db["documents"]
+
+    # Parent Report types
+    report_type_collection = db["reportType"]
+    parentReportTypeList = list(
+        report_type_collection.find(
+            {
+                "isSubReportType": False
+            }
+        )
+    )
+    parentReportTypeListLen = len(parentReportTypeList)
+
+    # Sub Report types
+    subReportTypeList = list(
+        report_type_collection.find(
+            {
+                "isSubReportType": True
+            }
+        )
+    )
+
+    # Division types
+    divisions_collection = db["divisions"]
+    divisionList = list(divisions_collection.find())
+
+    # Current Document Details
+    currentDocument = document_collection.find_one({"_id": ObjectId(id)})
+    authorListLen = len(currentDocument["author_list"])
+    
+    if request.method == "POST":
+        db = get_db()
+        document_collection = db["documents"]
+        fs = gridfs.GridFS(db)
+
+        title = request.form["new_title"]
+        document_number = request.form["new_document_number"]
+        year = request.form["new_document_year"]
+        author_list = request.form.getlist("new_author_name[]")
+        email_list = request.form.getlist("new_email[]")
+        
+        reportTypeId = ObjectId(request.form["new_report_type"])
+        if request.form.get("new_sub_report_type", False) != False:
+            subReportTypeId = ObjectId(request.form["new_sub_report_type"])
+        else:
+            subReportTypeId = None
+
+        reportType = report_type_collection.find_one({"_id": reportTypeId})["name"]
+        if subReportTypeId != None:
+            subReportType = report_type_collection.find_one({"_id": subReportTypeId})["name"]
+        else:
+            subReportType = None
+
+        author = author_list[0]
+        email = email_list[0]
+
+        if reportType != currentDocument["reportType"]:
+            report_type_collection.update_one(
+                {
+                    "name": currentDocument["reportType"]
+                },
+                {
+                    "$inc": {
+                        "documentCount": -1
+                    }
+                }
+            )
+            report_type_collection.update_one(
+                {
+                    "name": reportType
+                },
+                {
+                    "$inc": {
+                        "documentCount": 1
+                    }
+                }
+            )
+        if subReportType != None:
+            report_type_collection.update_one(
+                {
+                    "name": currentDocument["subReportType"]
+                },
+                {
+                    "$inc": {
+                        "documentCount": -1
+                    }
+                }
+            )
+
+            report_type_collection.update_one(
+                {
+                    "name": subReportType
+                },
+                {
+                    "$inc": {
+                        "documentCount": 1
+                    }
+                }
+            )
+
+        document_collection.update_one(
+            {
+                "_id": ObjectId(id)
+            },
+            {
+                "$set": {
+                    "title": title,
+                    "year": int(year),
+                    "document_number": document_number,
+                    "author": author,
+                    "reportType": reportType,
+                    "subReportType": subReportType,
+                    "email": email,
+                    "author_list": author_list,
+                    "email_list": email_list,
+                    "editedAt": datetime.datetime.now()
+                }
+            }
+        )
+
+        return redirect(url_for("documents.details", id=id))
+
+    return render_template(
+        "edit/editDocuments.html",
+        backPageUrl = backPageUrl,
+        parentReportTypeList = parentReportTypeList,
+        subReportTypeList = subReportTypeList,
+        divisionList = divisionList,
+        current_year = dt.now().year,
+        currentDocument = currentDocument,
+        authorListLen = authorListLen
+    )
+
+# ----------------- DELETE DOCUMENTS -----------------
+@bp.route("/details/deleteDocument/")
+@bp.route("/details/deleteDocument/<id>", methods=["GET", "POST"])
+@login_required
+def deleteDocument(id = None):
+    db = get_db()
+    document_collection = db["documents"]
+
+    document_collection.delete_one({"_id": ObjectId(id)})
+    print("Deleted document confirmation")
+    return redirect(url_for("documents.search"))
+
+
+# ----------------- Backend Function for getting Report Types in JS -----------------
 @bp.route("/upload/getReportTypes")
 @login_required
 def getReportTypes():
@@ -415,7 +568,7 @@ def details(id=None):
 
     searchResults = document_collection.find_one({"_id": ObjectId(id)})
     
-    
+    print(searchResults)
     if request.args.get("fromSearchPage", type=bool, default=False) == True:
         print("details from search apge")
         searchHistoryMetaData = {
@@ -551,3 +704,4 @@ def searchHistory():
         number_of_documents_per_page = number_of_documents_per_page,
         current_page = current_page
     )
+

@@ -16,19 +16,27 @@ addAuthorBtn.addEventListener("click", addAuthor);
 
 function addAuthor(e) {
   const authorContainer = document.getElementById("author-section");
-  const newAuthor = `<div class="col-md-6 mb-3">
-                            <div>
-                                <label for="author_name">Author ${authorCount}</label>
-                                <input name="author_name[]" class="form-control" id="first_name" type="text"
-                                    placeholder="Enter Author name" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label for="email">Author Email ${authorCount}</label>
-                                <input name="email[]" class="form-control" id="email" type="email" placeholder="Email">
-                            </div>
-                        </div>`;
+  const newAuthor = `
+            <div class="newAuthorSection mb-3">
+              <div class="row">
+              <div class="col-md-6" >
+                <div>
+                  <label for="author_name">Author ${authorCount}</label>
+                  <input name="author_name[]" class="form-control" id="first_name" type="text"
+                      placeholder="Enter Author name" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                  <div class="form-group">
+                      <div class="d-flex flex-row justify-content-between mb-0">
+                        <label for="email">Author Email ${authorCount}</label>
+                        <button type="button" class="btn-close" onclick='deleteAuthorSection(this)'></button>
+                      </div>
+                      <input name="email[]" class="form-control" id="email" type="email" placeholder="Email">
+                  </div>
+              </div>
+              </div>
+            </div>`;
   authorCount++;
   authorContainer.insertAdjacentHTML("beforeend", newAuthor);
 }
@@ -49,4 +57,11 @@ function resetForm() {
     "subReportTypeContainer"
   );
   subReportTypeContainer.remove();
+}
+
+// Deleting Author Section
+function deleteAuthorSection(btn) {
+  let parent = btn.closest(".newAuthorSection");
+  parent.remove();
+  authorCount--;
 }

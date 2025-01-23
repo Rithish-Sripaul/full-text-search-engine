@@ -46,6 +46,7 @@ def home():
       },
       {
         "$project": {
+          "document_id": 1,
           "document_details.title": 1,
           "document_details.document_number": 1,
           "document_details.year": 1,

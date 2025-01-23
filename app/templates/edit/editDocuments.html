@@ -1,0 +1,395 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Settings {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<h1 class="fw-bold mb-3 mt-3">Edit Document</h1>
+
+<div class="row">
+
+  <!-- OLD DOCUMENT DETAILS -->
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-body border-0 shadow mb-4">
+          <h2 class="h4 mb-4">Existing Document Details</h2>
+
+          <!-- TITLE -->
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <div>
+                <label for="old_title">Title</label>
+                <input name="old_title" class="form-control" id="first_name" type="text"
+                  placeholder="{{ currentDocument['title'] }}" disabled>
+              </div>
+            </div>
+          </div>
+
+          <!-- DOCUMENT NUMBER & YEAR -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div>
+                <label for="old_document_number">Document Number</label>
+                {% if currentDocument["document_number"] == "" %}
+                <input name="old_document_number" class="form-control" id="first_name" type="text" placeholder="-"
+                  disabled>
+                {% else %}
+                <input name="old_document_number" class="form-control" id="first_name" type="text"
+                  placeholder="{{ currentDocument['document_number'] }}" disabled>
+                {% endif %}
+
+
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div>
+                <label for="old_document_year">Year</label>
+                <select name="old_document_year" class="form-select mb-0" id="old_document_year"
+                  aria-label="Document year select" disabled>
+                  <option value="{{ currentDocument['year'] }}" selected disabled>{{currentDocument['year']}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIVISION & REPORT TYPE -->
+          <div class="row align-items-center">
+            <div class="col-md-6 mb-3">
+              <div>
+                <label for="old_division">Division</label>
+                <select name="old_division" class="form-select mb-0" id="division" aria-label="Gender select example"
+                  disabled>
+                  <option selected disabled value="{{ currentDocument['division'] }}">{{ currentDocument["division"]
+                    }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="old_report_type">Report Type</label>
+              <select name="old_report_type" class="form-select mb-0" aria-label="Gender select example"
+                onchange="displaySubReportType()" disabled>
+                <option selected disabled value="">{{ currentDocument["reportType"] }}</option>
+              </select>
+            </div>
+          </div>
+
+          {% if currentDocument["subReportType"] != "" %}
+          <div class="row align-items-center">
+            <div class="col-md-6 mb-3">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="old_sub_report_type">Sub Report Type</label>
+              <select name="old_sub_report_type" class="form-select mb-0" aria-label="Gender select example"
+                onchange="displaySubReportType()" disabled>
+                <option selected disabled value="">{{ currentDocument["subReportType"] }}</option>
+              </select>
+            </div>
+          </div>
+          {% endif %}
+
+
+          <!-- AUTHOR & EMAIL ADDRESS -->
+          {% for i in range(authorListLen) %}
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div>
+                <label for="old_author_name">Author {{ i + 1 }}</label>
+                <input name="old_author_name[]" class="form-control" id="first_name" type="text"
+                  placeholder="{{ currentDocument['author_list'][i] }}" disabled>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="old_email">Author Email {{ i + 1 }}</label>
+                <input name="old_email[]" class="form-control" id="email" type="email"
+                  placeholder="{{ currentDocument['email_list'][i] }}" disabled>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+
+
+
+          <!-- SUBMIT & RESET BUTTON -->
+          <div class="d-flex flex-row justify-content-end mt-3">
+            <div>
+              <input class="btn btn-outline-gray-800 mt-2 animate-up-2" type="reset" value="Reset" disabled></input>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- NEW DOCUMENT DETAILS -->
+  <div class="col-md-6">
+    <form method="post">
+      <div class="row">
+        <div class="col-12">
+          <div class="card card-body border-0 shadow mb-4">
+            <h2 class="h4 mb-4">New Document Details</h2>
+
+            <!-- TITLE -->
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <div>
+                  <label for="new_title">Title</label>
+                  <input name="new_title" class="form-control" id="first_name" type="text"
+                    value="{{ currentDocument['title'] }}">
+                </div>
+              </div>
+            </div>
+
+            <!-- DOCUMENT NUMBER & YEAR -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div>
+                  <label for="new_document_number">Document Number</label>
+                  {% if currentDocument["document_number"] == "" %}
+                  <input name="new_document_number" class="form-control" id="first_name" type="text" value="-">
+                  {% else %}
+                  <input name="new_document_number" class="form-control" id="first_name" type="text"
+                    value="{{ currentDocument['document_number'] }}">
+                  {% endif %}
+
+
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div>
+                  <label for="new_document_year">Year</label>
+                  <select name="new_document_year" class="form-select mb-0" id="new_document_year"
+                    aria-label="Document year select">
+                    <option selected disabled value="">Year</option>
+                    {% for i in range(1950, current_year + 1) %}
+                    {% if currentDocument["year"] == i %}
+                    <option value="{{ currentDocument['year'] }}" selected>{{currentDocument['year']}}</option>
+                    {% else %}
+                    <option value="{{i}}">{{i}}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- DIVISION & REPORT TYPE -->
+            <div class="row align-items-center" id="reportTypeContainer">
+              <div class="col-md-6 mb-3">
+                <div>
+                  <label for="new_division">Division</label>
+                  <select name="new_division" class="form-select mb-0" id="division" aria-label="Gender select example"
+                    required disabled>
+                    <option selected disabled value="">Division</option>
+                    {% for division in divisionList %}
+                    {% if currentDocument["division"] == division["name"] %}
+                    <option value="{{division['name']}}" selected>{{division['name']}}</option>
+                    {% else %}
+                    <option value="{{division['name']}}">{{division['name']}}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="new_report_type">Report Type</label>
+                <select name="new_report_type" class="form-select mb-0" aria-label="Gender select example"
+                  onchange="displaySubReportType()" id="reportType" required>
+                  <option selected disabled value="">Type</option>
+                  {% for reportType in parentReportTypeList %}
+                  {% if reportType["name"] == currentDocument["reportType"] %}
+                  <option value="{{reportType['_id']}}" selected>{{reportType['name']}}</option>
+                  {% else %}
+                  <option value="{{reportType['_id']}}">{{reportType['name']}}</option>
+                  {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+
+            </div>
+
+            <!-- AUTHOR & AUTHOR EMAIL -->
+            <div class="row" id="author-section">
+              {% for i in range(authorListLen) %}
+              <div class="newAuthorSection">
+                <div class="row">
+
+
+                  <div class="col-md-6 mb-3">
+                    <div>
+                      <label for="new_author_name">Author {{ i + 1 }}</label>
+                      <input name="new_author_name[]" class="form-control" id="first_name" type="text"
+                        placeholder="Enter author name" value="{{ currentDocument['author_list'][i] }}" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+
+                    <div class="form-group">
+                      <div class="d-flex flex-row justify-content-between mb-0">
+                        <label for="new_email">Author Email {{ i + 1 }}</label>
+                        {% if i != 0 %}
+                        <button type="button" class="btn-close" onclick="deleteAuthorSection(this)"></button>
+                        {% endif %}
+
+                      </div>
+                      {% if currentDocument['email_list'][i] == "" %}
+                      <input name="new_email[]" class="form-control" id="email" type="email" placeholder="" value="">
+                      {% else %}
+                      <input name="new_email[]" class="form-control" id="email" type="email" placeholder="Enter email"
+                        value="{{ currentDocument['email_list'][i] }}">
+                      {% endif %}
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+
+
+            <div class="d-flex flex-row justify-content-between mt-3">
+              <div>
+                <input class="btn btn-gray-800 mt-2 animate-up-2" name="sub-report-type-submit" type="submit"
+                  value="Update"></input>
+              </div>
+              <div class="d-flex flex-row gap-3">
+                <div>
+                  <button class="btn btn-gray-800 mt-2 animate-up-2" type="button" id="addAuthorBtn">Add
+                    Author</button>
+                </div>
+                <div>
+                  <input class="btn btn-outline-gray-800 mt-2 animate-up-2" type="reset" value="Reset"></input>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script>
+  async function fetchData() {
+    console.log("We're in")
+    const response = await fetch("/upload/getReportTypes");
+    const data = await response.json();
+    return data;
+  }
+
+  async function displaySubReportType() {
+    let reportTypeContainer = document.getElementById("reportTypeContainer");
+    let reportType = document.getElementById("reportType");
+    let reportTypeID = reportType.options[reportType.selectedIndex].value;
+    let reportTypeList = await fetchData();
+
+    let subReportTypeContainer = `<div class="row align-items center" id="subReportTypeContainer">
+                  <div class="col-md-6 mb-3">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                      <label for="new_sub_report_type">Sub Report Type</label>
+                      <select name="new_sub_report_type" class="form-select mb-0" id="subReportTypeSelect"
+                          aria-label="Gender select example">
+                          <option selected value="" id="defaultSelectOption">Type</option>
+                      </select>
+                  </div>
+              </div>`;
+
+
+    // Checking if the selected report type has sub report types
+    let hasSubReportType = reportTypeList.find((item) => item["_id"].$oid === reportTypeID)?.hasSubReportType;
+
+    if (hasSubReportType) {
+      if (document.getElementById("subReportTypeContainer") === null) {
+        reportTypeContainer.insertAdjacentHTML('afterend', subReportTypeContainer);
+
+        let subReportTypeSelect = document.getElementById("subReportTypeSelect");
+
+        // Populating the select field with Sub Reports
+        for (let i in reportTypeList) {
+          console.log("IN")
+          console.log()
+          if (reportTypeList[i].parentReportType?.$oid == reportTypeID) {
+            if (reportTypeList[i].name === "{{currentDocument['subReportType']}}") {
+              subReportTypeSelect.insertAdjacentHTML('beforeend', `<option value="${reportTypeList[i]._id.$oid}" selected>${reportTypeList[i].name}</option>`);
+            } else {
+              subReportTypeSelect.insertAdjacentHTML('beforeend', `<option value="${reportTypeList[i]._id.$oid}">${reportTypeList[i].name}</option>`);
+            }
+          }
+        }
+      } else {
+        // Removing all child nodes exept the default one
+        while (subReportTypeSelect.lastChild.id != "defaultSelectOption") {
+          subReportTypeSelect.removeChild(subReportTypeSelect.lastChild);
+        }
+
+        // Populating the select field with Sub Reports
+        for (let i in reportTypeList) {
+          console.log("IN")
+          console.log()
+          if (reportTypeList[i].parentReportType?.$oid == reportTypeID) {
+            subReportTypeSelect.insertAdjacentHTML('beforeend', `<option value="${reportTypeList[i]._id.$oid}">${reportTypeList[i].name}</option>`);
+          }
+        }
+      }
+    } else {
+      // Removing the sub report type container if it exists
+      if (document.getElementById("subReportTypeContainer") !== null) {
+        document.getElementById("subReportTypeContainer").remove();
+      }
+    }
+  }
+
+  function addAuthor() {
+    const authorContainer = document.getElementById("author-section");
+    const newAuthor = `
+            <div class="newAuthorSection mb-3">
+              <div class="row">
+              <div class="col-md-6" >
+                <div>
+                  <label for="new_author_name">Author ${authorCount}</label>
+                  <input name="new_author_name[]" class="form-control" id="first_name" type="text"
+                      placeholder="Enter Author name" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                  <div class="form-group">
+                      <div class="d-flex flex-row justify-content-between mb-0">
+                        <label for="new_email">Author Email ${authorCount}</label>
+                        <button type="button" class="btn-close" onclick='deleteAuthorSection(this)'></button>
+                      </div>
+                      <input name="new_email[]" class="form-control" id="email" type="email" placeholder="Email">
+                  </div>
+              </div>
+              </div>
+            </div>`;
+    authorCount++;
+    authorContainer.insertAdjacentHTML("beforeend", newAuthor);
+  }
+
+  displaySubReportType();
+
+  let authorCount = Number("{{ authorListLen }}") + 1;
+  const addAuthorBtn = document.getElementById("addAuthorBtn");
+  addAuthorBtn.addEventListener("click", addAuthor);
+
+  // Deleting Author Section
+  function deleteAuthorSection(btn) {
+    let parent = btn.closest(".newAuthorSection");
+    parent.remove();
+    authorCount--;
+  }
+
+</script>
+{% endblock javascripts %}
