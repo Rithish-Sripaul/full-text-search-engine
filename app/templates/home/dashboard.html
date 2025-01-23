@@ -83,7 +83,7 @@
 
                         {% for document in searchHistory %}
                         <tr>
-                            {% if document["document_number"] == "" %}
+                            {% if document["document_details"]["document_number"] == "" %}
                             <th class="text-gray-900" scope="row">-</th>
                             {% else %}
                             <th class="text-gray-900" scope="row">{{ document["document_details"]["document_number"] }}
