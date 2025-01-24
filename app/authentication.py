@@ -107,6 +107,8 @@ def register():
     if request.method == "POST":
         db = get_db()
         user_collection = db["users"]
+        division_collection = db["divisions"]
+
         username = request.form["username"]
         email = request.form["email"]
         password = request.form["password"]
@@ -142,10 +144,18 @@ def register():
                         "username": username, 
                         "email": email, 
                         "password": generate_password_hash(password),
-                        "division": diivsion,
+                        "division": division,
                         "isAdmin": isAdmin,
                         "hasAdminAccount": hasAdminAccount,
                         "adminAccount": ObjectId(adminAccount)
+                    }
+                )
+                division_collection.update_one(
+                    {"name": division},
+                    {
+                        "$inc": {
+                            "userCount": 1
+                        }
                     }
                 )
                 return redirect(url_for("authentication.login"))
@@ -155,9 +165,18 @@ def register():
                         "username": username, 
                         "email": email, 
                         "password": generate_password_hash(password),
+                        "division": division,
                         "isAdmin": isAdmin,
                         "hasAdminAccount": hasAdminAccount,
                         "adminAccount": None
+                    }
+                )
+                division_collection.update_one(
+                    {"name": division},
+                    {
+                        "$inc": {
+                            "userCount": 1
+                        }
                     }
                 )
                 return redirect(url_for("authentication.login"))

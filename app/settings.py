@@ -19,6 +19,15 @@ bp = Blueprint("settings", __name__, url_prefix="")
 def reportType():
   backPageUrl = "documents.search"
 
+  # Toast Message
+  try:
+    if session["toastMessage"] != "":
+      flash(session["toastMessage"], session["toastMessageCategory"])
+      print("Toast Message sent")
+      session["toastMessage"] = ""
+  except:
+    pass
+
   db = get_db()
   report_collection = db["reportType"]
   divisions_collection = db["divisions"]
@@ -73,6 +82,13 @@ def reportType():
     if "report-type-submit" in request.form:
       reportTypeName = request.form["report_type_name"]
 
+      documentExists = report_collection.find_one({"name": reportTypeName})
+      if documentExists:
+        session["toastMessage"] = "Report Type already exists"
+        session["toastMessageCategory"] = "Alert"
+        return redirect(url_for("settings.reportType"))
+
+
       document_metadata = {
         "name": reportTypeName,
         "uploaded_by": ObjectId(session["user_id"]),
@@ -85,6 +101,8 @@ def reportType():
 
       try:
         report_collection.insert_one(document_metadata)
+        session["toastMessage"] = "Report Type uploaded successfully"
+        session["toastMessageCategory"] = "Success"
         return redirect(url_for("settings.reportType"))
       except:
         print("Couldn't upload report type")
@@ -94,7 +112,16 @@ def reportType():
       parentReportType = request.form["parent_report_type"]
       subReportTypeName = request.form["sub_report_type"]
       print(parentReportType)
-  
+
+      documentExists = report_collection.find_one(
+        {
+          "name": subReportTypeName,
+          "parentReportType": ObjectId(parentReportType)
+        })
+      if documentExists:
+        session["toastMessage"] = "Sub Report Type already exists"
+        session["toastMessageCategory"] = "Alert"
+        return redirect(url_for("settings.reportType"))
       document_metadata = {
         "name": subReportTypeName,
         "uploaded_by": ObjectId(session["user_id"]),
@@ -116,6 +143,8 @@ def reportType():
             }
           }
         )
+        session["toastMessage"] = "Sub Report Type uploaded successfully"
+        session["toastMessageCategory"] = "Success"
         return redirect(url_for("settings.reportType"))
       except:
         print("Couldn't upload sub report type")

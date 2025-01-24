@@ -39,6 +39,16 @@ def search():
     db = get_db()
     document_collection = db["documents"]
 
+    # Toast
+    try:
+        if session["toastMessage"] != "":
+            flash(session["toastMessage"], session["toastMessageCategory"])
+            print("Toast Message sent")
+            session["toastMessage"] = ""
+            session["toastMessageCategory"] = ""
+    except:
+        pass
+
     # Report types
     report_type_collection = db["reportType"]
     reportTypeList = list(report_type_collection.find())
@@ -82,13 +92,14 @@ def search():
         searchMetaData.pop("$text", None)
     # document_number
     if request.args.get("document_number", default = "") != "":
-        searchMetaData["document_number"] = request.args.get("document_number")
+        searchMetaData["document_number"] = {"$regex": request.args.get("document_number"), "$options": "i"}    
         refreshDocumentNumber = request.args.get("document_number")
     else:
         searchMetaData.pop("document_number", None)
     # author_name
     if request.args.get("author", default = "") != "":
         searchMetaData["author_list"] = request.args.get("author")
+        searchMetaData["author_list"] = {"$regex": request.args.get("author"), "$options": "i"}
         refreshAuthorName = request.args.get("author")
     else:
         searchMetaData.pop("author", None)
@@ -558,6 +569,7 @@ def deleteDocument(id = None):
     document_collection = db["documents"]
     report_collection = db["reportType"]
     divisions_collection = db["divisions"]
+    fs = gridfs.GridFS(db)
 
     divisions_collection.update_one(
         {
@@ -589,7 +601,12 @@ def deleteDocument(id = None):
             }
         }
     )
+    file_id = document_collection.find_one({"_id": ObjectId(id)})["file_id"]
+    fs.delete(file_id)
     document_collection.delete_one({"_id": ObjectId(id)})
+    # Toast
+    session["toastMessage"] = "Document deleted successfully"
+    session["toastMessageCategory"] = "Success"
     print("Deleted document confirmation")
     return redirect(url_for("documents.search"))
 
