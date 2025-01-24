@@ -209,6 +209,16 @@ def search():
 def upload():
     backPageUrl = "documents.search"
 
+    # Toast Message
+    try:
+        if session["toastMessage"] != "":
+            flash(session["toastMessage"], session["toastMessageCategory"])
+            print("Toast Message sent")
+            session["toastMessage"] = ""
+            session["toastMessageCategory"] = ""
+    except:
+        pass
+
     db = get_db()
     document_collection = db["documents"]
     file_collection = db["fs.files"]
@@ -295,8 +305,10 @@ def upload():
         print(checkFileExists)
 
         if checkFileExists:
-            flash("File already exists. Please choose another file.")
-            redirect(url_for("documents.upload"))
+            # flash("File already exists. Please choose another file.", "Alert")
+            session["toastMessage"] = "File already exists. Please choose another file."
+            session["toastMessageCategory"] = "Alert"
+            return redirect(url_for("documents.upload"))
         else:
             content = []
             if "true" in ocrValue:
@@ -371,6 +383,8 @@ def upload():
                         }
                     )
                 print("Successfully uploaded the document")
+                session["toastMessage"] = "Document uploaded successfully"
+                session["toastMessageCategory"] = "Success"
             except:
                 print("some error")
 
@@ -519,6 +533,9 @@ def editDocument(id = None):
             }
         )
 
+        # Toast
+        session["toastMessage"] = "Document edited successfully"
+        session["toastMessageCategory"] = "Success"
         return redirect(url_for("documents.details", id=id))
 
     return render_template(
@@ -599,6 +616,16 @@ def details(id=None):
     searchHistory_collection = db["searchHistory"]
 
     searchResults = document_collection.find_one({"_id": ObjectId(id)})
+
+    # Toast
+    try:
+        if session["toastMessage"] != "":
+            flash(session["toastMessage"], session["toastMessageCategory"])
+            print("Toast Message sent")
+            session["toastMessage"] = ""
+            session["toastMessageCategory"] = ""
+    except:
+        pass
     
     print(searchResults)
     if request.args.get("fromSearchPage", type=bool, default=False) == True:

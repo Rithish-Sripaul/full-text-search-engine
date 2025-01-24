@@ -18,69 +18,120 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head> 
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<!-- Primary Meta Tags -->
+    <!-- Primary Meta Tags -->
 
-<title>
-    Flask Volt Dashboard - {% block title %}{% endblock %} | AppSeed
-</title>
+    <title>
+        Flask Volt Dashboard - {% block title %}{% endblock %} | AppSeed
+    </title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="title" content="Volt Free Bootstrap Dashboard - Sign up page">
-<meta name="author" content="Themesberg">
-<meta name="description" content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
-<meta name="keywords" content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, themesberg, themesberg dashboard, themesberg admin dashboard" />
-<link rel="canonical" href="https://appseed.us/admin-dashboards/flask-dashboard-volt">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="title" content="Volt Free Bootstrap Dashboard - Sign up page">
+    <meta name="author" content="Themesberg">
+    <meta name="description"
+        content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
+    <meta name="keywords"
+        content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, themesberg, themesberg dashboard, themesberg admin dashboard" />
+    <link rel="canonical" href="https://appseed.us/admin-dashboards/flask-dashboard-volt">
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://demo.themesberg.com/volt-pro">
-<meta property="og:title" content="Volt Free Bootstrap Dashboard - Sign up page">
-<meta property="og:description" content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
-<meta property="og:image" content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://demo.themesberg.com/volt-pro">
+    <meta property="og:title" content="Volt Free Bootstrap Dashboard - Sign up page">
+    <meta property="og:description"
+        content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
+    <meta property="og:image"
+        content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg">
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://demo.themesberg.com/volt-pro">
-<meta property="twitter:title" content="Volt Free Bootstrap Dashboard - Sign up page">
-<meta property="twitter:description" content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
-<meta property="twitter:image" content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://demo.themesberg.com/volt-pro">
+    <meta property="twitter:title" content="Volt Free Bootstrap Dashboard - Sign up page">
+    <meta property="twitter:description"
+        content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
+    <meta property="twitter:image"
+        content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg">
 
-<!-- Favicon -->
-<link rel="apple-touch-icon" sizes="120x120" href="/static/assets/img/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/static/assets/img/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/static/assets/img/favicon/favicon-16x16.png">
-<link rel="manifest" href="/static/assets/img/favicon/site.webmanifest">
-<link rel="mask-icon" href="/static/assets/img/favicon/safari-pinned-tab.svg" color="#ffffff">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="theme-color" content="#ffffff">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="120x120" href="/static/assets/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/assets/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/assets/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/static/assets/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/static/assets/img/favicon/safari-pinned-tab.svg" color="#ffffff">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
 
-<!-- FA Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" 
-      integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- FA Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<!-- Sweet Alert -->
-<link type="text/css" href="/static/assets/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Sweet Alert -->
+    <link type="text/css" href="/static/assets/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
 
-<!-- Notyf -->
-<link type="text/css" href="/static/assets/vendor/notyf/notyf.min.css" rel="stylesheet">
+    <!-- Notyf -->
+    <link type="text/css" href="/static/assets/vendor/notyf/notyf.min.css" rel="stylesheet">
 
-<!-- Volt CSS -->
-<link type="text/css" href="/static/assets/css/volt.css" rel="stylesheet">
+    <!-- Volt CSS -->
+    <link type="text/css" href="/static/assets/css/volt.css" rel="stylesheet">
 
-<!-- Specific Page JS goes HERE  -->    
-{% block stylesheets %}{% endblock stylesheets %}
+    <!-- Specific Page JS goes HERE  -->
+    {% block stylesheets %}{% endblock stylesheets %}
 
 </head>
+
 <body>
 
     {% block content %}{% endblock content %}
 
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 2000;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="toast toastCommon" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000"
+            data-bs-autohide="true">
+            <div class="toast-header">
+                {% if category.title() == "Alert" %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-exclamation-circle-fill text-danger" viewBox="0 0 16 16">
+                    <path
+                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4m.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2">
+                    </path>
+                </svg>
+
+                {% elif category.title() == "Warning" %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-exclamation-circle-fill text-danger" viewBox="0 0 16 16">
+                    <path
+                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4m.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2">
+                    </path>
+                </svg>
+                {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-check-circle-fill text-success" viewBox="0 0 16 16">
+                    <path
+                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                </svg>
+                {% endif %}
+                <strong class="me-auto ms-2">{{category.title()}}</strong>
+                <small>Now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                {{ message }}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
     {% include 'includes/scripts.html' %}
 
-  <!-- Specific Page JS goes HERE  -->
-  {% block javascripts %}{% endblock javascripts %}  
-  
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %}{% endblock javascripts %}
+
 </body>
+
 </html>

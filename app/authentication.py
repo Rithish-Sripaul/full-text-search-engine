@@ -21,8 +21,16 @@ def route_default():
 def login():
     session["number_of_documents_per_page"] = 10
     backPageUrl = "authentication.login"
+
+    print("toastMessage" in session)
+    if "toastMessage" in session and session["toastMessage"] != "":
+        flash(session["toastMessage"], session["toastMessageCategory"])
+        session["toastMessage"] = ""
+        session["toastMessageCategory"] = ""
+        print("Toast Message sent")
+
     if g.user is not None:
-        return redirect(url_for("documents.search"))
+        return redirect(url_for("dashboard.home"))
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -37,6 +45,12 @@ def login():
         elif not check_password_hash(user["password"], password):
             error = "Incorrect password"
         
+        if error is not None:
+            print("something wrong")
+            session["toastMessage"] = "Incorrect username or password"
+            session["toastMessageCategory"] = "Alert"
+            return redirect(url_for("authentication.login"))
+
         if error is None:
             session.clear()
             session["user_id"] = str(user["_id"])
@@ -45,14 +59,19 @@ def login():
             session["logged_in"] = True
             session["isAdmin"] = user["isAdmin"]
             print(session["user_id"])
-            return redirect(url_for("documents.search"))
+            session["toastMessage"] = "You have logged in Successfully"
+            return redirect(url_for("dashboard.home"))
 
-    return render_template("accounts/login.html", msg="")
+    return render_template("accounts/login.html")
 
+
+# Logout
 @bp.route("/logout/", methods=["GET", "POST"])
 def logout():
     backPageUrl = "authentication.login"
     session.clear()
+    session["toastMessage"] = "You have logged out Successfully"
+    session["toastMessageCategory"] = "Success"
     g.user = None
     return redirect(url_for("authentication.login"))
 
@@ -80,6 +99,10 @@ def load_logged_in_user():
 def register():
     db = get_db()
     user_collection = db["users"]
+    division_collection = db["divisions"]
+
+    divisionList = division_collection.find({})
+
     allUsers = list(user_collection.find({"isAdmin": True}))
     if request.method == "POST":
         db = get_db()
@@ -87,6 +110,7 @@ def register():
         username = request.form["username"]
         email = request.form["email"]
         password = request.form["password"]
+        division = request.form["division"]
         isAdmin = request.form["isAdmin"]
         hasAdminAccount = True if request.form["hasAdminAccount"] == "1" else False
         if hasAdminAccount:
@@ -102,6 +126,13 @@ def register():
         elif not password:
             error = "Password is required"
 
+        if error is not None:
+            session["toastMessage"] = error
+            session["toastMessageCategory"] = "Alert"
+            return redirect(url_for("authentication.register"))
+        else:
+            session["toastMessage"] = "User created successfully"
+            session["toastMessageCategory"] = "Success"
         if error is None:
             if user_collection.find_one({"username": username}):
                 error = "User with username already exists."
@@ -111,6 +142,7 @@ def register():
                         "username": username, 
                         "email": email, 
                         "password": generate_password_hash(password),
+                        "division": diivsion,
                         "isAdmin": isAdmin,
                         "hasAdminAccount": hasAdminAccount,
                         "adminAccount": ObjectId(adminAccount)
@@ -129,6 +161,10 @@ def register():
                     }
                 )
                 return redirect(url_for("authentication.login"))
-        flash(error)
 
-    return render_template("accounts/register.html", allUsersLen = len(allUsers), allUsers = allUsers)
+    return render_template(
+        "accounts/register.html",
+        allUsersLen = len(allUsers),
+        allUsers = allUsers,
+        divisionList = divisionList
+    )

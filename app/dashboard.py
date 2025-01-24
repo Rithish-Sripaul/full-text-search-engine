@@ -20,6 +20,14 @@ def home():
   backPageUrl = "dashboard.home"
   isAdmin = session["isAdmin"]
 
+  try:
+    if session["toastMessage"] != "":
+      flash(session["toastMessage"], "Success")
+      print("Toast Message sent")
+      session["toastMessage"] = ""
+  except:
+    pass
+
   db = get_db()
   document_collection = db["documents"]
   user_collection = db["users"]
