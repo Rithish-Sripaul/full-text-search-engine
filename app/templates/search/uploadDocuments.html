@@ -55,7 +55,7 @@
                             <label for="document_year">Year</label>
                             <select name="document_year" class="form-select mb-0" id="document_year"
                                 aria-label="Document year select" required>
-                                <option selected disabled value="">Year</option>
+                                <option selected disabled value="">Select Year</option>
                                 {% for i in range(1950, current_year + 1) %}
                                 <option value="{{i}}">{{i}}</option>
                                 {% endfor %}
@@ -70,7 +70,7 @@
                             <label for="division">Division</label>
                             <select name="division" class="form-select mb-0" id="division"
                                 aria-label="Gender select example" required>
-                                <option selected disabled value="">Division</option>
+                                <option selected disabled value="">Select Division</option>
                                 {% for division in divisionList %}
                                 <option value="{{division['name']}}">{{division['name']}}</option>
                                 {% endfor %}
@@ -81,7 +81,7 @@
                         <label for="report_type">Report Type</label>
                         <select name="report_type" class="form-select mb-0" id="reportType"
                             aria-label="Gender select example" onchange="displaySubReportType()" required>
-                            <option selected disabled value="">Type</option>
+                            <option selected disabled value="">Select Type</option>
                             {% for reportType in parentReportTypeList %}
                             <option value="{{reportType['_id']}}">{{reportType['name']}}</option>
                             {% endfor %}
@@ -100,7 +100,8 @@
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label for="email">Author Email</label>
-                            <input name="email[]" class="form-control" id="email" type="email" placeholder="Email">
+                            <input name="email[]" class="form-control" id="email" type="email"
+                                placeholder="Enter Email">
                         </div>
                     </div>
                     <!-- <div class="col-md-6 mb-3 mt-4">

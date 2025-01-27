@@ -104,6 +104,17 @@ def register():
     divisionList = division_collection.find({})
 
     allUsers = list(user_collection.find({"isAdmin": True}))
+
+    # Toast Message
+    try:
+        if session["toastMessage"] != "":
+            flash(session["toastMessage"], session["toastMessageCategory"])
+            print("Toast Message sent")
+            session["toastMessage"] = ""
+            session["toastMessageCategory"] = ""
+    except:
+        pass
+
     if request.method == "POST":
         db = get_db()
         user_collection = db["users"]
@@ -128,6 +139,10 @@ def register():
         elif not password:
             error = "Password is required"
 
+        if user_collection.find_one({"username": username}):
+            error = "User with username already exists."
+        elif user_collection.find_one({"email": email}):
+            error = "User with email already exists."
         if error is not None:
             session["toastMessage"] = error
             session["toastMessageCategory"] = "Alert"
@@ -135,10 +150,9 @@ def register():
         else:
             session["toastMessage"] = "User created successfully"
             session["toastMessageCategory"] = "Success"
+            
         if error is None:
-            if user_collection.find_one({"username": username}):
-                error = "User with username already exists."
-            elif hasAdminAccount:
+            if hasAdminAccount:
                 user_collection.insert_one(
                     {
                         "username": username, 
@@ -147,7 +161,8 @@ def register():
                         "division": division,
                         "isAdmin": isAdmin,
                         "hasAdminAccount": hasAdminAccount,
-                        "adminAccount": ObjectId(adminAccount)
+                        "adminAccount": ObjectId(adminAccount),
+                        "created_at": datetime.datetime.now()
                     }
                 )
                 division_collection.update_one(
