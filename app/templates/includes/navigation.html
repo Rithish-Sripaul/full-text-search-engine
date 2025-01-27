@@ -4,10 +4,10 @@
       <div class="d-flex align-items-center">
 
         {% if "details" in request.path %}
-        <a type="button" class="btn btn-sm btn-outline-gray-600" href="{{url_for(backPageUrl)}}">
+        <a type="button" class="btn btn-sm btn-outline-gray-600" href="javascript:window.history.back();">
           <-- </a>
             {% else %}
-            <a type="button" class="btn btn-sm btn-outline-gray-600" href="{{ url_for(backPageUrl) }} ">
+            <a type="button" class="btn btn-sm btn-outline-gray-600" href="javascript:window.history.back();">
               <-- </a>
                 {% endif %}
 

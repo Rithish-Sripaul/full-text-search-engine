@@ -58,8 +58,9 @@
                                         </span>
                                         <input name="password" type="password" class="form-control"
                                             placeholder="Password" aria-label="Username" aria-describedby="basic-addon1"
-                                            required>
+                                            id="password" required>
                                     </div>
+                                    <div id="passwordHelp" class="form-text text-danger"></div>
                                 </div>
                                 <!-- DIVISIOn -->
                                 <div class="form-group mb-4">
@@ -143,7 +144,9 @@
                                 </div> -->
                             </div>
                             <div class="d-grid">
-                                <button type="submit" name="register" class="btn btn-gray-800">Sign Up</button>
+                                <button type="submit" name="register" class="btn btn-gray-800" id="signUpBtn"
+                                    disabled>Sign
+                                    Up</button>
                             </div>
                         </form>
                         <br />

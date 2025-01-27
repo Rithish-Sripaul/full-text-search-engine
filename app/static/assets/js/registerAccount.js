@@ -1,3 +1,6 @@
+let passwordInput = document.getElementById("password");
+let signUpBtn = document.getElementById("signUpBtn");
+let passwordHelp = document.getElementById("passwordHelp");
 let hasAdminAccount = document.getElementsByClassName("hasAdminAccount");
 let adminAccount = document.getElementById("adminAccount");
 
@@ -13,4 +16,44 @@ function checkAccount() {
   }
 }
 
+function validatePassword() {
+  const password = passwordInput.value;
+
+  let errors = [];
+
+  // Length Validation
+  if (password.length < 8) {
+    errors.push("Password must be at least 8 characters long.");
+  } else if (password.length > 64) {
+    errors.push("Password must be at most 64 characters long.");
+  }
+
+  // Complexity Validation
+  if (!/[A-Z]/.test(password)) {
+    errors.push("Password must include at least one uppercase letter.");
+  }
+  if (!/[a-z]/.test(password)) {
+    errors.push("Password must include at least one lowercase letter.");
+  }
+  if (!/\d/.test(password)) {
+    errors.push("Password must include at least one number.");
+  }
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    errors.push("Password must include at least one special character.");
+  }
+
+  if (errors.length > 0) {
+    passwordHelp.innerHTML = `
+        <ul>
+          ${errors.map((error) => `<li>${error}</li>`).join("")}
+        </ul>
+      `;
+    signUpBtn.disabled = true;
+  } else {
+    passwordHelp.textContent = "";
+    signUpBtn.disabled = false;
+  }
+}
+
+passwordInput.addEventListener("input", validatePassword);
 checkAccount();

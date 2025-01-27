@@ -26,13 +26,14 @@
         <div class="table-settings mb-4">
             <div class="row align-items-center justify-content-between">
                 <div class="col">
+                    <!-- DOCUMENT TITLE -->
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <div>
-                                <label for="document_title">Title</label>
+                                <label for="document_title">Title / Content</label>
                                 {% if refreshDocumentTitle == "" %}
                                 <input name="document_title" class="form-control" id="document_title" type="text"
-                                    placeholder="Enter document title">
+                                    placeholder="Enter document title or content in files">
                                 {% else %}
                                 <input name="document_title" class="form-control" id="document_title" type="text"
                                     placeholder="Enter document title" , value="{{refreshDocumentTitle}}">
@@ -40,6 +41,9 @@
                             </div>
                         </div>
                     </div>
+
+
+                    <!-- DOCUMENT NUMBER and AUTHOR -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div>
@@ -53,8 +57,6 @@
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <div>
                                 <label for="author">Author</label>
@@ -68,6 +70,10 @@
 
                             </div>
                         </div>
+                    </div>
+
+                    <!-- YEAR and DIVISION -->
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <div>
                                 <label for="year">Year</label>
@@ -90,8 +96,6 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
-                    <div class="row" id="reportTypeContainer">
                         <div class="col-md-6 mb-3">
                             <div>
                                 <label for="division">Division</label>
@@ -116,6 +120,9 @@
                                 </select>
                             </div>
                         </div>
+                    </div>
+                    <div class="row" id="reportTypeContainer">
+
                         <div class="col-md-6 mb-3">
                             <div>
                                 <label for="reportType">Report Type</label>
@@ -518,17 +525,14 @@
         let reportTypeList = await fetchData();
         let refreshSubReportType = "{{refreshSubReportType}}";
 
-        let subReportTypeContainer = `<div class="row align-items center" id="subReportTypeContainer">
-                    <div class="col-md-6 mb-3">
-                    </div>
-                    <div class="col-md-6 mb-3">
+        let subReportTypeContainer = `
+                    <div class="col-md-6 mb-3" id="subReportTypeContainer">
                         <label for="subReportType">Sub Report Type</label>
                         <select name="subReportType" class="form-select mb-0" id="subReportTypeSelect"
                             aria-label="Gender select example">
                             <option selected value="" id="defaultSelectOption">Type</option>
                         </select>
-                    </div>
-                </div>`;
+                    </div>`;
 
 
         // Checking if the selected report type has sub report types
@@ -536,7 +540,7 @@
 
         if (hasSubReportType) {
             if (document.getElementById("subReportTypeContainer") === null) {
-                reportTypeContainer.insertAdjacentHTML('afterend', subReportTypeContainer);
+                reportTypeContainer.insertAdjacentHTML('beforeend', subReportTypeContainer);
                 let subReportTypeSelect = document.getElementById("subReportTypeSelect");
             } else {
                 // Removing all child nodes exept the default one

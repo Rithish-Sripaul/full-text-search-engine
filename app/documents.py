@@ -105,7 +105,7 @@ def search():
         searchMetaData.pop("author", None)
     # document_year
     if request.args.get("year", default = "") != "":
-        searchMetaData["year"] = request.args.get("year")
+        searchMetaData["year"] = int(request.args.get("year"))
         refreshDocumentYear = request.args.get("year")
     else:
         searchMetaData.pop("year", None)
