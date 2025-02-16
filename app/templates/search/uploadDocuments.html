@@ -28,6 +28,25 @@
     </div>
 </div>
 
+<div class="modal fade" tabindex="-1" id="validateFileExtension" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Unsupported File Extension</h5>
+            </div>
+            <div class="modal-body">
+                <p>The file you have uploaded is not supported. It will be compressed to a <strong>ZIP file</strong>.
+                </p>
+                <p>Do you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="validateCloseBtn">No</button>
+                <button type="button" class="btn btn-primary" id="validateFileExtensionBtn">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <h1 class="fw-bold mb-1 mt-2">Upload</h1>
 <form method="post" enctype="multipart/form-data" id="uploadForm">
     <div class="row">
@@ -37,7 +56,7 @@
                     <div class="col-md-12 mb-3">
                         <div>
                             <label for="document_title">Title</label>
-                            <input name="document_title" class="form-control" id="first_name" type="text"
+                            <input name="document_title" class="form-control" id="title" type="text"
                                 placeholder="Enter document title" required>
                         </div>
                     </div>
@@ -46,7 +65,7 @@
                     <div class="col-md-6 mb-3">
                         <div>
                             <label for="document_number">Document Number</label>
-                            <input name="document_number" class="form-control" id="first_name" type="text"
+                            <input name="document_number" class="form-control" id="document_number" type="text"
                                 placeholder="Enter Document number">
                         </div>
                     </div>
@@ -70,10 +89,16 @@
                             <label for="division">Division</label>
                             <select name="division" class="form-select mb-0" id="division"
                                 aria-label="Gender select example" required>
+                                {% if False %}
                                 <option selected disabled value="">Select Division</option>
                                 {% for division in divisionList %}
                                 <option value="{{division['name']}}">{{division['name']}}</option>
                                 {% endfor %}
+                                {% else %}
+                                <option value="{{userDivision}}" selected>{{userDivision}}</option>
+                                {% endif %}
+
+
                             </select>
                         </div>
                     </div>
@@ -93,7 +118,7 @@
                     <div class="col-md-6 mb-3">
                         <div>
                             <label for="author_name">Author</label>
-                            <input name="author_name[]" class="form-control" id="first_name" type="text"
+                            <input name="author_name[]" class="form-control" id="author" type="text"
                                 placeholder="Enter Author name" required>
                         </div>
                     </div>
@@ -119,6 +144,30 @@
                                 name="ocrValue">
                             <label class="form-check-label" for="flexCheckDefault">
                                 Apply OCR on the PDF
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="true" id="avoidAI" name="avoidAI"
+                                onclick="avoidAICheck()" checked>
+                            <label class="form-check-label" for="avoidAI">
+                                Avoid AI Features (Temperory)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="true" id="generateTitle"
+                                name="generateTitle">
+                            <label class="form-check-label" for="generateTitle">
+                                Automatically generate document title, number, year and author name
                             </label>
                         </div>
                     </div>
@@ -249,7 +298,12 @@
                             <td><span class="fw-normal">{{uploadedDocuments[i]["reportType"]}}</span></td>
                             <td>
                                 <a href="{{ url_for('documents.details', id=uploadedDocuments[i]['_id']) }}"
-                                    class="fw-bold">-></a>
+                                    class="fw-bold"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                                    </svg></a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

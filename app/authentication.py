@@ -4,7 +4,7 @@ from flask_login import (
     login_user,
     logout_user
 )
-
+import datetime
 from database import get_db
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
@@ -22,12 +22,14 @@ def login():
     session["number_of_documents_per_page"] = 10
     backPageUrl = "authentication.login"
 
-    print("toastMessage" in session)
-    if "toastMessage" in session and session["toastMessage"] != "":
-        flash(session["toastMessage"], session["toastMessageCategory"])
-        session["toastMessage"] = ""
-        session["toastMessageCategory"] = ""
-        print("Toast Message sent")
+    try:
+        if session["toastMessage"] != "":
+            flash(session["toastMessage"], session["toastMessageCategory"])
+            print("Toast Message sent")
+            session["toastMessage"] = ""
+            session["toastMessageCategory"] = ""
+    except:
+        pass
 
     if g.user is not None:
         return redirect(url_for("dashboard.home"))
@@ -36,6 +38,7 @@ def login():
         password = request.form["password"]
         db = get_db()
         user_collection = db["users"]
+        division_collection = db["divisions"]
         error = None
         
         user = user_collection.find_one({"username": username})
@@ -58,6 +61,7 @@ def login():
             session["number_of_documents_per_page"] = 10
             session["logged_in"] = True
             session["isAdmin"] = user["isAdmin"]
+            session["userDivisionID"] = str(division_collection.find_one({"name": user["division"]})["_id"])
             print(session["user_id"])
             session["toastMessage"] = "You have logged in Successfully"
             return redirect(url_for("dashboard.home"))

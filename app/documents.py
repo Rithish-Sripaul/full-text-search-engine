@@ -1,11 +1,13 @@
 # ----------------- IMPORTS -----------------
 
 import os
+import json
 import datetime
 from datetime import datetime as dt
 import math
 import requests
 import io
+import zipfile
 
 from flask import render_template, send_file, redirect, request, url_for, Blueprint, flash, session, make_response, jsonify, Response
 from flask_login import (
@@ -15,9 +17,10 @@ from flask_login import (
 )
 
 import pymongo
-from database import get_db
+from database import get_db, get_llm
 from authentication import login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from bson import json_util
 from bson.objectid import ObjectId
 
@@ -37,7 +40,10 @@ def search():
     backPageUrl = "dashboard.home"
 
     db = get_db()
+    user_collection = db["users"]
     document_collection = db["documents"]
+
+    userDivision = user_collection.find_one({"_id": ObjectId(session["user_id"])})["division"]
 
     # Toast
     try:
@@ -51,15 +57,15 @@ def search():
 
     # Report types
     report_type_collection = db["reportType"]
-    reportTypeList = list(report_type_collection.find())
-
+    reportTypeList = list(report_type_collection.find( {"divisionID": ObjectId(session["userDivisionID"]) }))
     # Parent Report Types
     parentReportTypeList = list(
         report_type_collection.find(
             {
+                "divisionID": ObjectId(session["userDivisionID"]),
                 "isSubReportType": False
             }
-        )
+        ).sort("name", 1)
     )
 
     # Division types
@@ -129,6 +135,8 @@ def search():
         searchMetaData.pop("subReportType", None)
     
     # CONSTRUCTING SORTING META DATA
+    if session["isAdmin"] == False:
+        searchMetaData["division"] = userDivision
     sortMetaData = {}
     refreshSortData = {}
 
@@ -152,10 +160,6 @@ def search():
     if sortMetaData == {}:
         sortMetaData["uploaded_at"] = -1
 
-    print(sortMetaData)
-    print(refreshSortData)
-    print(searchMetaData)
-    print(refreshReportType)
     # OPEN/CLOSE the SORT COLLAPSIBLE
     sortCollapse = ""
     if refreshSortData == {}:
@@ -187,6 +191,7 @@ def search():
     return render_template(
         "search/retreiveDocuments.html",
         backPageUrl = backPageUrl,
+        userDivision = userDivision,
         yearList = sorted(yearList),
         searchResults = searchResultsTrimmed, 
         lenSearchResults = searchResultsTrimmedLen,
@@ -232,27 +237,39 @@ def upload():
 
     db = get_db()
     document_collection = db["documents"]
+    user_collection = db["users"]
     file_collection = db["fs.files"]
+
+    # Allowed file extensions
+    allowed_file_extensions = ["pdf"]
+
+    userDivision = user_collection.find_one({"_id": ObjectId(session["user_id"])})["division"]
     
-    # Parent Report types
+    # Parent Report types sort by alphabetical order
     report_type_collection = db["reportType"]
+    reportTypeList = list(report_type_collection.find( {"divisionID": ObjectId(session["userDivisionID"]) }))
+    # Parent Report Types
     parentReportTypeList = list(
         report_type_collection.find(
             {
+                "divisionID": ObjectId(session["userDivisionID"]),
                 "isSubReportType": False
             }
-        )
+        ).sort("name", 1)
+    )
+    subReportTypeList = list(
+        report_type_collection.find(
+            {
+                "isSubReportType": True,
+                "divisionID": ObjectId(session["userDivisionID"])
+            }
+        ).sort("name", pymongo.ASCENDING)
     )
     parentReportTypeListLen = len(parentReportTypeList)
 
     # Sub Report types
-    subReportTypeList = list(
-        report_type_collection.find(
-            {
-                "isSubReportType": True
-            }
-        )
-    )
+
+    
 
     # Division types
     divisions_collection = db["divisions"]
@@ -285,20 +302,26 @@ def upload():
         document_collection = db["documents"]
         fs = gridfs.GridFS(db)
 
-        title = request.form["document_title"]
-        document_number = request.form["document_number"]
-        year = request.form["document_year"]
+        generateTitleAutomatic = request.form.getlist("generateTitle")
+        if "true" not in generateTitleAutomatic:
+            title = request.form["document_title"]
+            document_number = request.form["document_number"]
+            year = request.form["document_year"]
+            author_list = request.form.getlist("author_name[]")
+            author = author_list[0]
+
         division = request.form["division"]
-        author_list = request.form.getlist("author_name[]")
         email_list = request.form.getlist("email[]")
+        email = email_list[0]
 
         reportTypeId = ObjectId(request.form["report_type"])
-        if request.form.get("sub_report_type", False) != False:
-            subReportTypeId = ObjectId(request.form["sub_report_type"])
+        if request.form.get("sub_report_type", default="") != "":
+            subReportTypeId = ObjectId(request.form.get("sub_report_type"))
         else:
             subReportTypeId = None
 
         file_data = request.files["documents"]
+        file_extension = file_data.filename.split(".")[-1]
         ocrValue = request.form.getlist("ocrValue")
         
         reportType = report_type_collection.find_one({"_id": reportTypeId})["name"]
@@ -307,35 +330,184 @@ def upload():
         else:
             subReportType = None
         
-        author = author_list[0]
-        email = email_list[0]
-
         checkFileExists = list(file_collection.find({"filename": file_data.filename}))
-        print(checkFileExists)
         checkFileExists = True if len(checkFileExists) != 0 else False
-        print(checkFileExists)
 
-        if checkFileExists:
+        avoidAI = request.form.getlist("avoidAI")
+
+
+        if False:
             # flash("File already exists. Please choose another file.", "Alert")
             session["toastMessage"] = "File already exists. Please choose another file."
             session["toastMessageCategory"] = "Alert"
+            return redirect(url_for("documents.upload"))
+        elif file_extension not in allowed_file_extensions:
+            # Compressing the file to ZIP
+            filename = secure_filename(file_data.filename)
+            zip_buffer = io.BytesIO()
+            with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
+                zip_file.writestr(filename, file_data.read())
+
+            zip_buffer.seek(0)
+            file_id = fs.put(zip_buffer, filename=f"{filename}.zip")
+            document_metadata = {
+                "uploadedBy": ObjectId(session["user_id"]),
+                "title": title,
+                "year": int(year),
+                "document_number": document_number,
+                "division": division,
+                "author": author,
+                "reportType": reportType,
+                "subReportType": subReportType,
+                "email": email,
+                "author_list": author_list,
+                "email_list": email_list,
+                "file_id": file_id,
+                "isApproved": 0,
+                "approvedBy": None,
+                "approved_at": None,
+                "content": "",
+                "uploaded_at": datetime.datetime.now(),
+                "summary": "",
+                "summaryHTML": ""
+            }
+            try:
+                document_collection.insert_one(document_metadata)
+                divisions_collection.update_one(
+                    {
+                        "name": str(division)
+                    },
+                    {
+                        "$inc": {
+                            "documentCount": 1
+                        }
+                    }
+                )
+
+                report_type_collection.update_one(
+                    {
+                        "name": str(reportType)
+                    },
+                    {
+                        "$inc": {
+                            "documentCount": 1
+                        }
+                    }
+                )
+                if subReportType != None:
+                    report_type_collection.update_one(
+                        {
+                            "name": str(subReportType)
+                        },
+                        {
+                            "$inc": {
+                                "documentCount": 1
+                            }
+                        }
+                    )
+                print("Successfully uploaded the document")
+                session["toastMessage"] = "Document uploaded successfully"
+                session["toastMessageCategory"] = "Success"
+            except:
+                print("some error")
+
             return redirect(url_for("documents.upload"))
         else:
             content = []
             if "true" in ocrValue:
                 file_data.save(os.path.join("converted_pdf/", "input_pdf_test.pdf"))
-                ocrmypdf.ocr("converted_pdf/input_pdf_test.pdf", "converted_pdf/ouptut_pdf.pdf", deskew=True, force_ocr=True)
+                ocrmypdf.ocr("converted_pdf/input_pdf_test.pdf", "converted_pdf/ouptut_pdf.pdf", deskew=True, force_ocr=True,output_type="pdf" )
                 converted_file_data = open("converted_pdf/ouptut_pdf.pdf", 'rb')
-                file_id = fs.put(converted_file_data, filename=file_data.filename)
+                file_name = secure_filename(file_data.filename)
+                file_id = fs.put(converted_file_data, filename=file_name)
                 reader = PdfReader(converted_file_data)
             else:
-                file_id = fs.put(file_data, filename=file_data.filename)
+                file_name = secure_filename(file_data.filename)
+                file_id = fs.put(file_data, filename=file_name)
                 reader = PdfReader(file_data)
 
             for page in reader.pages:
                 content.append(page.extract_text())
             content = str(content)
             content = content.replace("\\n", " ")
+
+            # SUMMARY GENERATION
+            if "true" not in avoidAI:
+                llm = get_llm()
+                prompt = f"""
+                You are an intelligent assistant designed to help students understand complex topics. Your goal is to read and restructure the contents of a given PDF in a way that makes learning easier.
+
+                Task:
+                    •	Summarize and explain the concepts clearly.
+                    •	Use simple language and avoid unnecessary complexity.
+                    •	Organize content with proper headings and subheadings.
+                    •	Include meaningful examples with explanations.
+                    •	State the reasoning behind each example to improve comprehension.
+                
+                Output Format:
+                Ensure the explanation is well-structured with:
+                    1.	Headings & Subheadings
+                    2.	Concise explanations
+                    3.	Relevant examples with explanations
+                
+                Your goal is to make learning engaging, structured, and easy to understand for students.
+
+                Here is the content:
+                {content}
+                """
+                summary = llm.invoke(prompt)
+
+                # HTML generation from the summary
+                promptHTML = f"""
+                You are an AI that converts textual content into structured HTML format. 
+                Ensure proper usage of <h5>, <h6>, <p>, <ul>/<li>, <b> and <i> tags where appropriate.
+
+                Convert the following text into valid HTML:
+
+                {summary}
+
+                Output only the generated HTML code.
+                """
+                summaryHTML = llm.invoke(promptHTML)
+
+                if "true" in generateTitleAutomatic:
+                    # Get document title, document number and year in JSON format
+                    promptTitle = f"""
+                    Extract the **title**, **document number**, **year**, and **author** from the following PDF content.
+
+                    PDF Content:
+                    {content}
+
+                    Provide the output strictly in JSON format with the following structure:
+                    {{
+                        "title": "<Title of the document>",
+                        "document_number": "<Document number>",
+                        "year": "<Year>",
+                        "author": "<Author>",
+                    }}
+
+                    
+                    Ensure the question is well-structured and aligned with the given content.
+                    Output only the JSON.
+                    """
+                    titleDocumentNumberYear = llm.invoke(promptTitle)
+                    titleDocumentNumberYearJSON = json.loads(titleDocumentNumberYear)
+
+                    title = titleDocumentNumberYearJSON["title"]
+                    document_number = titleDocumentNumberYearJSON["document_number"]
+                    year = titleDocumentNumberYearJSON["year"]
+                    if not year:
+                        year = dt.now().year
+                    author = titleDocumentNumberYearJSON["author"]
+                    author_list = [author]
+            else:
+                summary = ""
+                summaryHTML = ""
+                title = request.form["document_title"]
+                document_number = request.form["document_number"]
+                year = request.form["document_year"]
+                author_list = request.form.getlist("author_name[]")
+                author = author_list[0]
             
             document_metadata = {
                 "uploadedBy": ObjectId(session["user_id"]),
@@ -354,7 +526,9 @@ def upload():
                 "approvedBy": None,
                 "approved_at": None,
                 "content": str(content),
-                "uploaded_at": datetime.datetime.now()
+                "uploaded_at": datetime.datetime.now(),
+                "summary": summary,
+                "summaryHTML": summaryHTML
             }
 
 
@@ -413,7 +587,8 @@ def upload():
         current_page = current_page,
         parentReportTypeList = parentReportTypeList,
         divisionList = divisionList,
-        current_year = dt.now().year
+        current_year = dt.now().year,   
+        userDivision = userDivision
     )
 
 
@@ -617,7 +792,7 @@ def deleteDocument(id = None):
 def getReportTypes():
     db = get_db()
     report_type_collection = db["reportType"]
-    reportTypeList = list(report_type_collection.find())
+    reportTypeList = list(report_type_collection.find().sort("name", pymongo.ASCENDING))
     
     return Response(json_util.dumps(reportTypeList), mimetype="application/json")
 

@@ -14,8 +14,6 @@ app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://mongo:27017/dev"
 app.config.from_mapping(SECRET_KEY="dev")
 
-mongo = PyMongo(app)
-db = mongo.db
 
 @app.route("/")
 def index():
@@ -44,8 +42,8 @@ def create_ocr_ditectory():
 register_blueprints(app)
 create_ocr_ditectory()
 
-if __name__ == "__main__":
-    ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)
-    ENVIRONMENT_PORT = os.environ.get("APP_PORT", 5000)
-    app.run(host='0.0.0.0', port=ENVIRONMENT_PORT, debug=ENVIRONMENT_DEBUG)
+# if __name__ == "__main__":
+#     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)
+#     ENVIRONMENT_PORT = os.environ.get("APP_PORT", 5000)
+#     app.run(host='0.0.0.0', port=ENVIRONMENT_PORT, debug=ENVIRONMENT_DEBUG)
     

@@ -1,11 +1,15 @@
 let fileNameCard = document.getElementById("file-name-card");
 let uploadedFile = document.getElementById("uploadedFile");
 
-function upload() {
-  console.log(uploadedFile);
-  fileNameCard.innerHTML = `Uploaded File: <br> ${uploadedFile.value
-    .split("\\")
-    .pop()}`;
+async function upload() {
+  let isValid = await validateFile();
+  if (isValid) {
+    fileNameCard.innerHTML = `Uploaded File: <br> ${uploadedFile.value
+      .split("\\")
+      .pop()}`;
+  } else {
+    uploadedFile.value = "";
+  }
 }
 
 // Author and email input creation
@@ -65,3 +69,64 @@ function deleteAuthorSection(btn) {
   parent.remove();
   authorCount--;
 }
+
+// Removing required from title, author and year when generateTitle checkbox is checked
+let generateTitle = document.getElementById("generateTitle");
+let title = document.getElementById("title");
+let author = document.getElementById("author");
+let year = document.getElementById("document_year");
+
+generateTitle.addEventListener("change", () => {
+  if (generateTitle.checked) {
+    title.removeAttribute("required");
+    author.removeAttribute("required");
+    year.removeAttribute("required");
+  } else {
+    title.setAttribute("required", "");
+    author.setAttribute("required", "");
+    year.setAttribute("required", "");
+  }
+});
+
+// Checking file extension
+let fileInput = document.getElementById("uploadedFile");
+let allowedExtensions = [".pdf"];
+
+function validateFile() {
+  // Call a modal if the file is not in allowedExtensions
+  if (!allowedExtensions.includes(fileInput.value.slice(-4))) {
+    let modal = new bootstrap.Modal(
+      document.getElementById("validateFileExtension")
+    );
+    let validateBtn = document.getElementById("validateFileExtensionBtn");
+    let closeBtn = document.getElementById("validateCloseBtn");
+    modal.show();
+
+    return new Promise((resolve) => {
+      validateBtn.addEventListener("click", () => {
+        modal.hide();
+        resolve(true);
+      });
+      closeBtn.addEventListener("click", () => {
+        modal.hide();
+        resolve(false);
+      });
+    });
+  }
+  return Promise.resolve(true);
+}
+
+// Avoid AI
+
+function avoidAICheck() {
+  let avoidAICheck = document.getElementById("avoidAI").checked;
+  let generateTitle = document.getElementById("generateTitle");
+  if (avoidAICheck) {
+    generateTitle.checked = false;
+    generateTitle.disabled = true;
+  } else {
+    generateTitle.disabled = false;
+  }
+}
+
+avoidAICheck();

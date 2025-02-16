@@ -34,8 +34,14 @@ def reportType():
  
   # Get the list of existing Parent report types
   parentReportTypeList = list(
-    report_collection.find({"isSubReportType": False})
+    report_collection.find(
+      {
+        "isSubReportType": False,
+        "divisionID": ObjectId(session["userDivisionID"])
+      }
+    )
   )
+
 
   # Get the list of existing report types
   reportTypesListLen = report_collection.count_documents({})
@@ -51,6 +57,11 @@ def reportType():
 
   reportTypesList = list(
       report_collection.aggregate([
+          {
+            "$match": {
+              "divisionID": ObjectId(session["userDivisionID"])
+            }
+          },
           {
               "$lookup": {
                   "from": "reportType",
@@ -96,6 +107,7 @@ def reportType():
         "isSubReportType": False,
         "parentReportType": None,
         "documentCount": 0,
+        "divisionID": ObjectId(session["userDivisionID"]),
         "uploadedAt": datetime.datetime.now(),
       }
 
@@ -129,6 +141,7 @@ def reportType():
         "isSubReportType": True,
         "parentReportType": ObjectId(parentReportType),
         "documentCount": 0,
+        "divisionID": ObjectId(session["userDivisionID"]),
         "uploadedAt": datetime.datetime.now(),
       }
 

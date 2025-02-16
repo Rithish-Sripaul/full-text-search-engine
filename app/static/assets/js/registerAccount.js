@@ -50,7 +50,7 @@ function validatePassword() {
       `;
     signUpBtn.disabled = true;
   } else {
-    passwordHelp.textContent = "";
+    passwordHelp.innerHTML = "";
     signUpBtn.disabled = false;
   }
 }
