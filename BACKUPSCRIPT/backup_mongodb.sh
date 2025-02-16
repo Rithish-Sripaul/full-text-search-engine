@@ -1,23 +1,26 @@
 #!/bin/bash
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
-env > /Users/rithishsripaul/repos/dockerFlaskMongoDB/BACKUPSCRIPT/backup/cron_env.log
 
 # Variables
-CONTAINER_NAME="mongodb"   # Replace with your MongoDB container name
-BACKUP_DIR="/Users/rithishsripaul/repos/dockerFlaskMongoDB/BACKUPSCRIPT/backup"
-TIMESTAMP=$(date +"%Y%m%d%H%M%S")    # Timestamp for backup naming
+CONTAINER_NAME="mongodb"
+BACKUP_DIR="/data/backup"  # Directory inside the container
+LOCAL_BACKUP_DIR="/Users/rithishsripaul/repos/dockerFlaskMongoDB/BACKUPSCRIPT/backup"
+TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 BACKUP_NAME="mongodb_backup_$TIMESTAMP.gz"
-USERNAME="adminNSTL"                 # Your MongoDB username
-PASSWORD="nstl1234"                  # Your MongoDB password
-AUTH_DB="admin"                      # The authentication database (usually "admin" for MongoDB)
+USERNAME="adminNSTL"
+PASSWORD="nstl1234"
+AUTH_DB="admin"
 
-# Create backup directory if not exists
-mkdir -p $BACKUP_DIR
+# Ensure the backup directory exists inside the container
+docker exec $CONTAINER_NAME mkdir -p $BACKUP_DIR
 
-# Run the MongoDB dump command with authentication
-/usr/local/bin/docker exec $CONTAINER_NAME mongodump --username $USERNAME --password $PASSWORD --authenticationDatabase $AUTH_DB --archive --gzip > "$BACKUP_DIR/$BACKUP_NAME"
+# Run the MongoDB dump command inside the container
+docker exec $CONTAINER_NAME mongodump --username $USERNAME --password $PASSWORD --authenticationDatabase $AUTH_DB --archive --gzip > "$BACKUP_DIR/$BACKUP_NAME"
 
-# Optional: Delete old backups (e.g., older than 7 days)
-find $BACKUP_DIR -type f -mtime +7 -name "*.gz" -exec rm {} \;
+# Copy backup from container to local machine
+docker cp $CONTAINER_NAME:$BACKUP_DIR/$BACKUP_NAME $LOCAL_BACKUP_DIR/
 
-echo "Backup completed: $BACKUP_DIR/$BACKUP_NAME"
+# Remove old backups (older than 7 days)
+find $LOCAL_BACKUP_DIR -type f -mtime +7 -name "*.gz" -exec rm {} \;
+
+echo "Backup completed: $LOCAL_BACKUP_DIR/$BACKUP_NAME"

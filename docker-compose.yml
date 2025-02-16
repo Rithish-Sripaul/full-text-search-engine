@@ -15,6 +15,7 @@ services:
       MONGODB_USERNAME: admin
       MONGODB_PASSWORD: 1234
       MONGODB_HOSTNAME: mongodb
+      LLAMA_BASE_URL: "https://74fa-2406-7400-43-4428-556-7983-f826-5517.ngrok-free.app"
     volumes:
       - appdata:/var/www
     depends_on:
@@ -37,6 +38,8 @@ services:
       - mongodbdata:/data/db
     networks:
       - backend
+    ports:
+      - "27017:27017"
 
   webserver:
     build:
