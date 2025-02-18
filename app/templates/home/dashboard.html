@@ -36,7 +36,7 @@
                     <a href="#" class="btn btn-dark btn-sm me-3">Week</a>
                 </div>
             </div>
-            <div class="card-body p-2 mb-2">
+            <div class="card-body p-2 mb-3">
                 <div class="ct-chart-sales-value ct-double-octave ct-series-g"></div>
             </div>
         </div>
@@ -1177,5 +1177,27 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const data = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        series: [
+          [5, 9, 7, 8, 5],
+          [3, 5, 4, 6, 3]
+        ]
+      };
+
+      const options = {
+        low: 0,
+        showArea: true,
+        fullWidth: true,
+        chartPadding: {
+          right: 40
+        }
+      };
+
+      new Chartist.Line('.ct-chart-sales-value', data, options);
+    });
+  </script>
 <script src="{{ url_for('static', filename='assets/js/toastScript.js') }}"></script>
 {% endblock javascripts %}

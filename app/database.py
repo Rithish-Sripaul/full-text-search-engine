@@ -9,8 +9,8 @@ from langchain_ollama import ChatOllama, OllamaLLM
 def get_db():
     if "db" not in g:
         # Docker Container
-        mongo = PyMongo(current_app)
-        g.db = mongo.db
+        # mongo = PyMongo(current_app)
+        # g.db = mongo.db
 
         # Flask Development Server
         client = MongoClient(
