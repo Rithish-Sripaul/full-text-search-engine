@@ -120,7 +120,7 @@ def home():
   # LATEST GLOBAL UPLOADS
   latestGlobalUploads = list(
     document_collection
-    .find({})
+    .find({"divisionID": ObjectId(session["userDivisionID"])})
     .sort({"uploaded_at": -1})
     .limit(5)
   )

@@ -9,6 +9,7 @@ from database import get_db
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
 import functools
+from helper import log_action
 
 bp = Blueprint("authentication", __name__, url_prefix='')
 @bp.route('/')
@@ -62,8 +63,15 @@ def login():
             session["logged_in"] = True
             session["isAdmin"] = user["isAdmin"]
             session["userDivisionID"] = str(division_collection.find_one({"name": user["division"]})["_id"])
-            print(session["user_id"])
             session["toastMessage"] = "You have logged in Successfully"
+
+            log_action(
+                action="login",
+                user_id=ObjectId(session["user_id"]),
+                document_id=None,
+                division_id=str(division_collection.find_one({"name": user["division"]})["_id"]),
+                comment=None
+            )
             return redirect(url_for("dashboard.home"))
 
     return render_template("accounts/login.html")
@@ -73,6 +81,20 @@ def login():
 @bp.route("/logout/", methods=["GET", "POST"])
 def logout():
     backPageUrl = "authentication.login"
+    db = get_db()
+    division_collection = db["divisions"]
+    user_collection = db["users"]
+
+    # Log the action    
+    user = user_collection.find_one({"_id": ObjectId(session["user_id"])})
+    log_action(
+        action="logout",
+        user_id=session["user_id"],
+        document_id=None,
+        division_id=str(division_collection.find_one({"name": user["division"]})["_id"]),
+        comment=None
+    )
+
     session.clear()
     session["toastMessage"] = "You have logged out Successfully"
     session["toastMessageCategory"] = "Success"

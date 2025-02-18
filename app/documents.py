@@ -18,7 +18,7 @@ from flask_login import (
 
 import pymongo
 from database import get_db, get_llm
-from authentication import login_required
+from authentication import login_required, log_action
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from bson import json_util
@@ -356,6 +356,7 @@ def upload():
                 "year": int(year),
                 "document_number": document_number,
                 "division": division,
+                "divisionID": ObjectId(session["userDivisionID"]),
                 "author": author,
                 "reportType": reportType,
                 "subReportType": subReportType,
@@ -515,6 +516,7 @@ def upload():
                 "year": int(year),
                 "document_number": document_number,
                 "division": division,
+                "divisionID": ObjectId(session["userDivisionID"]),
                 "author": author,
                 "reportType": reportType,
                 "subReportType": subReportType,

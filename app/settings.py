@@ -93,7 +93,7 @@ def reportType():
     if "report-type-submit" in request.form:
       reportTypeName = request.form["report_type_name"]
 
-      documentExists = report_collection.find_one({"name": reportTypeName})
+      documentExists = report_collection.find_one({"name": reportTypeName, "divisionID": ObjectId(session["userDivisionID"])})
       if documentExists:
         session["toastMessage"] = "Report Type already exists"
         session["toastMessageCategory"] = "Alert"
