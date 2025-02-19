@@ -18,7 +18,8 @@ from flask_login import (
 
 import pymongo
 from database import get_db, get_llm
-from authentication import login_required, log_action
+from authentication import login_required
+from helper import log_action
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from bson import json_util
@@ -59,11 +60,15 @@ def search():
     report_type_collection = db["reportType"]
     reportTypeList = list(report_type_collection.find( {"divisionID": ObjectId(session["userDivisionID"]) }))
     # Parent Report Types
+
+    # Get the list of existing Parent report types 
     parentReportTypeList = list(
         report_type_collection.find(
             {
-                "divisionID": ObjectId(session["userDivisionID"]),
-                "isSubReportType": False
+                "$or": [
+                { "isSubReportType": False, "divisionID": ObjectId(session["userDivisionID"]) },
+                { "isSubReportType": False, "isCommonToAllDivisions": True, }
+                ]
             }
         ).sort("name", 1)
     )
@@ -135,8 +140,7 @@ def search():
         searchMetaData.pop("subReportType", None)
     
     # CONSTRUCTING SORTING META DATA
-    if session["isAdmin"] == False:
-        searchMetaData["division"] = userDivision
+    searchMetaData["division"] = userDivision
     sortMetaData = {}
     refreshSortData = {}
 
@@ -248,15 +252,19 @@ def upload():
     # Parent Report types sort by alphabetical order
     report_type_collection = db["reportType"]
     reportTypeList = list(report_type_collection.find( {"divisionID": ObjectId(session["userDivisionID"]) }))
-    # Parent Report Types
+
+    # Get the list of existing Parent report types 
     parentReportTypeList = list(
         report_type_collection.find(
             {
-                "divisionID": ObjectId(session["userDivisionID"]),
-                "isSubReportType": False
+                "$or": [
+                { "isSubReportType": False, "divisionID": ObjectId(session["userDivisionID"]) },
+                { "isSubReportType": False, "isCommonToAllDivisions": True, }
+                ]
             }
         ).sort("name", 1)
     )
+
     subReportTypeList = list(
         report_type_collection.find(
             {
@@ -304,7 +312,7 @@ def upload():
 
         generateTitleAutomatic = request.form.getlist("generateTitle")
         if "true" not in generateTitleAutomatic:
-            title = request.form["document_title"]
+            title = request.form["document_title"].strip()
             document_number = request.form["document_number"]
             year = request.form["document_year"]
             author_list = request.form.getlist("author_name[]")
@@ -373,7 +381,8 @@ def upload():
                 "summaryHTML": ""
             }
             try:
-                document_collection.insert_one(document_metadata)
+                inserted_document = document_collection.insert_one(document_metadata)
+                document_id = inserted_document.inserted_id
                 divisions_collection.update_one(
                     {
                         "name": str(division)
@@ -406,6 +415,17 @@ def upload():
                             }
                         }
                     )
+
+                # Log Action
+                log_action(
+                    action="document_upload",
+                    user_id=session["user_id"],
+                    document_id=document_id,
+                    division_id=session["userDivisionID"],
+                    details={},
+                    comment="The files type was not supported. The file was compressed to a ZIP file and uploaded."
+                )
+
                 print("Successfully uploaded the document")
                 session["toastMessage"] = "Document uploaded successfully"
                 session["toastMessageCategory"] = "Success"
@@ -419,11 +439,11 @@ def upload():
                 file_data.save(os.path.join("converted_pdf/", "input_pdf_test.pdf"))
                 ocrmypdf.ocr("converted_pdf/input_pdf_test.pdf", "converted_pdf/ouptut_pdf.pdf", deskew=True, force_ocr=True,output_type="pdf" )
                 converted_file_data = open("converted_pdf/ouptut_pdf.pdf", 'rb')
-                file_name = secure_filename(file_data.filename)
+                file_name = secure_filename(title + ".pdf")
                 file_id = fs.put(converted_file_data, filename=file_name)
                 reader = PdfReader(converted_file_data)
             else:
-                file_name = secure_filename(file_data.filename)
+                file_name = secure_filename(title + ".pdf")
                 file_id = fs.put(file_data, filename=file_name)
                 reader = PdfReader(file_data)
 
@@ -536,7 +556,8 @@ def upload():
 
 
             try:
-                document_collection.insert_one(document_metadata)
+                inserted_document = document_collection.insert_one(document_metadata)
+                document_id = inserted_document.inserted_id
                 divisions_collection.update_one(
                     {
                         "name": str(division)
@@ -569,6 +590,15 @@ def upload():
                             }
                         }
                     )
+                # Log Action
+                log_action(
+                    action="document_upload",
+                    user_id=session["user_id"],
+                    document_id=document_id,
+                    division_id=session["userDivisionID"],
+                    details={},
+                    comment="The file was uploaded successfully."
+                )
                 print("Successfully uploaded the document")
                 session["toastMessage"] = "Document uploaded successfully"
                 session["toastMessageCategory"] = "Success"
@@ -629,6 +659,17 @@ def editDocument(id = None):
 
     # Current Document Details
     currentDocument = document_collection.find_one({"_id": ObjectId(id)})
+    oldDetails = {
+        "title": currentDocument["title"],
+        "year": currentDocument["year"],
+        "document_number": currentDocument["document_number"],
+        "author": currentDocument["author"],
+        "reportType": currentDocument["reportType"],
+        "subReportType": currentDocument["subReportType"],
+        "email": currentDocument["email"],
+        "author_list": currentDocument["author_list"],
+        "email_list": currentDocument["email_list"]
+    }
     authorListLen = len(currentDocument["author_list"])
     
     if request.method == "POST":
@@ -656,6 +697,19 @@ def editDocument(id = None):
 
         author = author_list[0]
         email = email_list[0]
+
+        newDetails = {
+                    "title": title,
+                    "year": int(year),
+                    "document_number": document_number,
+                    "author": author,
+                    "reportType": reportType,
+                    "subReportType": subReportType,
+                    "email": email,
+                    "author_list": author_list,
+                    "email_list": email_list,
+                    "editedAt": datetime.datetime.now()
+                }
 
         if reportType != currentDocument["reportType"]:
             report_type_collection.update_one(
@@ -706,19 +760,21 @@ def editDocument(id = None):
                 "_id": ObjectId(id)
             },
             {
-                "$set": {
-                    "title": title,
-                    "year": int(year),
-                    "document_number": document_number,
-                    "author": author,
-                    "reportType": reportType,
-                    "subReportType": subReportType,
-                    "email": email,
-                    "author_list": author_list,
-                    "email_list": email_list,
-                    "editedAt": datetime.datetime.now()
-                }
+                "$set": newDetails
             }
+        )
+
+        # Log Action
+        log_action(
+            action="document_edit",
+            user_id=session["user_id"],
+            document_id=ObjectId(id),
+            division_id=session["userDivisionID"],
+            details={
+                "oldDetails": oldDetails,
+                "newDetails": newDetails
+            },
+            comment="The document was edited successfully.",
         )
 
         # Toast
@@ -746,7 +802,20 @@ def deleteDocument(id = None):
     document_collection = db["documents"]
     report_collection = db["reportType"]
     divisions_collection = db["divisions"]
+    
     fs = gridfs.GridFS(db)
+    document_details = document_collection.find_one({"_id": ObjectId(id)})
+    document_details = {
+        "title": document_details["title"],
+        "year": document_details["year"],
+        "document_number": document_details["document_number"],
+        "author": document_details["author"],
+        "reportType": document_details["reportType"],
+        "subReportType": document_details["subReportType"],
+        "email": document_details["email"],
+        "author_list": document_details["author_list"],
+        "email_list": document_details["email_list"]
+    }
 
     divisions_collection.update_one(
         {
@@ -781,6 +850,17 @@ def deleteDocument(id = None):
     file_id = document_collection.find_one({"_id": ObjectId(id)})["file_id"]
     fs.delete(file_id)
     document_collection.delete_one({"_id": ObjectId(id)})
+    
+    # Log Action
+    log_action(
+        action="document_delete",
+        user_id=session["user_id"],
+        document_id=ObjectId(id),
+        division_id=session["userDivisionID"],
+        details=document_details,
+        comment="The document was deleted successfully."
+    )
+
     # Toast
     session["toastMessage"] = "Document deleted successfully"
     session["toastMessageCategory"] = "Success"
@@ -809,7 +889,10 @@ def details(id=None):
     document_collection = db["documents"]
     searchHistory_collection = db["searchHistory"]
 
-    searchResults = document_collection.find_one({"_id": ObjectId(id)})
+    searchResults = document_collection.find_one(
+        {"_id": ObjectId(id)},
+        {"content": 0}
+    )
 
     # Toast
     try:
@@ -830,12 +913,18 @@ def details(id=None):
             "timestamp": datetime.datetime.now()
         }
         searchHistory_collection.insert_one(searchHistoryMetaData)
+    
+    # Check if the current user the one who uploaded the document
+    isUploader = False
+    if searchResults["uploadedBy"] == ObjectId(session["user_id"]):
+        isUploader = True
     return render_template(
         "search/documentDetails.html", 
         backPageUrl = backPageUrl,
         searchResults = searchResults,
         numOfAuthors = len(searchResults["author_list"]),
-        isAdmin = session["isAdmin"]
+        isAdmin = session["isAdmin"],
+        isUploader = isUploader
     )
 
 
@@ -848,13 +937,18 @@ def download(id = None):
     file_data = grid_fs.find_one({'_id': ObjectId(id)})
     # Read the file content
     file_stream = io.BytesIO(file_data.read())
+
     # Send the file as a response
-    return send_file(
+    response = send_file(
         file_stream,
-        as_attachment=True,
+        as_attachment=False,
         download_name=file_data.filename,
         mimetype=file_data.content_type
     )
+    
+    # Force the file to open in a new tab with the correct name
+    response.headers["Content-Disposition"] = f"inline; filename={file_data.filename}"
+    return response
 
 
 # ----------------- SEARCH HISTORY -----------------

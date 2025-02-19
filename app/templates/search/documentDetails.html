@@ -137,7 +137,7 @@
                             <div class="d-flex justify-content-xl-center ms-xl-3">
                                 <div class="d-flex">
                                     <a class="btn animate-up-2"
-                                        href="{{url_for('documents.download', id=searchResults['file_id'])}}">
+                                        href="{{url_for('documents.download', id=searchResults['file_id'])}}" target="_blank">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
                                             fill="currentColor" class="bi bi-download" viewBox="0 0 20 20">
                                             <path
@@ -157,17 +157,17 @@
                 </div>
             </div>
         </div>
-        {% if isAdmin %}
+        {% if isAdmin or isUploader %}
         <div class="row">
             <div class="col-12">
                 <div class="card card-body border-0 shadow mb-4 text-center d-flex flex-row align-items-center gap-3">
-                    <a type="submit" class="btn btn-warning mt-2 mb-2 w-75" value="Approve" name="approve"
+                    <a type="submit" class="btn btn-primary mt-2 mb-2 w-75" value="Approve" name="approve"
                         href="{{  url_for('documents.editDocument', id=searchResults['_id']) }}">
                         <span class="display-4 text-white">Edit</span>
                     </a>
-                    <button type="button" class="btn btn-danger mt-2 mb-2 w-75" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-outline-primary mt-2 mb-2 w-75" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop">
-                        <span class="display-4 text-white">Delete</span>
+                        <span class="display-4 text-danger">Delete</span>
                     </button>
                 </div>
             </div>

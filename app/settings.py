@@ -8,6 +8,7 @@ from flask_login import (
     logout_user
 )
 from authentication import login_required
+from helper import log_action
 import pymongo
 from database import get_db
 from bson.objectid import ObjectId
@@ -32,16 +33,17 @@ def reportType():
   report_collection = db["reportType"]
   divisions_collection = db["divisions"]
  
-  # Get the list of existing Parent report types
+  # Get the list of existing Parent report types 
   parentReportTypeList = list(
     report_collection.find(
       {
-        "isSubReportType": False,
-        "divisionID": ObjectId(session["userDivisionID"])
+        "$or": [
+          { "isSubReportType": False, "divisionID": ObjectId(session["userDivisionID"]) },
+          { "isCommonToAllDivisions": True }
+        ]
       }
     )
   )
-
 
   # Get the list of existing report types
   reportTypesListLen = report_collection.count_documents({})
@@ -92,13 +94,16 @@ def reportType():
     # NEW REPORT TYPE
     if "report-type-submit" in request.form:
       reportTypeName = request.form["report_type_name"]
+      if "true" in request.form.getlist("is_common_to_all_divisions"):
+        isCommonToAllDivisions = True
+      else:
+        isCommonToAllDivisions = False
 
       documentExists = report_collection.find_one({"name": reportTypeName, "divisionID": ObjectId(session["userDivisionID"])})
       if documentExists:
         session["toastMessage"] = "Report Type already exists"
         session["toastMessageCategory"] = "Alert"
         return redirect(url_for("settings.reportType"))
-
 
       document_metadata = {
         "name": reportTypeName,
@@ -108,6 +113,7 @@ def reportType():
         "parentReportType": None,
         "documentCount": 0,
         "divisionID": ObjectId(session["userDivisionID"]),
+        "isCommonToAllDivisions": isCommonToAllDivisions,
         "uploadedAt": datetime.datetime.now(),
       }
 
@@ -115,6 +121,12 @@ def reportType():
         report_collection.insert_one(document_metadata)
         session["toastMessage"] = "Report Type uploaded successfully"
         session["toastMessageCategory"] = "Success"
+        # Log Action
+        log_action(
+          action="Report Type Created",
+          user_id=session["user_id"],
+          details={"Report Type": reportTypeName},
+        )
         return redirect(url_for("settings.reportType"))
       except:
         print("Couldn't upload report type")
@@ -123,7 +135,8 @@ def reportType():
     elif "sub-report-type-submit" in request.form:
       parentReportType = request.form["parent_report_type"]
       subReportTypeName = request.form["sub_report_type"]
-      print(parentReportType)
+
+      isCommonToAllDivisions = report_collection.find_one({"_id": ObjectId(parentReportType)})["isCommonToAllDivisions"]
 
       documentExists = report_collection.find_one(
         {
@@ -142,6 +155,7 @@ def reportType():
         "parentReportType": ObjectId(parentReportType),
         "documentCount": 0,
         "divisionID": ObjectId(session["userDivisionID"]),
+        "isCommonToAllDivisions": isCommonToAllDivisions,
         "uploadedAt": datetime.datetime.now(),
       }
 

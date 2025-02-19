@@ -28,7 +28,18 @@
                 </div>
               </div>
             </div>
-            <div class="d-flex flex-row justify-content-between mt-3">
+            <div class="row">
+              <div class="col-md-12">
+                  <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="true" id="is_common_to_all_divisions"
+                          name="is_common_to_all_divisions">
+                      <label class="form-check-label" for="is_common_to_all_divisions">
+                          Common to all Divisions
+                      </label>
+                  </div>
+              </div>
+          </div>
+            <div class="d-flex flex-row justify-content-between">
               <div>
                 <input class="btn btn-gray-800 mt-2 animate-up-2" name="report-type-submit" type="submit"
                   value="Upload"></input>
@@ -38,8 +49,10 @@
               </div>
             </div>
           </div>
+          
         </div>
       </div>
+      
     </form>
   </div>
   <div class="col-md-6">
@@ -49,7 +62,7 @@
         <div class="col-12">
           <div class="card card-body border-0 shadow mb-4">
             <h2 class="h4 mb-4">New Sub Report Type</h2>
-            <div class="row">
+            <div class="row mb-3">
               <div class="col-md-6 mb-3">
                 <div>
                   <label for="parent_report_type">Parent Report type</label>
@@ -119,9 +132,10 @@
                 <th class="col">#</th>
                 <th class="col">Uploaded At</th>
                 <th class="col">Name</th>
+                <th class="col">Common to all Divisions</th>
                 <th class="col">Sub Report Type</th>
                 <th class="col">Parent Report Type Name</th>
-
+                <th class="col"># of Documents</th>
               </tr>
             </thead>
             <tbody>
@@ -130,6 +144,12 @@
                 <td>{{ number_of_documents_per_page * current_page + i + 1}}</td>
                 <td>{{ reportTypesList[i]["uploadedAt"].strftime("%d/%m/%Y, %H:%M:%S") }}</td>
                 <td class="fw-bolder">{{ reportTypesList[i]["name"] }}</td>
+                
+                {% if reportTypesList[i]["isCommonToAllDivisions"] %}
+                <td>Yes</td>
+                {% else %}
+                <td>No</td>
+                {% endif %}
 
                 {% if reportTypesList[i]["isSubReportType"] %}
                 <td>Yes</td>
@@ -142,6 +162,8 @@
                 {% else %}
                 <td>-</td>
                 {% endif %}
+
+                <td>{{ reportTypesList[i]["documentCount"] }}</td>
 
               </tr>
               {% endfor %}
