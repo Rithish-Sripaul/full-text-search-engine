@@ -15,6 +15,7 @@ from bson.objectid import ObjectId
 
 bp = Blueprint("settings", __name__, url_prefix="")
 
+# ----------------- ADD REPORT TYPE -----------------
 @bp.route("/settings/reportType/", methods=["GET", "POST"])
 @login_required
 def reportType():
@@ -39,7 +40,7 @@ def reportType():
       {
         "$or": [
           { "isSubReportType": False, "divisionID": ObjectId(session["userDivisionID"]) },
-          { "isCommonToAllDivisions": True }
+          { "isSubReportType": False, "isCommonToAllDivisions": True }
         ]
       }
     )
@@ -61,7 +62,10 @@ def reportType():
       report_collection.aggregate([
           {
             "$match": {
-              "divisionID": ObjectId(session["userDivisionID"])
+              "$or": [
+                {"divisionID": ObjectId(session["userDivisionID"])},
+                {"isCommonToAllDivisions": True}
+              ]
             }
           },
           {
@@ -118,15 +122,24 @@ def reportType():
       }
 
       try:
-        report_collection.insert_one(document_metadata)
+        insertedReportType = report_collection.insert_one(document_metadata)
+        reportTypeID = insertedReportType.inserted_id
         session["toastMessage"] = "Report Type uploaded successfully"
         session["toastMessageCategory"] = "Success"
+
         # Log Action
         log_action(
-          action="Report Type Created",
+          action="report_type_created",
           user_id=session["user_id"],
-          details={"Report Type": reportTypeName},
+          details={
+            "reportTypeID": ObjectId(reportTypeID),
+            "reportTypeName": reportTypeName,
+            "isCommonToAllDivisions": isCommonToAllDivisions
+          },
+          division_id=session["userDivisionID"],
+          comment="Report Type Created"
         )
+
         return redirect(url_for("settings.reportType"))
       except:
         print("Couldn't upload report type")
@@ -161,7 +174,8 @@ def reportType():
 
       # Upload sub report type and update parent report type
       try:
-        report_collection.insert_one(document_metadata)
+        insertedReportType = report_collection.insert_one(document_metadata)
+        reportTypeID = insertedReportType.inserted_id
         report_collection.update_one(
           { "_id": ObjectId(parentReportType) },
           {
@@ -172,6 +186,21 @@ def reportType():
         )
         session["toastMessage"] = "Sub Report Type uploaded successfully"
         session["toastMessageCategory"] = "Success"
+
+        # Log Action
+        log_action(
+          action="sub_report_type_created",
+          user_id=session["user_id"],
+          details={
+            "parentReportTypeName": report_collection.find_one({"_id": ObjectId(parentReportType)})["name"],
+            "parentReportTypeID": ObjectId(parentReportType),
+            "reportTypeID" : reportTypeID,
+            "subReportTypeName": subReportTypeName,
+            "isCommonToAllDivisions": isCommonToAllDivisions
+          },
+          division_id=session["userDivisionID"],
+          comment="Sub Report Type Created"
+        )
         return redirect(url_for("settings.reportType"))
       except:
         print("Couldn't upload sub report type")
@@ -187,4 +216,58 @@ def reportType():
     number_of_documents_per_page = number_of_documents_per_page,
     current_page = current_page,
   )
-  
+
+
+# ----------------- ACTION LOGS -----------------
+@bp.route("/settings/actionLogs/", methods=["GET"])
+@login_required
+def actionLogs():
+  db = get_db()
+  action_collection = db["actionLogs"]
+
+  actionLogList = list(
+    action_collection.find(
+      {
+        "$or": [
+          { "adminID": ObjectId(session["user_id"]) },
+          { "user_id": ObjectId(session["user_id"]) }
+        ]
+      }
+    )
+  )
+
+  actionLogListLen = len(actionLogList)
+
+
+  list_number_of_documents_per_page = [5, 10, 20, 40, 60, 80]
+  if request.args.get("docppag") is not None:
+    session["number_of_documents_per_page"] = request.args.get("docppag", type=int)
+  number_of_documents_per_page = session["number_of_documents_per_page"]
+  current_page = request.args.get('page', default=0, type=int)
+  number_of_pages = math.ceil(actionLogListLen / number_of_documents_per_page)
+
+  actionLogList = list(
+    action_collection.find(
+      {
+        "$or": [
+          { "adminID": ObjectId(session["user_id"]) },
+          { "user_id": ObjectId(session["user_id"]) }
+        ]
+      },
+      sort=[("timestamp", pymongo.DESCENDING)],
+      skip=number_of_documents_per_page * current_page,
+      limit=number_of_documents_per_page
+    )
+  )
+  actionLogListLen = len(actionLogList)
+
+
+  return render_template(
+    "settings/actionLogs.html",
+    actionLogList = actionLogList,
+    actionLogListLen = actionLogListLen,
+    number_of_pages = number_of_pages,
+    list_number_of_documents_per_page = list_number_of_documents_per_page,
+    number_of_documents_per_page = number_of_documents_per_page,
+    current_page = current_page,
+  )

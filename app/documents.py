@@ -443,7 +443,7 @@ def upload():
                 file_id = fs.put(converted_file_data, filename=file_name)
                 reader = PdfReader(converted_file_data)
             else:
-                file_name = secure_filename(title + ".pdf")
+                file_name = secure_filename(file_data.filename)
                 file_id = fs.put(file_data, filename=file_name)
                 reader = PdfReader(file_data)
 
@@ -517,7 +517,7 @@ def upload():
                     title = titleDocumentNumberYearJSON["title"]
                     document_number = titleDocumentNumberYearJSON["document_number"]
                     year = titleDocumentNumberYearJSON["year"]
-                    if not year:
+                    if not year or type(year) != int:
                         year = dt.now().year
                     author = titleDocumentNumberYearJSON["author"]
                     author_list = [author]

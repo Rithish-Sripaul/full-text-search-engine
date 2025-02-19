@@ -15,6 +15,7 @@ db.createCollection("documents");
 db.createCollection("divisions");
 db.createCollection("reportType");
 db.createCollection("searchHistory");
+db.createCollection("actionLogs");
 
 db.documents.createIndex({ title: "text", content: "text" });
 

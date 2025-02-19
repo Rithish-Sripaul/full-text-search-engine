@@ -63,6 +63,7 @@ def login():
             session["logged_in"] = True
             session["isAdmin"] = user["isAdmin"]
             session["userDivisionID"] = str(division_collection.find_one({"name": user["division"]})["_id"])
+            session["userDivision"] = user["division"]
             session["toastMessage"] = "You have logged in Successfully"
 
             log_action(
@@ -151,6 +152,9 @@ def register():
         password = request.form["password"]
         division = request.form["division"]
         isAdmin = request.form["isAdmin"]
+        isMaster = False
+        divisionID = division_collection.find_one({"name": division})["_id"]
+
         hasAdminAccount = True if request.form["hasAdminAccount"] == "1" else False
         if hasAdminAccount:
             adminAccount = request.form["adminAccount"]
@@ -179,18 +183,20 @@ def register():
             
         if error is None:
             if hasAdminAccount:
-                user_collection.insert_one(
+                insertedUser = user_collection.insert_one(
                     {
                         "username": username, 
                         "email": email, 
                         "password": generate_password_hash(password),
                         "division": division,
+                        "isMaster": isMaster,
                         "isAdmin": isAdmin,
                         "hasAdminAccount": hasAdminAccount,
                         "adminAccount": ObjectId(adminAccount),
                         "created_at": datetime.datetime.now()
                     }
                 )
+                user_id = insertedUser.inserted_id
                 division_collection.update_one(
                     {"name": division},
                     {
@@ -199,25 +205,61 @@ def register():
                         }
                     }
                 )
+
+                # Log Action
+                log_action(
+                    action="user_created",
+                    user_id=user_id,
+                    division_id=divisionID,
+                    comment="User Created",
+                    details={
+                        "username": username,
+                        "email": email,
+                        "division": division,
+                        "isMaster": isMaster,
+                        "isAdmin": isAdmin,
+                        "hasAdminAccount": hasAdminAccount,
+                        "adminAccount": ObjectId(adminAccount)
+                    }
+                )
                 return redirect(url_for("authentication.login"))
             elif not hasAdminAccount:
-                user_collection.insert_one(
+                insertedUser = user_collection.insert_one(
                     {
                         "username": username, 
                         "email": email, 
                         "password": generate_password_hash(password),
                         "division": division,
+                        "isMaster": isMaster,
                         "isAdmin": isAdmin,
                         "hasAdminAccount": hasAdminAccount,
                         "adminAccount": None
                     }
                 )
+                user_id = insertedUser.inserted_id
                 division_collection.update_one(
                     {"name": division},
                     {
                         "$inc": {
                             "userCount": 1
                         }
+                    }
+                )
+
+                # Log Action
+                log_action(
+                    action="user_created",
+                    user_id=user_id,
+                    division_id=divisionID,
+                    comment="User Created",
+                    details={
+                        "username": username,
+                        "email": email,
+                        "division": division,
+                        "isMaster": isMaster,
+                        "isAdmin": isAdmin,
+                        "hasAdminAccount": hasAdminAccount,
+                        "adminAccount": None
                     }
                 )
                 return redirect(url_for("authentication.login"))
