@@ -50,5 +50,11 @@ db.divisions.insertMany([
     documentCount: 0,
     userCount: 0,
   },
+  {
+    name: "LCT",
+    director: "",
+    documentCount: 0,
+    userCount: 0,
+  },
 ]);
 

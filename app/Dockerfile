@@ -66,4 +66,4 @@ USER www
 EXPOSE 5000
 
 # Start the application using Gunicorn with 4 workers
-CMD [ "gunicorn", "-w", "4", "--timeout", "300", "--bind", "0.0.0.0:5000", "wsgi:app"]
+CMD [ "gunicorn", "-w", "4", "--timeout", "3000", "--bind", "0.0.0.0:5000", "wsgi:app"]

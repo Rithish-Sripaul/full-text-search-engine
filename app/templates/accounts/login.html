@@ -3,25 +3,71 @@
 {% block title %} Sign IN {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<style>
+    /* Full-screen background video */
+    .background-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+    }
+    
+    /* To ensure form content is above the video */
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Add a subtle overlay for better text visibility */
+    .video-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 0;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+        backdrop-filter: blur(20px) brightness(1.2); /* Blur with brightness adjustment */
+        -webkit-backdrop-filter: blur(20px) brightness(1.2);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        color: rgb(230, 230, 230);
+    }
+</style>
+
+{% endblock stylesheets %}
 
 {% block content %}
+<!-- Background Video -->
+<video class="background-video" autoplay loop muted>
+    <source src="{{ url_for('static', filename='assets/videos/Navy Blue Animated Business Company Presentation Video.mp4') }}" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
 
+<!-- Dark Overlay for Better Text Visibility -->
+<!-- <div class="video-overlay"></div> -->
 <main>
     <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
         <div class="container">
-            <div class="row justify-content-center form-bg-image"
-                data-background-lg="/static/assets/img/illustrations/signin.svg">
+            <div class="row justify-content-center">
                 <div class="col-12 d-flex align-items-center justify-content-center">
                     <div class="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
                         <div class="text-center text-md-center mb-4 mt-md-0">
+                            <img class="mb-4" src="{{ url_for('static', filename='assets/img/logo/nstl_logo.jpg') }}" alt="" style="width: 150px; height: 150px;">
                             <h1 class="mb-0 h3">
                                 NSTL - Sign In
                             </h1>
                         </div>
                         <form method="post" class="mt-4">
-
-
                             <!-- Form -->
                             <div class="form-group mb-4">
                                 <label for="email">Username</label>

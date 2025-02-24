@@ -116,10 +116,17 @@ def home():
     }
   )
 
+  division_lct = divisions_collection.find_one(
+    {
+      "name": "LCT"
+    }
+  )
+
   # Chart Details
   # Get the current month
+  all_months_alphabet = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
   current_month = datetime.datetime.now().month
-  current_year = datetime.datetime.now().year
+  current_year = datetime.datetime.now().year + 1
   months = []
   for i in range(5):
     if current_month == 0:
@@ -128,6 +135,10 @@ def home():
     months.append(current_month)
     current_month -= 1
   months.reverse()
+
+  chosen_months_alphabet = []
+  for m in months:
+    chosen_months_alphabet.append(all_months_alphabet[m - 1])
 
 
   # Generate a count of documents uploaded in the past 5 months for Wind Tunnel Division
@@ -144,7 +155,7 @@ def home():
         }
       )
     )
-  print(months, wind_tunnel_monthly_uploads)
+  print(current_year, months, wind_tunnel_monthly_uploads)
 
 
   # LATEST GLOBAL UPLOADS
@@ -167,5 +178,9 @@ def home():
     division_smb = division_smb,
     division_ct = division_ct,
     division_cfd = division_cfd,
-    latestGlobalUploads = latestGlobalUploads
+    division_lct = division_lct,
+    latestGlobalUploads = latestGlobalUploads,
+    chosen_months_alphabet = chosen_months_alphabet,
+    months = months,
+    wind_tunnel_monthly_uploads = wind_tunnel_monthly_uploads
   )

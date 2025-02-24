@@ -387,7 +387,9 @@ def upload():
                 "content": "",
                 "uploaded_at": datetime.datetime.now(),
                 "summary": "",
-                "summaryHTML": ""
+                "summaryHTML": "",
+                "reportTypeID": reportTypeId,
+                "subReportTypeID": subReportTypeId
             }
             try:
                 inserted_document = document_collection.insert_one(document_metadata)
@@ -559,7 +561,9 @@ def upload():
                 "content": str(content),
                 "uploaded_at": datetime.datetime.now(),
                 "summary": summary,
-                "summaryHTML": summaryHTML
+                "summaryHTML": summaryHTML,
+                "reportTypeID": reportTypeId,
+                "subReportTypeID": subReportTypeId
             }
 
 
