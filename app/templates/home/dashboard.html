@@ -227,7 +227,7 @@
 
 <div class="row mb-2">
     <!-- CAROUSEL - FOR DIVISIONS -->
-    <div id="carouselExampleIndicators" class="carousel carousel-dark slide col-12 d-flex flex-row align-items-center" data-bs-ride="carousel">
+    <div id="carouselExampleIndicators" class="carousel carousel-dark slide col-12 col-xl-8 d-flex flex-row align-items-center" data-bs-ride="carousel">
         <!-- <div class="carousel-indicators">
           <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
           <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -324,7 +324,43 @@
           <span class="visually-hidden">Next</span>
         </button>
       </div>
-
+    
+    <div class="col-12 col-xl-4 d-flex align-items-center">
+        <div class="card h-100 w-100">
+            <div class="card-body p-0">
+                <div id="carouselExampleFade" class="carousel slide carousel-dark h-100" data-bs-ride="carousel">
+                    <div class="carousel-inner h-100">
+                        <div class="carousel-item active h-100">
+                            <img src="{{ url_for('static', filename='assets/img/nstl_images/images (1).jpg') }}" class="d-block w-100 h-100 object-fit-cover">
+                        </div>
+                        <div class="carousel-item h-100">
+                            <img src="{{ url_for('static', filename='assets/img/nstl_images/Home-Page-NSTL.jpg') }}" class="d-block w-100 h-100 object-fit-cover">
+                        </div>
+                        <div class="carousel-item h-100">
+                            <img src="{{ url_for('static', filename='assets/img/nstl_images/images.jpg') }}" class="d-block w-100 h-100 object-fit-cover">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+                        <span aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                            </svg>
+                        </span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+                        <span aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+                            </svg>
+                        </span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
       
     <!-- TOTAL DOCUMENTS -->
     <!-- <div class="col-12 col-xl-4 mb-4">
@@ -713,42 +749,7 @@
             </div> -->
         </div>
     </div>
-    <div class="col-12 col-xl-4 d-flex align-items-center">
-        <div class="card h-100 w-100">
-            <div class="card-body p-0">
-                <div id="carouselExampleFade" class="carousel slide carousel-dark h-100" data-bs-ride="carousel">
-                    <div class="carousel-inner h-100">
-                        <div class="carousel-item active h-100">
-                            <img src="{{ url_for('static', filename='assets/img/nstl_images/images (1).jpg') }}" class="d-block w-100 h-100 object-fit-cover">
-                        </div>
-                        <div class="carousel-item h-100">
-                            <img src="{{ url_for('static', filename='assets/img/nstl_images/Home-Page-NSTL.jpg') }}" class="d-block w-100 h-100 object-fit-cover">
-                        </div>
-                        <div class="carousel-item h-100">
-                            <img src="{{ url_for('static', filename='assets/img/nstl_images/images.jpg') }}" class="d-block w-100 h-100 object-fit-cover">
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
-                        <span aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-                            </svg>
-                        </span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
-                        <span aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
-                            </svg>
-                        </span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
+
 
 </div>
 
@@ -1174,7 +1175,6 @@
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
         series: [
           [5, 9, 7, 8, 5],
-          [3, 5, 4, 6, 3]
         ]
       };
 
@@ -1183,8 +1183,9 @@
         showArea: true,
         fullWidth: true,
         chartPadding: {
-          right: 40
-        }
+          right: 20
+        },
+        lineSmooth: Chartist.Interpolation.none()
       };
 
       new Chartist.Line('.ct-chart-sales-value', data, options);

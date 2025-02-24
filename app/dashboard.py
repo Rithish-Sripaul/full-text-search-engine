@@ -116,6 +116,36 @@ def home():
     }
   )
 
+  # Chart Details
+  # Get the current month
+  current_month = datetime.datetime.now().month
+  current_year = datetime.datetime.now().year
+  months = []
+  for i in range(5):
+    if current_month == 0:
+      current_month = 12
+      current_year -= 1
+    months.append(current_month)
+    current_month -= 1
+  months.reverse()
+
+
+  # Generate a count of documents uploaded in the past 5 months for Wind Tunnel Division
+  wind_tunnel_monthly_uploads = []
+  for month in months:
+    wind_tunnel_monthly_uploads.append(
+      document_collection.count_documents(
+        {
+          "divisionID": ObjectId(division_wind_tunnel["_id"]),
+          "uploaded_at": {
+            "$gte": datetime.datetime(current_year, month, 1),
+            "$lt": datetime.datetime(current_year, month, 28)
+          }
+        }
+      )
+    )
+  print(months, wind_tunnel_monthly_uploads)
+
 
   # LATEST GLOBAL UPLOADS
   latestGlobalUploads = list(

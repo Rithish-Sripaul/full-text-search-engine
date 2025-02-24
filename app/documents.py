@@ -88,6 +88,7 @@ def search():
     searchMetaData = {}
 
     refreshDocumentTitle = ""
+    refreshDocumentContent = ""
     refreshDocumentNumber = ""
     refreshAuthorName = ""
     refreshDocumentYear = ""
@@ -97,8 +98,14 @@ def search():
     
     # document_title
     if request.args.get("document_title", default = "") != "":
-        searchMetaData["$text"] = {"$search": request.args.get("document_title", default="")}
+        searchMetaData["title"] = {"$regex": request.args.get("document_title"), "$options": "i"}
         refreshDocumentTitle = request.args.get("document_title")
+    else:
+        searchMetaData.pop("title", None)
+    # document_content
+    if request.args.get("document_content", default = "") != "":
+        searchMetaData["$text"] = {"$search": request.args.get("document_content", default="")}
+        refreshDocumentContent = request.args.get("document_content")
     else:
         searchMetaData.pop("$text", None)
     # document_number
@@ -171,6 +178,7 @@ def search():
     else:
         sortCollapse = "show"
     print(sortCollapse)
+    print(searchMetaData)
     # DEFAULT VIEW: Recently uploaded documents
     search_results = list(document_collection.find(searchMetaData))
 
@@ -207,6 +215,7 @@ def search():
         number_of_documents_per_page = number_of_documents_per_page,
         current_page = current_page,
         refreshDocumentTitle = refreshDocumentTitle,
+        refreshDocumentContent = refreshDocumentContent,
         refreshDocumentNumber = refreshDocumentNumber,
         refreshAuthorName = refreshAuthorName,
         refreshDocumentYear = refreshDocumentYear,
@@ -632,27 +641,30 @@ def editDocument(id = None):
     backPageUrl = "documents.search"
     db = get_db()
     document_collection = db["documents"]
+    report_type_collection = db["reportType"]
 
     # Parent Report types
-    report_type_collection = db["reportType"]
     parentReportTypeList = list(
         report_type_collection.find(
             {
-                "isSubReportType": False
+                "$or": [
+                { "isSubReportType": False, "divisionID": ObjectId(session["userDivisionID"]) },
+                { "isSubReportType": False, "isCommonToAllDivisions": True, }
+                ]
             }
-        )
+        ).sort("name", 1)
     )
-    parentReportTypeListLen = len(parentReportTypeList)
 
-    # Sub Report types
     subReportTypeList = list(
         report_type_collection.find(
             {
-                "isSubReportType": True
+                "isSubReportType": True,
+                "divisionID": ObjectId(session["userDivisionID"])
             }
-        )
+        ).sort("name", pymongo.ASCENDING)
     )
-
+    parentReportTypeListLen = len(parentReportTypeList)
+        
     # Division types
     divisions_collection = db["divisions"]
     divisionList = list(divisions_collection.find())

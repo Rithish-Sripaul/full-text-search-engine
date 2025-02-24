@@ -136,6 +136,7 @@
                 <th class="col">Sub Report Type</th>
                 <th class="col">Parent Report Type Name</th>
                 <th class="col"># of Documents</th>
+                <th class="col">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -164,6 +165,10 @@
                 {% endif %}
 
                 <td>{{ reportTypesList[i]["documentCount"] }}</td>
+                <td>
+                  <a href="{{ url_for('settings.editReportType', reportTypeID=reportTypesList[i]['_id']) }}"
+                    class="btn btn-sm btn-warning">Edit</a>
+                </td>
 
               </tr>
               {% endfor %}

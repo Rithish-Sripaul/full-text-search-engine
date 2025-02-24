@@ -30,10 +30,10 @@
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <div>
-                                <label for="document_title">Title / Content</label>
+                                <label for="document_title">Title </label>
                                 {% if refreshDocumentTitle == "" %}
                                 <input name="document_title" class="form-control" id="document_title" type="text"
-                                    placeholder="Enter document title or content in files">
+                                    placeholder="Enter document title">
                                 {% else %}
                                 <input name="document_title" class="form-control" id="document_title" type="text"
                                     placeholder="Enter document title" , value="{{refreshDocumentTitle}}">
@@ -42,6 +42,21 @@
                         </div>
                     </div>
 
+                    <!-- CONTENT -->
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div>
+                                <label for="document_content">Content</label>
+                                {% if refreshDocumentContent == "" %}
+                                <input name="document_content" class="form-control" id="document_content" type="text"
+                                    placeholder="Enter content in documents">
+                                {% else %}
+                                <input name="document_content" class="form-control" id="document_content" type="text"
+                                    placeholder="Enter document title" , value="{{refreshDocumentContent}}">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- DOCUMENT NUMBER and AUTHOR -->
                     <div class="row">

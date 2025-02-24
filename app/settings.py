@@ -217,6 +217,74 @@ def reportType():
     current_page = current_page,
   )
 
+# ----------------- EDIT REPORT TYPE -----------------
+@bp.route("/settings/reportType/edit/<reportTypeID>", methods=["GET", "POST"])
+@login_required
+def editReportType(reportTypeID=None):
+  db = get_db()
+  report_collection = db["reportType"]
+  documents_collection = db["documents"]
+
+  reportTypeDetails = report_collection.find_one({"_id": ObjectId(reportTypeID)})
+
+  if request.method == "POST":
+    reportTypeName = request.form["report_type_name"]
+
+    # Update report type name
+    try:
+      report_collection.update_one(
+        { "_id": ObjectId(reportTypeID) },
+        {
+          "$set": {
+            "name": reportTypeName
+          }
+        }
+      )
+      session["toastMessage"] = "Report Type updated successfully"
+      session["toastMessageCategory"] = "Success"
+
+      # Update all documents with the previous report type name
+      if reportTypeDetails["isSubReportType"] == False:
+        documents_collection.update_many(
+          { "reportTypeID": ObjectId(reportTypeID) },
+          {
+            "$set": {
+              "reportType": reportTypeName
+            }
+          }
+        )
+      else:
+        documents_collection.update_many(
+          { "subReportTypeID": ObjectId(reportTypeID) },
+          {
+            "$set": {
+              "subReportType": reportTypeName
+            }
+          }
+        )
+
+      # Log Action
+      log_action(
+        action="report_type_updated",
+        user_id=session["user_id"],
+        details={
+          "reportTypeID": ObjectId(reportTypeID),
+          "oldReportTypeName": reportTypeDetails["name"],
+          "reportTypeName": reportTypeName
+        },
+        division_id=session["userDivisionID"],
+        comment="Report Type Updated"
+      )
+
+      return redirect(url_for("settings.reportType"))
+    except:
+      print("Couldn't update report type")
+
+  return render_template(
+    "settings/editReportType.html",
+    reportTypeID = reportTypeID,
+    reportTypeDetails = reportTypeDetails,
+  )
 
 # ----------------- ACTION LOGS -----------------
 @bp.route("/settings/actionLogs/", methods=["GET"])
@@ -271,3 +339,5 @@ def actionLogs():
     number_of_documents_per_page = number_of_documents_per_page,
     current_page = current_page,
   )
+
+

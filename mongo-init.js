@@ -51,3 +51,4 @@ db.divisions.insertMany([
     userCount: 0,
   },
 ]);
+
