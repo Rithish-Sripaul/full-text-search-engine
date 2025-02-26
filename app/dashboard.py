@@ -1,7 +1,7 @@
 import os
 import datetime
 import math
-from flask import render_template, redirect, request, url_for, Blueprint, flash, session, make_response
+from flask import render_template, redirect, request, url_for, Blueprint, flash, session, make_response, Response
 from flask_login import (
     current_user,
     login_user,
@@ -11,6 +11,9 @@ from authentication import login_required
 import pymongo
 from database import get_db
 from bson.objectid import ObjectId
+
+import gridfs
+from gridfs import GridFS
 
 bp = Blueprint("dashboard", __name__, url_prefix="")
 
@@ -33,6 +36,11 @@ def home():
   user_collection = db["users"]
   searchHistory_collection = db["searchHistory"]
   divisions_collection = db["divisions"]
+  slideshows_collection = db["slideshowImages"]
+
+  # SLIDESHOW IMAGES
+  slideshowImages = list(slideshows_collection.find({}))
+  slideshowImagesLen = len(slideshowImages)
 
   # SEARCH HISTORY
   searchHistory = list(
@@ -88,7 +96,7 @@ def home():
   # DIVISION ANALYTICS
   division_wind_tunnel = divisions_collection.find_one(
       {
-        "name": "Wind Tunnel"
+        "name": "WT"
       }
   )
 
@@ -170,6 +178,8 @@ def home():
   return render_template(
     "home/dashboard.html",
     backPageUrl = backPageUrl,
+    slideshowImages = slideshowImages,
+    slideshowImagesLen = slideshowImagesLen,
     isAdmin = isAdmin,
     searchHistory = searchHistory,
     pastUploads = pastUploads,
@@ -184,3 +194,15 @@ def home():
     months = months,
     wind_tunnel_monthly_uploads = wind_tunnel_monthly_uploads
   )
+
+@bp.route("slideshowImages/get/<string:file_id>")
+@login_required
+def serve_slideshow_images(file_id):
+  fs = GridFS(get_db())
+  try:
+      # Get the image from GridFS
+      file = fs.get(ObjectId(file_id))
+      return Response(file.read(), content_type=file.content_type)
+  except:
+      # Return a default image if the file is not found
+      return Response(open('static/default_profile.png', 'rb').read(), content_type='image/png')

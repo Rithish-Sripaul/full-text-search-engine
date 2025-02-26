@@ -1,5 +1,6 @@
 
 // To add reportTypeID to documents collection 
+use flaskdb
 db.documents.aggregate([
     {
       $lookup: {

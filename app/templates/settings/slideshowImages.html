@@ -1,0 +1,166 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Slideshow Images {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+{% block body %}{% endblock %}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+    data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="d-flex flex-column align-items-center justify-content-between">
+                    <div class="text-center mb-3">
+                        <h3>Applying OCR layer to PDF</h3>
+                        <h3>Please wait</h3>
+                    </div>
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="validateFileExtension" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Unsupported File Extension</h5>
+            </div>
+            <div class="modal-body">
+                <p>The file you have uploaded is not supported. It will be compressed to a <strong>ZIP file</strong>.
+                </p>
+                <p>Do you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="validateCloseBtn">No</button>
+                <button type="button" class="btn btn-primary" id="validateFileExtensionBtn">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h1 class="fw-bold mb-4 mt-2">Slideshow Images</h1>
+
+    <div class="row">
+        <div class="col-12 col-xl-8">
+            <div class="row mb-2">
+                <div class="col-12">
+                    <div class="card card-body border-0 shadow">
+                        <div class="d-flex flex-row justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="card-title">Recent Uploads</h4>
+                                <h6 class="card-subtitle text-muted"></h6>
+                            </div>
+                        </div>
+            
+            
+                        <div class="table-responsive">
+            
+                            <table class="table table-hover text-center">
+                                <thead>
+                                    <tr>
+                                        <th class="border-gray-200">#</th>
+                                        <th class="border-gray-200">Upload Date</th>
+                                        <th class="border-gray-200">Image File Name</th>
+                                        <th class="border-gray-200">Uploaded By</th>
+                                        <th class="border-gray-200">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in range(slideshowImagesListLen) %}
+                                    <tr>
+                                        <td>{{ i+1 }}</td>
+                                        <td>{{ slideshowImagesList[i]["uploadedAt"].strftime("%d/%m/%Y,
+                                            %H:%M:%S")}}</td>
+                                        <td class="text-truncate" style="max-width: 200px;">{{ slideshowImagesList[i]["filename"] }}</td>
+                                        <td class="text-truncate" style="max-width: 200px;">{{ slideshowImagesList[i]["uploadedBy"] }}</td>
+                                        <td>
+                                            <!-- <a href="#" class="btn btn-sm btn-primary">View</a> -->
+                                            <a href="{{ url_for('settings.delete_slideshow_image', slideshowImageID=slideshowImagesList[i]['_id']) }}" class="btn btn-sm btn-danger">Delete</a>
+                                        </td>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+            
+            
+                        </div>
+                    </div>
+            
+                </div>
+            
+            </div>
+        </div>
+
+        <!-- UPLOAD DOCUMENTS -->
+        <div class="col-12 col-xl-4">
+            <div class="row">
+                <div class="col-12 mb-4 scanDocument">
+                    <div class="card shadow border-0 text-center p-0 d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4"
+                        id="file-name-card">
+                        No new image <br>uploaded
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card card-body border-0 shadow mb-4">
+                        <h2 class="h5 mb-4">Choose Image</h2>
+                        <div class="d-flex align-items-center">
+                            <div class="file-field">
+                                <div class="d-flex justify-content-xl-center ms-xl-3">
+                                    <div class="d-flex">
+                                        <svg class="icon text-gray-500 me-2" fill="currentColor" viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <form method="post" enctype="multipart/form-data">
+                                            <div class="col">
+                                                <input type="file" class="formFile form-control file-uploader" name="slideshow_image"
+                                                onChange="upload();" id="uploadedFile" accept="image/*" required>
+                                                <div class="d-md-block text-left">
+                                                    <div class="fw-normal text-dark mb-1">Browse Images</div>
+                                                    <div class="text-gray small">PNG, JPEG and More</div>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary mt-4 mb-2 w-10" value="Approve" name="approve"
+                                                href="#">
+                                                    <span class="display-5 text-white">Upload image</span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- RECENT UPLOADS TABLE -->
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>
+    let fileNameCard = document.getElementById("file-name-card");
+    let uploadedFile = document.getElementById("uploadedFile");
+
+    async function upload() {
+        fileNameCard.innerHTML = `Uploaded File: <br> ${uploadedFile.value
+        .split("\\")
+        .pop()}`;
+    }
+</script>
+<script src="{{ url_for('static', filename='assets/js/toastScript.js') }}"></script>
+{% endblock javascripts %}

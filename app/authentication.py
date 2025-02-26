@@ -65,6 +65,13 @@ def login():
             session["userDivisionID"] = str(division_collection.find_one({"name": user["division"]})["_id"])
             session["userDivision"] = user["division"]
             session["toastMessage"] = "You have logged in Successfully"
+            session["profilePictureExists"] = False
+            if user.get("profile_picture", None) is not None:
+                session["profilePictureExists"] = True
+            
+            session["profilePictureID"] = None
+            if session["profilePictureExists"]:
+                session["profilePictureID"] = str(user["profile_picture"]["gridfs_id"])
 
             log_action(
                 action="login",
@@ -101,7 +108,6 @@ def logout():
     session["toastMessageCategory"] = "Success"
     g.user = None
     return redirect(url_for("authentication.login"))
-
 
 # Checks if a user is logged in
 def login_required(view):
@@ -219,7 +225,8 @@ def register():
                         "isMaster": isMaster,
                         "isAdmin": isAdmin,
                         "hasAdminAccount": hasAdminAccount,
-                        "adminAccount": ObjectId(adminAccount)
+                        "adminAccount": ObjectId(adminAccount),
+                        "created_at": datetime.datetime.now()
                     }
                 )
                 return redirect(url_for("authentication.login"))
@@ -233,7 +240,8 @@ def register():
                         "isMaster": isMaster,
                         "isAdmin": isAdmin,
                         "hasAdminAccount": hasAdminAccount,
-                        "adminAccount": None
+                        "adminAccount": None,
+                        "created_at": datetime.datetime.now()
                     }
                 )
                 user_id = insertedUser.inserted_id
@@ -259,7 +267,8 @@ def register():
                         "isMaster": isMaster,
                         "isAdmin": isAdmin,
                         "hasAdminAccount": hasAdminAccount,
-                        "adminAccount": None
+                        "adminAccount": None,
+                        "created_at": datetime.datetime.now()
                     }
                 )
                 return redirect(url_for("authentication.login"))

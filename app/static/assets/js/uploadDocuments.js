@@ -36,7 +36,7 @@ function addAuthor(e) {
                         <label for="email">Author Email ${authorCount}</label>
                         <button type="button" class="btn-close" onclick='deleteAuthorSection(this)'></button>
                       </div>
-                      <input name="email[]" class="form-control" id="email" type="email" placeholder="Email">
+                      <input name="email[]" class="form-control" id="email" type="email" placeholder="Enter Email">
                   </div>
               </div>
               </div>

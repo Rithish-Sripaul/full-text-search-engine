@@ -17,11 +17,10 @@
     </div>
     <div class="d-flex flex-column">
         {% if isAdmin %}
-        <div class="fw-light text-end me-4">Admin</div>
+        <div class="fw-bold text-end me-4">ADMIN</div>
         {% endif %}
         <h4 class="fw-light text-end me-4">{{session["userDivision"]}}</h4>
     </div>
-
 
 </h1>
 
@@ -56,27 +55,27 @@
                 <div class="row d-block d-xl-flex align-items-center">
                     <div
                         class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                        <div class="icon-shape icon-shape-primary rounded me-4 me-sm-0">
+                        <div class="icon-shape icon-shape-secondary rounded me-4 me-sm-0">
                             <svg class="icon" fill="currentColor" viewBox="0 0 20 20"
                                 xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z">
-                                </path>
+                                <path fill-rule="evenodd"
+                                    d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                         </div>
                         <div class="d-sm-none">
-                            <h2 class="h5">Wind Tunnel</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_wind_tunnel["documentCount"] }}</h3>
+                            <h2 class="h5">WT</h2>
+                            <h3 class="fw-extrabold mb-1">{{ division_wind_tunnel["documentCount"] | int}}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
-                            <h2 class="h6 text-gray-400 mb-0">Wind Tunnel</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_wind_tunnel["documentCount"] }}</h3>
+                            <h2 class="h6 text-gray-400 mb-0">WT</h2>
+                            <h3 class="fw-extrabold mb-1">{{ division_wind_tunnel["documentCount"] | int}}</h3>
                         </div>
                         <div class="small d-flex mt-1">
-                            <div># of users: <span class="text-success fw-bolder">{{ division_wind_tunnel["userCount"]
-                                    }}</span></div>
+                            <div>Users: <span class="text-success fw-bolder">{{ division_wind_tunnel["userCount"]
+                                    | int}}</span></div>
                         </div>
                     </div>
                 </div>
@@ -85,41 +84,6 @@
     </div>
 
     <!-- HSTT -->
-    <div class="col mx-1 mb-4">
-        <div class="card border-0 shadow">
-            <div class="card-body">
-                <div class="row d-block d-xl-flex align-items-center">
-                    <div
-                        class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                        <div class="icon-shape icon-shape-secondary rounded me-4 me-sm-0">
-                            <svg class="icon" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                        <div class="d-sm-none">
-                            <h2 class="fw-extrabold h5">HSTT</h2>
-                            <h3 class="mb-1 text_center">{{ division_hstt["documentCount"] }}</h3>
-                        </div>
-                    </div>
-                    <div class="col-12 col-xl-7 px-xl-0">
-                        <div class="d-none d-sm-block">
-                            <h2 class="h6 text-gray-400 mb-0">HSTT</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_hstt["documentCount"] }}</h3>
-                        </div>
-                        <div class="small d-flex mt-1">
-                            <div># of users: <span class="text-success fw-bolder">{{ division_hstt["userCount"]
-                                    }}</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SMB -->
     <div class="col mx-1 mb-4">
         <div class="card border-0 shadow">
             <div class="card-body">
@@ -135,17 +99,52 @@
                             </svg>
                         </div>
                         <div class="d-sm-none">
+                            <h2 class="fw-extrabold h5">HSTT</h2>
+                            <h3 class="mb-1 text_center">{{ division_hstt["documentCount"] | int }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-7 px-xl-0">
+                        <div class="d-none d-sm-block">
+                            <h2 class="h6 text-gray-400 mb-0">HSTT</h2>
+                            <h3 class="fw-extrabold mb-1">{{ division_hstt["documentCount"] | int }}</h3>
+                        </div>
+                        <div class="small d-flex mt-1">
+                            <div>Users: <span class="text-success fw-bolder">{{ division_hstt["userCount"]
+                                    | int }}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SMB -->
+    <div class="col mx-1 mb-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <div class="row d-block d-xl-flex align-items-center">
+                    <div
+                        class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                        <div class="icon-shape icon-shape-secondary rounded me-4 me-sm-0">
+                            <svg class="icon" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="d-sm-none">
                             <h2 class="fw-extrabold h5">SMB</h2>
-                            <h3 class="mb-1">{{ division_smb["documentCount"] }}</h3>
+                            <h3 class="mb-1">{{ division_smb["documentCount"] | int}}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 text-gray-400 mb-0">SMB</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_smb["documentCount"] }}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ division_smb["documentCount"] | int}}</h3>
                         </div>
                         <div class="small d-flex mt-1">
-                            <div># of users: <span class="text-success fw-bolder">{{ division_smb["userCount"] }}</span>
+                            <div>Users: <span class="text-success fw-bolder">{{ division_smb["userCount"] | int}}</span>
                             </div>
                         </div>
                     </div>
@@ -171,16 +170,16 @@
                         </div>
                         <div class="d-sm-none">
                             <h2 class="fw-extrabold h5">CT</h2>
-                            <h3 class="mb-1">{{ division_ct["documentCount"] }}</h3>
+                            <h3 class="mb-1">{{ division_ct["documentCount"] | int}}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 text-gray-400 mb-0">CT</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_ct["documentCount"] }}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ division_ct["documentCount"] | int}}</h3>
                         </div>
                         <div class="small d-flex mt-1">
-                            <div># of users: <span class="text-success fw-bolder">{{ division_ct["userCount"] }}</span>
+                            <div>Users: <span class="text-success fw-bolder">{{ division_ct["userCount"] | int}}</span>
                             </div>
                         </div>
                     </div>
@@ -196,7 +195,7 @@
                 <div class="row d-block d-xl-flex align-items-center">
                     <div
                         class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                        <div class="icon-shape icon-shape-tertiary rounded me-4 me-sm-0">
+                        <div class="icon-shape icon-shape-secondary rounded me-4 me-sm-0">
                             <svg class="icon" fill="currentColor" viewBox="0 0 20 20"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
@@ -206,16 +205,16 @@
                         </div>
                         <div class="d-sm-none">
                             <h2 class="fw-extrabold h5">CFD</h2>
-                            <h3 class="mb-1">{{ division_cfd["documentCount"] }}</h3>
+                            <h3 class="mb-1">{{ division_cfd["documentCount"] | int}}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 text-gray-400 mb-0">CFD</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_cfd["documentCount"] }}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ division_cfd["documentCount"] | int}}</h3>
                         </div>
                         <div class="small d-flex mt-1">
-                            <div># of users: <span class="text-success fw-bolder">{{ division_cfd["userCount"] }}</span>
+                            <div>Users: <span class="text-success fw-bolder">{{ division_cfd["userCount"] | int}}</span>
                             </div>
                         </div>
                     </div>
@@ -224,7 +223,7 @@
         </div>
     </div>
 
-    <!-- CFD -->
+    <!-- LCT -->
     <div class="col mx-1 mb-4">
         <div class="card border-0 shadow">
             <div class="card-body">
@@ -241,16 +240,51 @@
                         </div>
                         <div class="d-sm-none">
                             <h2 class="fw-extrabold h5">LCT</h2>
-                            <h3 class="mb-1">{{ division_lct["documentCount"] }}</h3>
+                            <h3 class="mb-1">{{ division_lct["documentCount"] | int}}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 text-gray-400 mb-0">LCT</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_lct["documentCount"] }}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ division_lct["documentCount"] | int}}</h3>
                         </div>
                         <div class="small d-flex mt-1">
-                            <div># of users: <span class="text-success fw-bolder">{{ division_lct["userCount"] }}</span>
+                            <div>Users: <span class="text-success fw-bolder">{{ division_lct["userCount"] | int}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- RESOURCES -->
+    <div class="col mx-1 mb-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <div class="row d-block d-xl-flex align-items-center">
+                    <div
+                        class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                        <div class="icon-shape icon-shape-secondary rounded me-4 me-sm-0">
+                            <svg class="icon" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="d-sm-none">
+                            <h2 class="fw-extrabold h5">Resources</h2>
+                            <h3 class="mb-1">{{ division_cfd["documentCount"] | int}}</h3>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-7 px-xl-0">
+                        <div class="d-none d-sm-block">
+                            <h2 class="h6 text-gray-400 mb-0">Resources</h2>
+                            <h3 class="fw-extrabold mb-1">{{ division_cfd["documentCount"] | int}}</h3>
+                        </div>
+                        <div class="small d-flex mt-1">
+                            <div>-
                             </div>
                         </div>
                     </div>
@@ -272,10 +306,10 @@
         <!-- GRAPH CONTENT -->
         <div class="carousel-inner">
           <div class="carousel-item active">
-            <div class="card bg-yellow-100 shadow mx-auto" style="width: 80%;">
+            <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
                 <div class="card-header d-sm-flex flex-row align-items-center flex-0">
                     <div class="d-block mb-3 mb-sm-0">
-                        <div class="fs-5 fw-normal mb-2">Wind Tunnel</div>
+                        <div class="fs-5 fw-normal mb-2">WT</div>
                         <h2 class="fs-3 fw-extrabold">11</h2>
                         <!-- <div class="small mt-2">
                             <span class="fw-normal me-2">Yesterday</span>
@@ -285,7 +319,6 @@
                     </div>
                     <div class="d-flex ms-auto">
                         <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
-                        <a href="#" class="btn btn-dark btn-sm me-2">Uploaded Year</a>
                         <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
                     </div>
                 </div>
@@ -364,19 +397,17 @@
     <div class="col-12 col-xl-4 d-flex align-items-center">
         <div class="card h-100 w-100">
             <div class="card-body p-0">
-                <div id="carouselExampleFade" class="carousel slide carousel-dark h-100" data-bs-ride="carousel">
-                    <div class="carousel-inner h-100">
-                        <div class="carousel-item active h-100">
-                            <img src="{{ url_for('static', filename='assets/img/nstl_images/images (1).jpg') }}" class="d-block w-100 h-100 object-fit-cover">
-                        </div>
-                        <div class="carousel-item h-100">
-                            <img src="{{ url_for('static', filename='assets/img/nstl_images/Home-Page-NSTL.jpg') }}" class="d-block w-100 h-100 object-fit-cover">
-                        </div>
-                        <div class="carousel-item h-100">
-                            <img src="{{ url_for('static', filename='assets/img/nstl_images/images.jpg') }}" class="d-block w-100 h-100 object-fit-cover">
-                        </div>
+                <div id="slideshow_carousel" class="carousel slide carousel-dark h-100" data-bs-ride="carousel">
+                    <div class="carousel-inner h-100 rounded">
+                        {% for i in range(slideshowImagesLen) %}
+                        <div class="carousel-item {% if i == 0 %}active{% endif %} h-100">
+                            <img src="{{ url_for('dashboard.serve_slideshow_images', file_id=slideshowImages[i]['gridfs_id']) }}" class="img-fluid d-block w-100 h-100 object-fit-cover">
+                        </div>        
+                        {% endfor %}
+                        
+
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+                    <button class="carousel-control-prev" type="button" data-bs-target="#slideshow_carousel" data-bs-slide="prev">
                         <span aria-hidden="true">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
@@ -384,7 +415,7 @@
                         </span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+                    <button class="carousel-control-next" type="button" data-bs-target="#slideshow_carousel" data-bs-slide="next">
                         <span aria-hidden="true">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
@@ -1228,8 +1259,8 @@
         interval: 20000
       });
       
-      var imageCarousel = new bootstrap.Carousel(document.querySelector('#carouselExampleIndicators'), {
-        interval: 20000
+      var imageCarousel = new bootstrap.Carousel(document.querySelector('#slideshow_carousel'), {
+        interval: 10000
       });
     });
   </script>
