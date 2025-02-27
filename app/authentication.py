@@ -62,6 +62,7 @@ def login():
             session["number_of_documents_per_page"] = 10
             session["logged_in"] = True
             session["isAdmin"] = user["isAdmin"]
+            session["isMaster"] = user["isMaster"]
             session["userDivisionID"] = str(division_collection.find_one({"name": user["division"]})["_id"])
             session["userDivision"] = user["division"]
             session["toastMessage"] = "You have logged in Successfully"
@@ -279,3 +280,55 @@ def register():
         allUsers = allUsers,
         divisionList = divisionList
     )
+
+
+# Profile
+@bp.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+  db = get_db()
+  user_collection = db["users"]
+
+  userDetails = user_collection.find_one(
+    {"_id": ObjectId(session["user_id"])},
+    {
+      "username": 1,
+      "email": 1,
+      "division": 1,
+      "isAdmin": 1,
+      "hasAdminAccount": 1,
+      "created_at": 1,
+      "profile_picture": 1,
+      "adminAccount": 1,
+    }
+  )
+
+  adminAccountDetails = None
+  if userDetails["hasAdminAccount"]:
+    adminAccountDetails = user_collection.find_one(
+      {"_id": ObjectId(userDetails["adminAccount"])},
+      {
+        "username": 1,
+        "email": 1,
+        "division": 1,
+        "isAdmin": 1,
+        "hasAdminAccount": 1,
+        "created_at": 1,
+        "profile_picture": 1,
+      }
+    )
+
+  # Checking if the user has a profile picture 
+  profilePictureExists = False
+
+  if userDetails.get('profile_picture', None) is not None:
+    profilePictureExists = True
+  else:
+    profilePictureExists = False
+
+  return render_template(
+    "accounts/profile.html",
+    userDetails = userDetails,
+    adminAccountDetails = adminAccountDetails,
+    profilePictureExists = profilePictureExists,
+  )

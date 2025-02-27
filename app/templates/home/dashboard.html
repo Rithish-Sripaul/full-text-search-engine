@@ -16,10 +16,15 @@
         <h4 class="fw-light mb-3">Global Analytics</h4>
     </div>
     <div class="d-flex flex-column">
-        {% if isAdmin %}
+        {% if isMaster %}
+        <div class="fw-bold text-end me-4">MASTER</div>
+        {% elif isAdmin %}
         <div class="fw-bold text-end me-4">ADMIN</div>
         {% endif %}
+        
+        {% if isMaster == False %}
         <h4 class="fw-light text-end me-4">{{session["userDivision"]}}</h4>
+        {% endif %}
     </div>
 
 </h1>
@@ -320,8 +325,8 @@
                             </div> -->
                         </div>
                         <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
-                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                            <button class="btn btn-secondary text-dark btn-sm me-2 month-wt">Month</button>
+                            <button class="btn btn-sm btn-outline-secondary me-2 year-wt">Published Year</button>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -339,8 +344,8 @@
                             <h2 class="fs-3 fw-extrabold">{{ division_hstt["documentCount"] | int }}</h2>
                         </div>
                         <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
-                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2 month-hstt">Month</a>
+                            <a href="#" class="btn btn-sm btn-outline-secondary me-2 year-hstt">Published Year</a>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -358,8 +363,8 @@
                             <h2 class="fs-3 fw-extrabold">{{ division_smb["documentCount"] | int }}</h2>
                         </div>
                         <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
-                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2 month-smb">Month</a>
+                            <a href="#" class="btn btn-sm btn-outline-secondary me-2 year-smb">Published Year</a>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -382,8 +387,8 @@
                             </div> -->
                         </div>
                         <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
-                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2 month-ct">Month</a>
+                            <a href="#" class="btn btn-sm btn-outline-secondary me-2 year-ct">Published Year</a>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -406,8 +411,8 @@
                             </div> -->
                         </div>
                         <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
-                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2 month-cfd">Month</a>
+                            <a href="#" class="btn btn-sm btn-outline-secondary me-2 year-cfd">Published Year</a>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -430,8 +435,8 @@
                             </div> -->
                         </div>
                         <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
-                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2 month-lct">Month</a>
+                            <a href="#" class="btn btn-sm btn-outline-secondary me-2 year-lct">Published Year</a>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -967,8 +972,8 @@
     </div>
 
     <!-- Pending Approval -->
-    {% if isAdmin %}
-    <div class="col-md-6 mb-4">
+    {% if isAdmin or isMaster%}
+    <!-- <div class="col-md-6 mb-4">
         <div class="card border-0 shadow">
             <div class="card-header">
                 <div class="row align-items-center">
@@ -991,39 +996,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <tr>
-                            <th class="text-gray-900" scope="row">
-                                /demo/admin/index.html
-                            </th>
-                            <td class="fw-bolder text-gray-500">
-                                3,225
-                            </td>
-                            <td class="fw-bolder text-gray-500">
-                                $20
-                            </td>
-                            <td class="fw-bolder text-gray-500">
-                                <div class="d-flex">
-                                    <svg class="icon icon-xs text-danger me-2" fill="currentColor" viewBox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
-                                            d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                    42,55%
-                                </div>
-                            </td>
-                        </tr> -->
 
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
+    </div> -->
     {% endif %}
 
     <!-- DATABASE LOGS -->
-    {% if isAdmin %}
-    <div class="col-md-6 mb-4">
+    {% if isAdmin or isMaster%}
+    <!-- <div class="col-md-6 mb-4">
         <div class="card border-0 shadow">
             <div class="card-header">
                 <div class="row align-items-center">
@@ -1046,34 +1029,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <tr>
-                            <th class="text-gray-900" scope="row">
-                                /demo/admin/index.html
-                            </th>
-                            <td class="fw-bolder text-gray-500">
-                                3,225
-                            </td>
-                            <td class="fw-bolder text-gray-500">
-                                $20
-                            </td>
-                            <td class="fw-bolder text-gray-500">
-                                <div class="d-flex">
-                                    <svg class="icon icon-xs text-danger me-2" fill="currentColor" viewBox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
-                                            d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                    42,55%
-                                </div>
-                            </td>
-                        </tr> -->
-
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
+    </div> -->
     {% endif %}
 
     <!-- PAST UPLOADS -->
@@ -1306,7 +1266,7 @@
     document.addEventListener('DOMContentLoaded', function() {
     // Initialize carousels
     var myCarousel = new bootstrap.Carousel(document.querySelector('#carouselExampleIndicators'), {
-        interval: 20000
+        interval: 10000
     });
     var imageCarousel = new bootstrap.Carousel(document.querySelector('#slideshow_carousel'), {
         interval: 10000
@@ -1355,6 +1315,49 @@
         ]
     }
 
+    // Yearly data
+    const wt_data_year = {
+        labels: {{choosen_years|tojson}},
+        series: [
+        {{wt_uploads_by_year|tojson}},
+        ]
+    };
+
+    const cfd_data_year = {
+        labels: {{choosen_years|tojson}},
+        series: [
+        {{cfd_uploads_by_year|tojson}},
+        ]
+    };
+
+    const smb_data_year = {
+        labels: {{choosen_years|tojson}},
+        series: [
+        {{smb_uploads_by_year|tojson}},
+        ]
+    }
+
+    const hstt_data_year = {
+        labels: {{choosen_years|tojson}},
+        series: [
+        {{hstt_uploads_by_year|tojson}},
+        ]
+    }
+
+    const ct_data_year = {
+        labels: {{choosen_years|tojson}},
+        series: [
+        {{ct_uploads_by_year|tojson}},
+        ]
+    }
+
+    const lct_data_year = {
+        labels: {{choosen_years|tojson}},
+        series: [
+        {{lct_uploads_by_year|tojson}},
+        ]
+    }
+
     const options = {
         low: 0,
         showArea: true,
@@ -1362,27 +1365,313 @@
         chartPadding: {
         right: 20
         },
-        lineSmooth: Chartist.Interpolation.none()
+        lineSmooth: Chartist.Interpolation.none(),
+        plugins: [
+            Chartist.plugins.tooltip()
+        ]
+
+    };
+    const options_bar = {
+        axisX: {
+            showGrid: false, // Hide vertical grid lines
+        },
+        axisY: {
+            onlyInteger: true, // Show only integers on Y-axis
+        },
+        low: 0,
+        fullWidth: true,
+        chartPadding: {
+            right: 30,
+        },
+        lineSmooth: false,
+        seriesBarDistance: 10,
+        plugins: [
+            Chartist.plugins.tooltip()
+        ]
     };
 
-    // Function to draw charts
-    function drawCharts() {
-        new Chartist.Line('.ct-chart-wt', wt_data, options);
-        new Chartist.Line('.ct-chart-cfd', cfd_data, options);
-        new Chartist.Line('.ct-chart-smb', smb_data, options);
-        new Chartist.Line('.ct-chart-hstt', hstt_data, options);
-        new Chartist.Line('.ct-chart-ct', ct_data, options);
-        new Chartist.Line('.ct-chart-lct', lct_data, options);
+    // CSS for sharp, thick bars
+    const chartStyle = `
+    .ct-bar {
+        stroke-width: 25px;   /* Thicker bar width */
+        stroke-linecap: square; /* Sharp edges */
+    }
+    `;
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = chartStyle;
+    document.head.appendChild(styleSheet);
+
+    function animateChart(chart) {
+        chart.on('draw', function(data) {
+            // Only animate non-zero bars
+            if (data.type === 'bar') {
+
+                // Skip drawing for zero values
+                if (data.value.y === 0) {
+                    data.element.remove();
+                    return; // Exit the function early
+                }
+
+                // Animate non-zero bars with bounce effect and fade-in
+                data.element.attr({
+                    style: 'opacity: 0;'
+                });
+                data.element.animate({
+                    y2: {
+                        dur: 800,  // Faster animation
+                        from: data.chartRect.height(), // Start from bottom of the chart
+                        to: data.y2,                   // End at calculated position
+                        easing: Chartist.Svg.Easing.easeOutBounce
+                    },
+                    opacity: {
+                        dur: 800,                     // Match with y2 animation duration
+                        from: 0,                      // Start invisible
+                        to: 1,                        // Fade in smoothly
+                        easing: Chartist.Svg.Easing.easeInQuad
+                    }
+                });
+
+                // Ensure bar stays visible after animation
+                data.element.attr({
+                    style: 'opacity: 1;'
+                });
+            }
+        });
     }
 
-    // Initial draw for the active slide
-    drawCharts();
+    function animateLineChart(chart) {
+        chart.on('draw', function(data) {
+            // Animate line drawing from left to right
+            if (data.type === 'line') {
+                data.element.animate({
+                    d: {
+                        begin: 0,
+                        dur: 1500,
+                        from: data.path.clone().scale(0, 1).translate(data.chartRect.width(), 0).stringify(),
+                        to: data.path.clone().stringify(),
+                        easing: Chartist.Svg.Easing.easeOutQuint
+                    }
+                });
+            }
+
+            // Smoothly pop in points
+            if (data.type === 'point') {
+                data.element.animate({
+                    x1: {
+                        begin: data.index * 100,  // Sequential pop-in effect
+                        dur: 500,
+                        from: data.x - 20,
+                        to: data.x,
+                        easing: Chartist.Svg.Easing.easeOutBack
+                    },
+                    y1: {
+                        begin: data.index * 100,
+                        dur: 500,
+                        from: data.y - 20,
+                        to: data.y,
+                        easing: Chartist.Svg.Easing.easeOutBack
+                    },
+                    opacity: {
+                        begin: data.index * 100,
+                        dur: 500,
+                        from: 0,
+                        to: 1,
+                        easing: Chartist.Svg.Easing.easeOutBack
+                    }
+                });
+            }
+
+            // Animate area under the line
+            if (data.type === 'area') {
+                data.element.animate({
+                    d: {
+                        begin: 0,
+                        dur: 1500,
+                        from: data.path.clone().scale(0, 1).translate(data.chartRect.width(), 0).stringify(),
+                        to: data.path.clone().stringify(),
+                        easing: Chartist.Svg.Easing.easeOutQuint
+                    }
+                });
+            }
+        });
+    }
+
+    window.onload = function() {
+        // Function to initialize and animate charts
+        function initializeCharts() {
+            const lineChartSelectors = [
+                '.ct-chart-wt',
+                '.ct-chart-cfd',
+                '.ct-chart-smb',
+                '.ct-chart-hstt',
+                '.ct-chart-ct',
+                '.ct-chart-lct'
+            ];
+
+            const lineChartData = [
+                wt_data,
+                cfd_data,
+                smb_data,
+                hstt_data,
+                ct_data,
+                lct_data
+            ];
+
+            lineChartSelectors.forEach((selector, index) => {
+                document.querySelector(selector).innerHTML = ''; // Clear the container
+                const chart = new Chartist.Line(selector, lineChartData[index], options);
+                animateLineChart(chart);
+            });
+        }
+
+        // Initial draw for all charts
+        initializeCharts();
+
+        // Redraw charts when the slide changes
+        var carouselElement = document.querySelector('#carouselExampleIndicators');
+        carouselElement.addEventListener('slid.bs.carousel', function() {
+            initializeCharts();
+        });
+    };
+
+    // WT Buttons
+    document.querySelector(".year-wt").addEventListener("click", function() {
+        document.querySelector(".month-wt").classList = "btn btn-sm btn-outline-secondary me-2 month-wt";
+        document.querySelector(".year-wt").classList = "btn btn-sm btn-secondary me-2 year-wt";
+        document.querySelector('.ct-chart-wt').innerHTML = '';
+        var chart = new Chartist.Bar('.ct-chart-wt', wt_data_year, options_bar);
+        animateChart(chart);
+    });
+
+    document.querySelector(".month-wt").addEventListener("click", function() {
+        document.querySelector(".year-wt").classList = "btn btn-sm btn-outline-secondary me-2 month-wt";
+        document.querySelector(".month-wt").classList = "btn btn-sm btn-secondary me-2 year-wt";
+        document.querySelector('.ct-chart-wt').innerHTML = '';
+        var chart = new Chartist.Line('.ct-chart-wt', wt_data, options);
+        animateLineChart(chart);
+    });
+
+    // CFD Buttons
+    document.querySelector(".year-cfd").addEventListener("click", function() {
+        document.querySelector(".month-cfd").classList = "btn btn-sm btn-outline-secondary me-2 month-cfd";
+        document.querySelector(".year-cfd").classList = "btn btn-sm btn-secondary me-2 year-cfd";
+        document.querySelector('.ct-chart-cfd').innerHTML = '';
+        var chart = new Chartist.Bar('.ct-chart-cfd', cfd_data_year, options_bar);
+        animateChart(chart);
+    });
+
+    document.querySelector(".month-cfd").addEventListener("click", function() {
+        document.querySelector(".year-cfd").classList = "btn btn-sm btn-outline-secondary me-2 month-cfd";
+        document.querySelector(".month-cfd").classList = "btn btn-sm btn-secondary me-2 year-cfd";
+        document.querySelector('.ct-chart-cfd').innerHTML = '';
+        var chart = new Chartist.Line('.ct-chart-cfd', cfd_data, options);
+        animateLineChart(chart);
+    });
+
+    // SMB Buttons
+    document.querySelector(".year-smb").addEventListener("click", function() {
+        document.querySelector(".month-smb").classList = "btn btn-sm btn-outline-secondary me-2 month-smb";
+        document.querySelector(".year-smb").classList = "btn btn-sm btn-secondary me-2 year-smb";
+        document.querySelector('.ct-chart-smb').innerHTML = '';
+        var chart = new Chartist.Bar('.ct-chart-smb', smb_data_year, options_bar);
+        animateChart(chart);
+    });
+
+    document.querySelector(".month-smb").addEventListener("click", function() {
+        document.querySelector(".year-smb").classList = "btn btn-sm btn-outline-secondary me-2 month-smb";
+        document.querySelector(".month-smb").classList = "btn btn-sm btn-secondary me-2 year-smb";
+        document.querySelector('.ct-chart-smb').innerHTML = '';
+        var chart = new Chartist.Line('.ct-chart-smb', smb_data, options);
+        animateLineChart(chart);
+    });
+
+    // HSTT Buttons
+    document.querySelector(".year-hstt").addEventListener("click", function() {
+        document.querySelector(".month-hstt").classList = "btn btn-sm btn-outline-secondary me-2 month-hstt";
+        document.querySelector(".year-hstt").classList = "btn btn-sm btn-secondary me-2 year-hstt";
+        document.querySelector('.ct-chart-hstt').innerHTML = '';
+        var chart = new Chartist.Bar('.ct-chart-hstt', hstt_data_year, options_bar);
+        animateChart(chart);
+    });
+
+    document.querySelector(".month-hstt").addEventListener("click", function() {
+        document.querySelector(".year-hstt").classList = "btn btn-sm btn-outline-secondary me-2 month-hstt";
+        document.querySelector(".month-hstt").classList = "btn btn-sm btn-secondary me-2 year-hstt";
+        document.querySelector('.ct-chart-hstt').innerHTML = '';
+        var chart = new Chartist.Line('.ct-chart-hstt', hstt_data, options);
+        animateLineChart(chart);
+    });
+
+    // CT Buttons
+    document.querySelector(".year-ct").addEventListener("click", function() {
+        document.querySelector(".month-ct").classList = "btn btn-sm btn-outline-secondary me-2 month-ct";
+        document.querySelector(".year-ct").classList = "btn btn-sm btn-secondary me-2 year-ct";
+        document.querySelector('.ct-chart-ct').innerHTML = '';
+        var chart = new Chartist.Bar('.ct-chart-ct', ct_data_year, options_bar);
+        animateChart(chart);
+    });
+
+    document.querySelector(".month-ct").addEventListener("click", function() {
+        document.querySelector(".year-ct").classList = "btn btn-sm btn-outline-secondary me-2 month-ct";
+        document.querySelector(".month-ct").classList = "btn btn-sm btn-secondary me-2 year-ct";
+        document.querySelector('.ct-chart-ct').innerHTML = '';
+        var chart = new Chartist.Line('.ct-chart-ct', ct_data, options);
+        animateLineChart(chart);
+    });
+
+    // LCT Buttons
+    document.querySelector(".year-lct").addEventListener("click", function() {
+        document.querySelector(".month-lct").classList = "btn btn-sm btn-outline-secondary me-2 month-lct";
+        document.querySelector(".year-lct").classList = "btn btn-sm btn-secondary me-2 year-lct";
+        document.querySelector('.ct-chart-lct').innerHTML = '';
+        var chart = new Chartist.Bar('.ct-chart-lct', lct_data_year, options_bar);
+        animateChart(chart);
+    });
+
+    document.querySelector(".month-lct").addEventListener("click", function() {
+        document.querySelector(".year-lct").classList = "btn btn-sm btn-outline-secondary me-2 month-lct";
+        document.querySelector(".month-lct").classList = "btn btn-sm btn-secondary me-2 year-lct";
+        document.querySelector('.ct-chart-lct').innerHTML = '';
+        var chart = new Chartist.Line('.ct-chart-lct', lct_data, options);
+        animateLineChart(chart);
+    });
+
+    // Function to reset all buttons when the carousel changes
+    function resetButtons() {
+        document.querySelector(".month-wt").classList = "btn btn-sm btn-secondary me-2 month-wt";
+        document.querySelector(".year-wt").classList = "btn btn-sm btn-outline-secondary me-2 year-wt";
+
+        document.querySelector(".month-cfd").classList = "btn btn-sm btn-secondary me-2 month-cfd";
+        document.querySelector(".year-cfd").classList = "btn btn-sm btn-outline-secondary me-2 year-cfd";
+
+        document.querySelector(".month-smb").classList = "btn btn-sm btn-secondary me-2 month-smb";
+        document.querySelector(".year-smb").classList = "btn btn-sm btn-outline-secondary me-2 year-smb";
+
+        document.querySelector(".month-hstt").classList = "btn btn-sm btn-secondary me-2 month-hstt";
+        document.querySelector(".year-hstt").classList = "btn btn-sm btn-outline-secondary me-2 year-hstt";
+
+        document.querySelector(".month-ct").classList = "btn btn-sm btn-secondary me-2 month-ct";
+        document.querySelector(".year-ct").classList = "btn btn-sm btn-outline-secondary me-2 year-ct";
+
+        document.querySelector(".month-lct").classList = "btn btn-sm btn-secondary me-2 month-lct";
+        document.querySelector(".year-lct").classList = "btn btn-sm btn-outline-secondary me-2 year-lct";
+    }
+
+    // Reset all the buttons when the carousel changes using the above function
+    var carouselElement = document.querySelector('#carouselExampleIndicators');
+    carouselElement.addEventListener('slid.bs.carousel', function() {
+        resetButtons();
+    });
 
     // Redraw charts when the slide changes
     var carouselElement = document.querySelector('#carouselExampleIndicators');
     carouselElement.addEventListener('slid.bs.carousel', function () {
         drawCharts();
     });
+
+    // Initial draw for the active slide
+    drawCharts();
   });
 
   </script>

@@ -436,6 +436,7 @@
     <div class="card-footer px-3 border-0 d-flex flex-column flex-lg-row align-items-center justify-content-between">
         <nav aria-label="Page navigation example">
             <ul class="pagination mb-0">
+                <!-- Previous Button -->
                 {% if current_page == 0 %}
                 <li class="page-item disabled">
                     <a class="page-link" href="#">Previous</a>
@@ -444,63 +445,117 @@
                 <li class="page-item">
                     <a class="page-link" href="{{ url_for(
                             'documents.search',
-                            document_title = request.args.get('document_title'),
-                            document_number = request.args.get('document_number'),
+                            document_title=request.args.get('document_title'),
+                            document_number=request.args.get('document_number'),
                             author=request.args.get('author'),
-                            year = request.args.get('year'),
-                            division = request.args.get('division'),
-                            reportType = request.args.get('reportType'),
-                            sortDocumentTitle = request.args.get('sortDocumentTitle'),
-                            sortAuthor = request.args.get('sortAuthor'),
-                            sortYear = request.args.get('sortYear'),
-                            sortUploadedAt = request.args.get('sortUploadedAt'),
-                            sortBy = request.args.get('sortBy'),
+                            year=request.args.get('year'),
+                            division=request.args.get('division'),
+                            reportType=request.args.get('reportType'),
+                            sortDocumentTitle=request.args.get('sortDocumentTitle'),
+                            sortAuthor=request.args.get('sortAuthor'),
+                            sortYear=request.args.get('sortYear'),
+                            sortUploadedAt=request.args.get('sortUploadedAt'),
+                            sortBy=request.args.get('sortBy'),
                             page=current_page - 1) }}">Previous</a>
                 </li>
                 {% endif %}
-
-                {% for i in range(number_of_pages) %}
-                {% if i == current_page %}
-                <li class="page-item active">
-                    <a class="page-link" href="{{ url_for(
-                            'documents.search',
-                            document_title = request.args.get('document_title'),
-                            document_number = request.args.get('document_number'),
-                            author=request.args.get('author'),
-                            year = request.args.get('year'),
-                            division = request.args.get('division'),
-                            reportType = request.args.get('reportType'),
-                            sortDocumentTitle = request.args.get('sortDocumentTitle'),
-                            sortAuthor = request.args.get('sortAuthor'),
-                            sortYear = request.args.get('sortYear'),
-                            sortUploadedAt = request.args.get('sortUploadedAt'),
-                            sortBy = request.args.get('sortBy'),
-                            page=i) }}">
-                        {{ i + 1 }}
-                    </a>
-                </li>
+    
+                <!-- Page Numbers -->
+                {% if number_of_pages <= 7 %}
+                    <!-- Show all pages if less than or equal to 7 -->
+                    {% for i in range(number_of_pages) %}
+                        <li class="page-item {% if i == current_page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for(
+                                    'documents.search',
+                                    document_title=request.args.get('document_title'),
+                                    document_number=request.args.get('document_number'),
+                                    author=request.args.get('author'),
+                                    year=request.args.get('year'),
+                                    division=request.args.get('division'),
+                                    reportType=request.args.get('reportType'),
+                                    sortDocumentTitle=request.args.get('sortDocumentTitle'),
+                                    sortAuthor=request.args.get('sortAuthor'),
+                                    sortYear=request.args.get('sortYear'),
+                                    sortUploadedAt=request.args.get('sortUploadedAt'),
+                                    sortBy=request.args.get('sortBy'),
+                                    page=i) }}">{{ i + 1 }}</a>
+                        </li>
+                    {% endfor %}
                 {% else %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ url_for(
-                            'documents.search',
-                            document_title = request.args.get('document_title'),
-                            document_number = request.args.get('document_number'),
-                            author=request.args.get('author'),
-                            year = request.args.get('year'),
-                            division = request.args.get('division'),
-                            reportType = request.args.get('reportType'),
-                            sortDocumentTitle = request.args.get('sortDocumentTitle'),
-                            sortAuthor = request.args.get('sortAuthor'),
-                            sortYear = request.args.get('sortYear'),
-                            sortUploadedAt = request.args.get('sortUploadedAt'),
-                            sortBy = request.args.get('sortBy'),
-                            page=i) }}">
-                        {{ i + 1 }}
-                    </a>
-                </li>
+                    <!-- Always show the first page -->
+                    <li class="page-item {% if current_page == 0 %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for(
+                                'documents.search',
+                                document_title=request.args.get('document_title'),
+                                document_number=request.args.get('document_number'),
+                                author=request.args.get('author'),
+                                year=request.args.get('year'),
+                                division=request.args.get('division'),
+                                reportType=request.args.get('reportType'),
+                                sortDocumentTitle=request.args.get('sortDocumentTitle'),
+                                sortAuthor=request.args.get('sortAuthor'),
+                                sortYear=request.args.get('sortYear'),
+                                sortUploadedAt=request.args.get('sortUploadedAt'),
+                                sortBy=request.args.get('sortBy'),
+                                page=0) }}">1</a>
+                    </li>
+    
+                    <!-- Add ellipsis if needed -->
+                    {% if current_page > 3 %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+    
+                    <!-- Display pages around the current page -->
+                    {% for i in range(current_page - 2, current_page + 3) %}
+                        {% if i > 0 and i < number_of_pages - 1 %}
+                            <li class="page-item {% if i == current_page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for(
+                                        'documents.search',
+                                        document_title=request.args.get('document_title'),
+                                        document_number=request.args.get('document_number'),
+                                        author=request.args.get('author'),
+                                        year=request.args.get('year'),
+                                        division=request.args.get('division'),
+                                        reportType=request.args.get('reportType'),
+                                        sortDocumentTitle=request.args.get('sortDocumentTitle'),
+                                        sortAuthor=request.args.get('sortAuthor'),
+                                        sortYear=request.args.get('sortYear'),
+                                        sortUploadedAt=request.args.get('sortUploadedAt'),
+                                        sortBy=request.args.get('sortBy'),
+                                        page=i) }}">{{ i + 1 }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+    
+                    <!-- Add ellipsis if needed -->
+                    {% if current_page < number_of_pages - 4 %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+    
+                    <!-- Always show the last page -->
+                    <li class="page-item {% if current_page == number_of_pages - 1 %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for(
+                                'documents.search',
+                                document_title=request.args.get('document_title'),
+                                document_number=request.args.get('document_number'),
+                                author=request.args.get('author'),
+                                year=request.args.get('year'),
+                                division=request.args.get('division'),
+                                reportType=request.args.get('reportType'),
+                                sortDocumentTitle=request.args.get('sortDocumentTitle'),
+                                sortAuthor=request.args.get('sortAuthor'),
+                                sortYear=request.args.get('sortYear'),
+                                sortUploadedAt=request.args.get('sortUploadedAt'),
+                                sortBy=request.args.get('sortBy'),
+                                page=number_of_pages - 1) }}">{{ number_of_pages }}</a>
+                    </li>
                 {% endif %}
-                {% endfor %}
-
+    
+                <!-- Next Button -->
                 {% if current_page == number_of_pages - 1 %}
                 <li class="page-item disabled">
                     <a class="page-link" href="#">Next</a>
@@ -509,25 +564,24 @@
                 <li class="page-item">
                     <a class="page-link" href="{{ url_for(
                             'documents.search',
-                            document_title = request.args.get('document_title'),
-                            document_number = request.args.get('document_number'),
+                            document_title=request.args.get('document_title'),
+                            document_number=request.args.get('document_number'),
                             author=request.args.get('author'),
-                            year = request.args.get('year'),
-                            division = request.args.get('division'),
-                            reportType = request.args.get('reportType'),
-                            sortDocumentTitle = request.args.get('sortDocumentTitle'),
-                            sortAuthor = request.args.get('sortAuthor'),
-                            sortYear = request.args.get('sortYear'),
-                            sortUploadedAt = request.args.get('sortUploadedAt'),
-                            sortBy = request.args.get('sortBy'),
+                            year=request.args.get('year'),
+                            division=request.args.get('division'),
+                            reportType=request.args.get('reportType'),
+                            sortDocumentTitle=request.args.get('sortDocumentTitle'),
+                            sortAuthor=request.args.get('sortAuthor'),
+                            sortYear=request.args.get('sortYear'),
+                            sortUploadedAt=request.args.get('sortUploadedAt'),
+                            sortBy=request.args.get('sortBy'),
                             page=current_page + 1) }}">Next</a>
                 </li>
                 {% endif %}
             </ul>
         </nav>
-
-        <!-- <div class="fw-normal small mt-4 mt-lg-0">Showing <b>5</b> out of <b>25</b> entries</div> -->
     </div>
+    
 </div>
 
 {% endblock content %}

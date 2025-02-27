@@ -266,7 +266,7 @@
         </a>
       </li>
 
-      {% if session["isAdmin"] %}
+      {% if session["isAdmin"] or session["isMaster"] %}
       <li class="nav-item">
         <a href="{{url_for('settings.reportType')}}" class="nav-link d-flex align-items-center">
           <span class="sidebar-icon">

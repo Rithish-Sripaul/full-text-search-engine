@@ -39,7 +39,7 @@ bp = Blueprint("documents", __name__, url_prefix='')
 @login_required
 def search():
     backPageUrl = "dashboard.home"
-
+    print(request.path)
     db = get_db()
     user_collection = db["users"]
     document_collection = db["documents"]
@@ -236,8 +236,6 @@ def search():
 @bp.route("/upload/", methods=["GET", "POST"])
 @login_required
 def upload():
-    backPageUrl = "documents.search"
-
     # Toast Message
     try:
         if session["toastMessage"] != "":
@@ -252,6 +250,7 @@ def upload():
     document_collection = db["documents"]
     user_collection = db["users"]
     file_collection = db["fs.files"]
+    isMaster = session["isMaster"]
 
     # Allowed file extensions
     allowed_file_extensions = ["pdf"]
@@ -283,6 +282,25 @@ def upload():
         ).sort("name", pymongo.ASCENDING)
     )
     parentReportTypeListLen = len(parentReportTypeList)
+
+    if isMaster:
+        # Get all the parent report types regardless of the division
+        parentReportTypeList = list(
+            report_type_collection.find(
+                {
+                    "isSubReportType": False
+                }
+            ).sort("name", 1)
+        )
+
+        # Get all the sub report types regardless of the division
+        subReportTypeList = list(
+            report_type_collection.find(
+                {
+                    "isSubReportType": True
+                }
+            ).sort("name", pymongo.ASCENDING)
+        )
 
     # Sub Report types
 
@@ -585,16 +603,30 @@ def upload():
             try:
                 inserted_document = document_collection.insert_one(document_metadata)
                 document_id = inserted_document.inserted_id
-                divisions_collection.update_one(
-                    {
-                        "name": str(division)
-                    },
-                    {
-                        "$inc": {
-                            "documentCount": 1
+                # Check if the report type is common
+                if report_type_collection.find_one({"name": reportType})["isCommonToAllDivisions"] == False:
+                    divisions_collection.update_one(
+                        {
+                            "name": str(division)
+                        },
+                        {
+                            "$inc": {
+                                "documentCount": 1
+                            }
                         }
-                    }
-                )
+                    )
+                else:
+                    divisions_collection.update_one(
+                        {
+                            "name": str(division)
+                        },
+                        {
+                            "$inc": {
+                                "common_document_count": 1
+                            }
+                        }
+                    )
+
 
                 report_type_collection.update_one(
                     {
@@ -636,7 +668,7 @@ def upload():
 
     return render_template(
         "search/uploadDocuments.html",
-        backPageUrl = backPageUrl,
+        isMaster = session["isMaster"],
         uploadedDocuments = uploadedDocuments,
         uploadedDocumentsLen = len(uploadedDocuments),
         totalNumberOfDocuments = totalNumberOfDocuments,
@@ -954,6 +986,7 @@ def details(id=None):
         searchResults = searchResults,
         numOfAuthors = len(searchResults["author_list"]),
         isAdmin = session["isAdmin"],
+        isMaster = session["isMaster"],
         isUploader = isUploader
     )
 

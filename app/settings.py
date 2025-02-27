@@ -484,7 +484,7 @@ def slideshow_images():
     slideshow_collection.aggregate([
       {
         "$match": {
-          "divisionID": ObjectId(session["userDivisionID"])
+
         }
       },
       {
