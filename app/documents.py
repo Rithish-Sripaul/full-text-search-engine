@@ -394,16 +394,30 @@ def upload():
             try:
                 inserted_document = document_collection.insert_one(document_metadata)
                 document_id = inserted_document.inserted_id
-                divisions_collection.update_one(
-                    {
-                        "name": str(division)
-                    },
-                    {
-                        "$inc": {
-                            "documentCount": 1
+
+                # Check if the report type is common
+                if report_type_collection.find_one({"name": reportType})["isCommonToAllDivisions"] == False:
+                    divisions_collection.update_one(
+                        {
+                            "name": str(division)
+                        },
+                        {
+                            "$inc": {
+                                "documentCount": 1
+                            }
                         }
-                    }
-                )
+                    )
+                else:
+                    divisions_collection.update_one(
+                        {
+                            "name": str(division)
+                        },
+                        {
+                            "$inc": {
+                                "common_document_count": 1
+                            }
+                        }
+                    )
 
                 report_type_collection.update_one(
                     {

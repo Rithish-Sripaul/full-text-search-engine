@@ -34,6 +34,7 @@
     </div>
 
     <!-- REPORT TYPE SETTINGS -->
+    {% if session["isAdmin"] %}
     <div class="col-sm-3">
       <div class="card">
         <div class="card-body">
@@ -44,8 +45,12 @@
         </div>
       </div>
     </div>
+    {% endif %}
+    
+
 
     <!-- SLIDESHOW SETTINGS -->
+    {% if session["isAdmin"] %}
     <div class="col-sm-3">
       <div class="card">
         <div class="card-body">
@@ -55,6 +60,21 @@
         </div>
       </div>
     </div>
+    {% endif %}
+
+    <!-- REGISTER ACCOUNT -->
+    {% if session["isAdmin"] %}
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Register New User</h5>
+          <p class="card-text">As a admin, register new users under you.</p>
+          <br>
+          <a href="{{ url_for('authentication.register') }}" class="btn btn-primary">Register</a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
 </div>
 
 {% endblock content %}

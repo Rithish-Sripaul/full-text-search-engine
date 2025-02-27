@@ -275,13 +275,13 @@
                         </div>
                         <div class="d-sm-none">
                             <h2 class="fw-extrabold h5">Resources</h2>
-                            <h3 class="mb-1">{{ division_cfd["documentCount"] | int}}</h3>
+                            <h3 class="mb-1">{{ total_common_document_count | int}}</h3>
                         </div>
                     </div>
                     <div class="col-12 col-xl-7 px-xl-0">
                         <div class="d-none d-sm-block">
                             <h2 class="h6 text-gray-400 mb-0">Resources</h2>
-                            <h3 class="fw-extrabold mb-1">{{ division_cfd["documentCount"] | int}}</h3>
+                            <h3 class="fw-extrabold mb-1">{{ total_common_document_count | int}}</h3>
                         </div>
                         <div class="small d-flex mt-1">
                             <div>-
@@ -305,72 +305,140 @@
 
         <!-- GRAPH CONTENT -->
         <div class="carousel-inner">
-          <div class="carousel-item active">
-            <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
-                <div class="card-header d-sm-flex flex-row align-items-center flex-0">
-                    <div class="d-block mb-3 mb-sm-0">
-                        <div class="fs-5 fw-normal mb-2">WT</div>
-                        <h2 class="fs-3 fw-extrabold">11</h2>
-                        <!-- <div class="small mt-2">
-                            <span class="fw-normal me-2">Yesterday</span>
-                            <span class="fas fa-angle-up text-success"></span>
-                            <span class="text-success fw-bold">2</span>
-                        </div> -->
+
+            <!-- WT -->
+            <div class="carousel-item active">
+                <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
+                        <div class="d-block mb-3 mb-sm-0">
+                            <div class="fs-5 fw-normal mb-2">WT</div>
+                            <h2 class="fs-3 fw-extrabold">{{ division_wind_tunnel["documentCount"] | int }}</h2>
+                            <!-- <div class="small mt-2">
+                                <span class="fw-normal me-2">Yesterday</span>
+                                <span class="fas fa-angle-up text-success"></span>
+                                <span class="text-success fw-bold">2</span>
+                            </div> -->
+                        </div>
+                        <div class="d-flex ms-auto">
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
+                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                        </div>
                     </div>
-                    <div class="d-flex ms-auto">
-                        <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
-                        <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                    <div class="card-body p-2">
+                        <div class="ct-chart-wt ct-double-octave ct-series-g"></div>
                     </div>
-                </div>
-                <div class="card-body p-2">
-                    <div class="ct-chart-sales-value ct-double-octave ct-series-g"></div>
                 </div>
             </div>
-          </div>
-          <div class="carousel-item">
-            <div class="card bg-yellow-100 shadow mx-auto" style="width: 80%;">
-                <div class="card-header d-sm-flex flex-row align-items-center flex-0">
-                    <div class="d-block mb-3 mb-sm-0">
-                        <div class="fs-5 fw-normal mb-2">CFD</div>
-                        <h2 class="fs-3 fw-extrabold">11</h2>
-                        <!-- <div class="small mt-2">
-                            <span class="fw-normal me-2">Yesterday</span>
-                            <span class="fas fa-angle-up text-success"></span>
-                            <span class="text-success fw-bold">2</span>
-                        </div> -->
+
+            <!-- HSTT -->
+            <div class="carousel-item">
+                <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
+                        <div class="d-block mb-3 mb-sm-0">
+                            <div class="fs-5 fw-normal mb-2">HSTT</div>
+                            <h2 class="fs-3 fw-extrabold">{{ division_hstt["documentCount"] | int }}</h2>
+                        </div>
+                        <div class="d-flex ms-auto">
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
+                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                        </div>
                     </div>
-                    <div class="d-flex ms-auto">
-                        <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
-                        <a href="#" class="btn btn-dark btn-sm me-3">Week</a>
+                    <div class="card-body p-2">
+                        <div class="ct-chart-hstt ct-double-octave ct-series-g"></div>
                     </div>
-                </div>
-                <div class="card-body p-2">
-                    <div class="ct-chart-sales-value ct-double-octave ct-series-g"></div>
                 </div>
             </div>
-          </div>
-          <div class="carousel-item">
-            <div class="card bg-yellow-100 shadow mx-auto" style="width: 80%;">
-                <div class="card-header d-sm-flex flex-row align-items-center flex-0">
-                    <div class="d-block mb-3 mb-sm-0">
-                        <div class="fs-5 fw-normal mb-2">SMB</div>
-                        <h2 class="fs-3 fw-extrabold">11</h2>
-                        <!-- <div class="small mt-2">
-                            <span class="fw-normal me-2">Yesterday</span>
-                            <span class="fas fa-angle-up text-success"></span>
-                            <span class="text-success fw-bold">2</span>
-                        </div> -->
+
+            <!-- SMB -->            
+            <div class="carousel-item">
+                <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
+                        <div class="d-block mb-3 mb-sm-0">
+                            <div class="fs-5 fw-normal mb-2">SMB</div>
+                            <h2 class="fs-3 fw-extrabold">{{ division_smb["documentCount"] | int }}</h2>
+                        </div>
+                        <div class="d-flex ms-auto">
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
+                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                        </div>
                     </div>
-                    <div class="d-flex ms-auto">
-                        <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
-                        <a href="#" class="btn btn-dark btn-sm me-3">Week</a>
+                    <div class="card-body p-2">
+                        <div class="ct-chart-smb ct-double-octave ct-series-g"></div>
                     </div>
-                </div>
-                <div class="card-body p-2">
-                    <div class="ct-chart-sales-value ct-double-octave ct-series-g"></div>
                 </div>
             </div>
-          </div>
+
+            <!-- CT -->
+            <div class="carousel-item">
+                <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
+                        <div class="d-block mb-3 mb-sm-0">
+                            <div class="fs-5 fw-normal mb-2">CT</div>
+                            <h2 class="fs-3 fw-extrabold">{{ division_ct["documentCount"] | int }}</h2>
+                            <!-- <div class="small mt-2">
+                                <span class="fw-normal me-2">Yesterday</span>
+                                <span class="fas fa-angle-up text-success"></span>
+                                <span class="text-success fw-bold">2</span>
+                            </div> -->
+                        </div>
+                        <div class="d-flex ms-auto">
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
+                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="ct-chart-ct ct-double-octave ct-series-g"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CFD -->
+            <div class="carousel-item">
+                <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
+                        <div class="d-block mb-3 mb-sm-0">
+                            <div class="fs-5 fw-normal mb-2">CFD</div>
+                            <h2 class="fs-3 fw-extrabold">{{ division_cfd["documentCount"] | int }}</h2>
+                            <!-- <div class="small mt-2">
+                                <span class="fw-normal me-2">Yesterday</span>
+                                <span class="fas fa-angle-up text-success"></span>
+                                <span class="text-success fw-bold">2</span>
+                            </div> -->
+                        </div>
+                        <div class="d-flex ms-auto">
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
+                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="ct-chart-cfd ct-double-octave ct-series-g"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LCT -->
+            <div class="carousel-item">
+                <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
+                        <div class="d-block mb-3 mb-sm-0">
+                            <div class="fs-5 fw-normal mb-2">LCT</div>
+                            <h2 class="fs-3 fw-extrabold">{{ division_lct["documentCount"] | int }}</h2>
+                            <!-- <div class="small mt-2">
+                                <span class="fw-normal me-2">Yesterday</span>
+                                <span class="fas fa-angle-up text-success"></span>
+                                <span class="text-success fw-bold">2</span>
+                            </div> -->
+                        </div>
+                        <div class="d-flex ms-auto">
+                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
+                            <a href="#" class="btn btn-dark btn-sm me-3">Published Year</a>
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="ct-chart-lct ct-double-octave ct-series-g"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- NEXT AND PREVIOUS BUTTONS -->
@@ -1236,33 +1304,87 @@
 {% block javascripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const data = {
+    // Initialize carousels
+    var myCarousel = new bootstrap.Carousel(document.querySelector('#carouselExampleIndicators'), {
+        interval: 20000
+    });
+    var imageCarousel = new bootstrap.Carousel(document.querySelector('#slideshow_carousel'), {
+        interval: 10000
+    });
+
+    // Chartist data and options
+    const wt_data = {
         labels: {{chosen_months_alphabet|tojson}},
         series: [
-          {{wind_tunnel_monthly_uploads|tojson}},
+        {{wind_tunnel_monthly_uploads|tojson}},
         ]
-      };
+    };
 
-      const options = {
+    const cfd_data = {
+        labels: {{chosen_months_alphabet|tojson}},
+        series: [
+        {{cfd_monthly_uploads|tojson}},
+        ]
+    };
+
+    const smb_data = {
+        labels: {{chosen_months_alphabet|tojson}},
+        series: [
+        {{smb_monthly_uploads|tojson}},
+        ]
+    }
+
+    const hstt_data = {
+        labels: {{chosen_months_alphabet|tojson}},
+        series: [
+        {{hstt_monthly_uploads|tojson}},
+        ]
+    }
+
+    const ct_data = {
+        labels: {{chosen_months_alphabet|tojson}},
+        series: [
+        {{ct_monthly_uploads|tojson}},
+        ]
+    }
+
+    const lct_data = {
+        labels: {{chosen_months_alphabet|tojson}},
+        series: [
+        {{lct_monthly_uploads|tojson}},
+        ]
+    }
+
+    const options = {
         low: 0,
         showArea: true,
         fullWidth: true,
         chartPadding: {
-          right: 20
+        right: 20
         },
         lineSmooth: Chartist.Interpolation.none()
-      };
+    };
 
-      new Chartist.Line('.ct-chart-sales-value', data, options);
+    // Function to draw charts
+    function drawCharts() {
+        new Chartist.Line('.ct-chart-wt', wt_data, options);
+        new Chartist.Line('.ct-chart-cfd', cfd_data, options);
+        new Chartist.Line('.ct-chart-smb', smb_data, options);
+        new Chartist.Line('.ct-chart-hstt', hstt_data, options);
+        new Chartist.Line('.ct-chart-ct', ct_data, options);
+        new Chartist.Line('.ct-chart-lct', lct_data, options);
+    }
 
-      var myCarousel = new bootstrap.Carousel(document.querySelector('#carouselExampleIndicators'), {
-        interval: 20000
-      });
-      
-      var imageCarousel = new bootstrap.Carousel(document.querySelector('#slideshow_carousel'), {
-        interval: 10000
-      });
+    // Initial draw for the active slide
+    drawCharts();
+
+    // Redraw charts when the slide changes
+    var carouselElement = document.querySelector('#carouselExampleIndicators');
+    carouselElement.addEventListener('slid.bs.carousel', function () {
+        drawCharts();
     });
+  });
+
   </script>
 <script src="{{ url_for('static', filename='assets/js/toastScript.js') }}"></script>
 {% endblock javascripts %}

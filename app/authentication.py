@@ -271,7 +271,7 @@ def register():
                         "created_at": datetime.datetime.now()
                     }
                 )
-                return redirect(url_for("authentication.login"))
+                return redirect(url_for("settings.settings"))
 
     return render_template(
         "accounts/register.html",

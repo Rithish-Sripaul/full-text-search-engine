@@ -380,13 +380,14 @@ def profile():
       "hasAdminAccount": 1,
       "created_at": 1,
       "profile_picture": 1,
+      "adminAccount": 1,
     }
   )
 
   adminAccountDetails = None
   if userDetails["hasAdminAccount"]:
     adminAccountDetails = user_collection.find_one(
-      {"_id": ObjectId(userDetails["division"]["adminID"])},
+      {"_id": ObjectId(userDetails["adminAccount"])},
       {
         "username": 1,
         "email": 1,
