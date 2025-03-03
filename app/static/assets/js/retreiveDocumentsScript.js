@@ -1,6 +1,7 @@
 // RESET SEARCH FORM
 let documentTitle = document.getElementById("document_title");
 let documentNumber = document.getElementById("document_number");
+let documentContent = document.getElementById("document_content");
 let author = document.getElementById("author");
 let year = document.getElementById("year");
 let division = document.getElementById("division");
@@ -8,6 +9,7 @@ let reportType = document.getElementById("reportType");
 
 document.getElementById("formReset").addEventListener("click", (e) => {
   documentTitle.value = "";
+  documentContent.value = "";
   documentNumber.value = "";
   author.value = "";
   year.value = "";

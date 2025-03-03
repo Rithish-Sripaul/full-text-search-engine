@@ -171,107 +171,111 @@ def home():
       )
   ]
 
-  # Step 2: Count documents excluding common report types
-  wind_tunnel_monthly_uploads = []
-  for month, year in months_with_years:
-      last_day = calendar.monthrange(year, month)[1]
-      wind_tunnel_monthly_uploads.append(
-          document_collection.count_documents(
-              {
-                  "divisionID": ObjectId(division_wind_tunnel["_id"]),
-                  "reportTypeID": {"$in": non_common_report_type_ids},
-                  "uploaded_at": {
-                      "$gte": datetime.datetime(year, month, 1),
-                      "$lt": datetime.datetime(year, month, last_day)
-                  }
-              }
-          )
-      )
-
-  # Get the total number of documents uploaded in the past 5 months for CFD
-  cfd_monthly_uploads = []
-  for month, year in months_with_years:
-      last_day = calendar.monthrange(year, month)[1]
-      cfd_monthly_uploads.append(
-          document_collection.count_documents(
-              {
-                  "divisionID": ObjectId(division_cfd["_id"]),
-                  "reportTypeID": {"$in": non_common_report_type_ids},
-                  "uploaded_at": {
-                      "$gte": datetime.datetime(year, month, 1),
-                      "$lt": datetime.datetime(year, month, last_day)
-                  }
-              }
-          )
-      )
-
-  # Get the total number of documents uploaded in the past 5 months for LCT
-  lct_monthly_uploads = []
-  for month, year in months_with_years:
-      last_day = calendar.monthrange(year, month)[1]
-      lct_monthly_uploads.append(
-          document_collection.count_documents(
-              {
-                  "divisionID": ObjectId(division_lct["_id"]),
-                  "reportTypeID": {"$in": non_common_report_type_ids},
-                  "uploaded_at": {
-                      "$gte": datetime.datetime(year, month, 1),
-                      "$lt": datetime.datetime(year, month, last_day)
-                  }
-              }
-          )
-      )
-
-  # Get the total number of documents uploaded in the past 5 months for CT
-  ct_monthly_uploads = []
-  for month, year in months_with_years:
-      last_day = calendar.monthrange(year, month)[1]
-      ct_monthly_uploads.append(
-          document_collection.count_documents(
-              {
-                  "divisionID": ObjectId(division_ct["_id"]),
-                  "reportTypeID": {"$in": non_common_report_type_ids},
-                  "uploaded_at": {
-                      "$gte": datetime.datetime(year, month, 1),
-                      "$lt": datetime.datetime(year, month, last_day)
-                  }
-              }
-          )
-      )
-
-  # Get the total number of documents uploaded in the past 5 months for SMB
-  smb_monthly_uploads = []
-  for month, year in months_with_years:
-      last_day = calendar.monthrange(year, month)[1]
-      smb_monthly_uploads.append(
-          document_collection.count_documents(
-              {
-                  "divisionID": ObjectId(division_smb["_id"]),
-                  "reportTypeID": {"$in": non_common_report_type_ids},
-                  "uploaded_at": {
-                      "$gte": datetime.datetime(year, month, 1),
-                      "$lt": datetime.datetime(year, month, last_day)
-                  }
-              }
-          )
-      )
-
-  # Get the total number of documents uploaded in the past 5 months for HSTT
   hstt_monthly_uploads = []
+  wind_tunnel_monthly_uploads = []
+  cfd_monthly_uploads = []
+  lct_monthly_uploads = []
+  ct_monthly_uploads = []
+  smb_monthly_uploads = []
+
   for month, year in months_with_years:
-      last_day = calendar.monthrange(year, month)[1]
-      hstt_monthly_uploads.append(
-          document_collection.count_documents(
-              {
-                  "divisionID": ObjectId(division_hstt["_id"]),
-                  "reportTypeID": {"$in": non_common_report_type_ids},
-                  "uploaded_at": {
-                      "$gte": datetime.datetime(year, month, 1),
-                      "$lt": datetime.datetime(year, month, last_day)
-                  }
-              }
-          )
-      )
+    # Calculate the first day of the next month
+    if month == 12:
+        next_month = 1
+        next_year = year + 1
+    else:
+        next_month = month + 1
+        next_year = year
+
+    # Count documents for HSTT
+    hstt_monthly_uploads.append(
+        document_collection.count_documents(
+            {
+                "divisionID": ObjectId(division_hstt["_id"]),
+                "reportTypeID": {"$in": non_common_report_type_ids},
+                "uploaded_at": {
+                    "$gte": datetime.datetime(year, month, 1),
+                    "$lt": datetime.datetime(next_year, next_month, 1)
+                }
+            }
+        )
+    )
+
+    # Count documents for Wind Tunnel
+    wind_tunnel_monthly_uploads.append(
+        document_collection.count_documents(
+            {
+                "divisionID": ObjectId(division_wind_tunnel["_id"]),
+                "reportTypeID": {"$in": non_common_report_type_ids},
+                "uploaded_at": {
+                    "$gte": datetime.datetime(year, month, 1),
+                    "$lt": datetime.datetime(next_year, next_month, 1)
+                }
+            }
+        )
+    )
+
+    # Count documents for CFD
+    cfd_monthly_uploads.append(
+        document_collection.count_documents(
+            {
+                "divisionID": ObjectId(division_cfd["_id"]),
+                "reportTypeID": {"$in": non_common_report_type_ids},
+                "uploaded_at": {
+                    "$gte": datetime.datetime(year, month, 1),
+                    "$lt": datetime.datetime(next_year, next_month, 1)
+                }
+            }
+        )
+    )
+
+    # Count documents for LCT
+    lct_monthly_uploads.append(
+        document_collection.count_documents(
+            {
+                "divisionID": ObjectId(division_lct["_id"]),
+                "reportTypeID": {"$in": non_common_report_type_ids},
+                "uploaded_at": {
+                    "$gte": datetime.datetime(year, month, 1),
+                    "$lt": datetime.datetime(next_year, next_month, 1)
+                }
+            }
+        )
+    )
+
+    # Count documents for CT
+    ct_monthly_uploads.append(
+        document_collection.count_documents(
+            {
+                "divisionID": ObjectId(division_ct["_id"]),
+                "reportTypeID": {"$in": non_common_report_type_ids},
+                "uploaded_at": {
+                    "$gte": datetime.datetime(year, month, 1),
+                    "$lt": datetime.datetime(next_year, next_month, 1)
+                }
+            }
+        )
+    )
+
+    # Count documents for SMB
+    smb_monthly_uploads.append(
+        document_collection.count_documents(
+            {
+                "divisionID": ObjectId(division_smb["_id"]),
+                "reportTypeID": {"$in": non_common_report_type_ids},
+                "uploaded_at": {
+                    "$gte": datetime.datetime(year, month, 1),
+                    "$lt": datetime.datetime(next_year, next_month, 1)
+                }
+            }
+        )
+    )
+
+    print(datetime.datetime(year, month, 1))
+    print(datetime.datetime(next_year, next_month, 1))
+
+
+
 
   # UPLOADED YEAR GRAPH
   # Year Ranges
@@ -297,8 +301,8 @@ def home():
               {
                   "divisionID": ObjectId(division_wind_tunnel["_id"]),                 
                   "year": {
-                      "$gte": start_year,
-                      "$lt": end_year
+                      "$gt": start_year,
+                      "$lte": end_year
                   },
                   "reportTypeID": {"$in": non_common_report_type_ids}
               }
@@ -313,8 +317,8 @@ def home():
               {
                   "divisionID": ObjectId(division_cfd["_id"]),
                   "year": {
-                      "$gte": start_year,
-                      "$lt": end_year
+                      "$gt": start_year,
+                      "$lte": end_year
                   },
                   "reportTypeID": {"$in": non_common_report_type_ids}
               }
@@ -329,8 +333,8 @@ def home():
               {
                   "divisionID": ObjectId(division_lct["_id"]),
                   "year": {
-                      "$gte": start_year,
-                      "$lt": end_year
+                      "$gt": start_year,
+                      "$lte": end_year
                   },
                   "reportTypeID": {"$in": non_common_report_type_ids}
               }
@@ -345,8 +349,8 @@ def home():
               {
                   "divisionID": ObjectId(division_ct["_id"]),
                   "year": {
-                      "$gte": start_year,
-                      "$lt": end_year
+                      "$gt": start_year,
+                      "$lte": end_year
                   },
                   "reportTypeID": {"$in": non_common_report_type_ids}
               }
@@ -361,8 +365,8 @@ def home():
               {
                   "divisionID": ObjectId(division_smb["_id"]),
                   "year": {
-                      "$gte": start_year,
-                      "$lt": end_year
+                      "$gt": start_year,
+                      "$lte": end_year
                   },
                   "reportTypeID": {"$in": non_common_report_type_ids}
               }
@@ -377,8 +381,8 @@ def home():
               {
                   "divisionID": ObjectId(division_hstt["_id"]),
                   "year": {
-                      "$gte": start_year,
-                      "$lt": end_year
+                      "$gt": start_year,
+                      "$lte": end_year
                   },
                   "reportTypeID": {"$in": non_common_report_type_ids}
               }

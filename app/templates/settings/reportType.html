@@ -146,7 +146,7 @@
               {% for i in range(reportTypesListLen) %}
               <tr>
                 <td>{{ number_of_documents_per_page * current_page + i + 1}}</td>
-                <td>{{ reportTypesList[i]["uploadedAt"].strftime("%d/%m/%Y, %H:%M:%S") }}</td>
+                <td>{{ reportTypesList[i]["uploadedAt"].strftime("%d/%m/%Y") }}</td>
                 <td class="fw-bolder">{{ reportTypesList[i]["name"] }}</td>
                 
                 {% if reportTypesList[i]["isCommonToAllDivisions"] %}

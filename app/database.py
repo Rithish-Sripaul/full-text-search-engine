@@ -26,7 +26,7 @@ def get_llm():
     llm = OllamaLLM(
         model="llama3.2",
         base_url=os.environ["LLAMA_BASE_URL"],
-        # base_url="https://0e81-2406-7400-43-d6bd-e59d-a145-5631-b520.ngrok-free.app",
+        # base_url="https://fd28-2409-40f0-fa-dad9-8dde-efb-9de5-456c.ngrok-free.app",
         temperature=0,
     )
     return llm

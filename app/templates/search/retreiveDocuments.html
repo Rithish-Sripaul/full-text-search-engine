@@ -172,7 +172,7 @@
                         <div class="d-flex flex-row w-100 justify-content-between">
                             <div>
                                 <button class="btn btn-gray-800 mt-2 animate-up-2 submit-btn" type="button"
-                                    value="Submit">Submit</button>
+                                    value="Submit" id="submitButton">Submit</button>
                             </div>
                             <div>
                                 <button class="btn btn-outline-gray-800 mt-2 animate-up-2" type="button"
@@ -229,6 +229,7 @@
                 <a type="button" class="btn btn-sm btn-outline-gray-600 active" href="{{ url_for(
                         'documents.search',
                         document_title = request.args.get('document_title'),
+                        document_content = request.args.get('document_content'),
                         author=request.args.get('author'),
                         year = request.args.get('year'),
                         document_number = request.args.get('document_number'),
@@ -244,6 +245,7 @@
                 <a type="button" class="btn btn-sm btn-outline-gray-600" href="{{ url_for(
                         'documents.search',
                         document_title = request.args.get('document_title'),
+                        document_content = request.args.get('document_content'),
                         document_number = request.args.get('document_number'),
                         author=request.args.get('author'),
                         year = request.args.get('year'),
@@ -383,7 +385,7 @@
 
 
 
-                <td><span class="fw-normal">{{searchResults[i]["uploaded_at"].strftime("%d/%m/%Y, %H:%M:%S")}}</span>
+                <td><span class="fw-normal">{{searchResults[i]["uploaded_at"].strftime("%d/%m/%Y")}}</span>
                 </td>
                 {% if searchResults[i]["document_number"] == "" %}
                 <td class="text-center"><span class="fw-normal">-</span></td>
@@ -446,6 +448,7 @@
                     <a class="page-link" href="{{ url_for(
                             'documents.search',
                             document_title=request.args.get('document_title'),
+                            document_content=request.args.get('document_content'),
                             document_number=request.args.get('document_number'),
                             author=request.args.get('author'),
                             year=request.args.get('year'),
@@ -468,6 +471,7 @@
                             <a class="page-link" href="{{ url_for(
                                     'documents.search',
                                     document_title=request.args.get('document_title'),
+                                    document_content=request.args.get('document_content'),
                                     document_number=request.args.get('document_number'),
                                     author=request.args.get('author'),
                                     year=request.args.get('year'),
@@ -487,6 +491,7 @@
                         <a class="page-link" href="{{ url_for(
                                 'documents.search',
                                 document_title=request.args.get('document_title'),
+                                document_content=request.args.get('document_content'),
                                 document_number=request.args.get('document_number'),
                                 author=request.args.get('author'),
                                 year=request.args.get('year'),
@@ -514,6 +519,7 @@
                                 <a class="page-link" href="{{ url_for(
                                         'documents.search',
                                         document_title=request.args.get('document_title'),
+                                        document_content=request.args.get('document_content'),
                                         document_number=request.args.get('document_number'),
                                         author=request.args.get('author'),
                                         year=request.args.get('year'),
@@ -541,6 +547,7 @@
                         <a class="page-link" href="{{ url_for(
                                 'documents.search',
                                 document_title=request.args.get('document_title'),
+                                document_content=request.args.get('document_content'),
                                 document_number=request.args.get('document_number'),
                                 author=request.args.get('author'),
                                 year=request.args.get('year'),
@@ -565,6 +572,7 @@
                     <a class="page-link" href="{{ url_for(
                             'documents.search',
                             document_title=request.args.get('document_title'),
+                            document_content=request.args.get('document_content'),
                             document_number=request.args.get('document_number'),
                             author=request.args.get('author'),
                             year=request.args.get('year'),
@@ -648,6 +656,13 @@
         }
 
     }
+
+    document.getElementById("searchForm").addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Prevent default only if needed
+            document.getElementById("submitButton").click();
+        }
+    });
     displaySubReportType();
 </script>
 <script src="{{ url_for('static', filename='assets/js/retreiveDocumentsScript.js') }}"></script>

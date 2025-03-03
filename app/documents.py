@@ -721,13 +721,25 @@ def editDocument(id = None):
 
     # Current Document Details
     currentDocument = document_collection.find_one({"_id": ObjectId(id)})
+
+    if "subReportTypeID" in currentDocument:
+        subReportTypeId = currentDocument["subReportTypeID"]
+    else:
+        subReportTypeId = None
+
+    if "reportTypeID" in currentDocument:
+        reportTypeId = currentDocument["reportTypeID"]
+    else:
+        reportTypeId = None
     oldDetails = {
         "title": currentDocument["title"],
         "year": currentDocument["year"],
         "document_number": currentDocument["document_number"],
         "author": currentDocument["author"],
         "reportType": currentDocument["reportType"],
+        "reportTypeID": reportTypeId,
         "subReportType": currentDocument["subReportType"],
+        "subReportTypeID": subReportTypeId,
         "email": currentDocument["email"],
         "author_list": currentDocument["author_list"],
         "email_list": currentDocument["email_list"]
@@ -746,11 +758,16 @@ def editDocument(id = None):
         email_list = request.form.getlist("new_email[]")
         
         reportTypeId = ObjectId(request.form["new_report_type"])
-        if request.form.get("new_sub_report_type", False) != False:
+        if request.form.get("new_sub_report_type", "") != "":
             subReportTypeId = ObjectId(request.form["new_sub_report_type"])
         else:
             subReportTypeId = None
 
+        newParentReportType = report_type_collection.find_one({"_id": reportTypeId})
+        if subReportTypeId != None:
+            newSubReportType = report_type_collection.find_one({"_id": subReportTypeId})
+        else:
+            newSubReportType = None
         reportType = report_type_collection.find_one({"_id": reportTypeId})["name"]
         if subReportTypeId != None:
             subReportType = report_type_collection.find_one({"_id": subReportTypeId})["name"]
@@ -760,18 +777,159 @@ def editDocument(id = None):
         author = author_list[0]
         email = email_list[0]
 
+        # If the document is a PDF file, check if re-OCR is required
+        file_id = currentDocument["file_id"]
+        file = fs.get(file_id)
+        file_extension = file.filename.split(".")[-1]
+        # Check if document is a PDF file
+        if file_extension == "pdf":
+            # apply OCR using ocrmypdf
+            ocrValue = request.form.getlist("ocrValue")
+            if "true" in ocrValue:
+                file_data = fs.get(file_id)
+                file_bytes = file_data.read()
+
+                # Save the input PDF to disk
+                input_pdf_path = "converted_pdf/input_pdf_test.pdf"
+                output_pdf_path = "converted_pdf/output_pdf.pdf"
+                
+                with open(input_pdf_path, "wb") as f:
+                    f.write(file_bytes)
+
+                # Apply OCR using ocrmypdf
+                ocrmypdf.ocr(input_pdf_path, output_pdf_path, deskew=True, force_ocr=True, output_type="pdf")
+
+                # Store the converted file in MongoDB GridFS
+                with open(output_pdf_path, 'rb') as converted_file:
+                    file_id = fs.put(converted_file, filename=file.filename)
+
+                # Extract text from the OCR-processed PDF
+                reader = PdfReader(output_pdf_path)
+                content = []
+                for page in reader.pages:
+                    content.append(page.extract_text())
+                content = " ".join(content).replace("\\n", " ")
+
+            else:
+                content = currentDocument["content"]
+
+
+            # SUMMARY GENERATION
+            llm = get_llm()
+            summaryGenerate = request.form.getlist("regenerateSummary")            
+            if "true" in summaryGenerate:
+                prompt = f"""
+                You are an intelligent assistant designed to help students understand complex topics. Your goal is to read and restructure the contents of a given PDF in a way that makes learning easier.
+
+                Task:
+                    •	Summarize and explain the concepts clearly.
+                    •	Use simple language and avoid unnecessary complexity.
+                    •	Organize content with proper headings and subheadings.
+                    •	Include meaningful examples with explanations.
+                    •	State the reasoning behind each example to improve comprehension.
+                
+                Output Format:
+                Ensure the explanation is well-structured with:
+                    1.	Headings & Subheadings
+                    2.	Concise explanations
+                    3.	Relevant examples with explanations
+                
+                Your goal is to make learning engaging, structured, and easy to understand for students.
+
+                Here is the content:
+                {content}
+                """
+                summary = llm.invoke(prompt)
+
+                # HTML generation from the summary
+                promptHTML = f"""
+                You are an AI that converts textual content into structured HTML format. 
+                Ensure proper usage of <h5>, <h6>, <p>, <ul>/<li>, <b> and <i> tags where appropriate.
+
+                Convert the following text into valid HTML:
+
+                {summary}
+
+                Output only the generated HTML code.
+                """
+                summaryHTML = llm.invoke(promptHTML)
+            else:
+                summary = currentDocument["summary"]
+                summaryHTML = currentDocument["summaryHTML"]
+        else:
+            content = currentDocument["content"]
+            summary = currentDocument["summary"]
+            summaryHTML = currentDocument["summaryHTML"]
         newDetails = {
                     "title": title,
                     "year": int(year),
                     "document_number": document_number,
                     "author": author,
                     "reportType": reportType,
+                    "reportTypeID": reportTypeId,
                     "subReportType": subReportType,
+                    "subReportTypeID": subReportTypeId,
                     "email": email,
                     "author_list": author_list,
                     "email_list": email_list,
+                    "file_id": file_id,
+                    "content": content,
+                    "summary": summary,
+                    "summaryHTML": summaryHTML,
                     "editedAt": datetime.datetime.now()
                 }
+        
+        # If the report type is changes, check if the previous report type is common or not and change the document count accordingly
+        previousParentReportType = report_type_collection.find_one({"_id": oldDetails["reportTypeID"]})
+        previousSubReportType = report_type_collection.find_one({"_id": oldDetails["subReportTypeID"]})
+        print("Previout Parent Report Type", previousParentReportType)
+        print("Previout Parent Report Type", previousSubReportType)
+        if previousParentReportType != None:
+            if previousParentReportType["isCommonToAllDivisions"] == False:
+                divisions_collection.update_one(
+                    {
+                        "name": currentDocument["division"]
+                    },
+                    {
+                        "$inc": {
+                            "documentCount": -1
+                        }
+                    }
+                )
+            else:
+                divisions_collection.update_one(
+                    {
+                        "name": currentDocument["division"]
+                    },
+                    {
+                        "$inc": {
+                            "common_document_count": -1
+                        }
+                    }
+                )
+            
+        if newParentReportType["isCommonToAllDivisions"] == False:
+            divisions_collection.update_one(
+                {
+                    "name": currentDocument["division"]
+                },
+                {
+                    "$inc": {
+                        "documentCount": 1
+                    }
+                }
+            )
+        else:
+            divisions_collection.update_one(
+                {
+                    "name": currentDocument["division"]
+                },
+                {
+                    "$inc": {
+                        "common_document_count": 1
+                    }
+                }
+            )
 
         if reportType != currentDocument["reportType"]:
             report_type_collection.update_one(

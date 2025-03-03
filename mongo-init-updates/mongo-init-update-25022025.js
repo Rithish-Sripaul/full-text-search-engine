@@ -91,11 +91,3 @@ db.documents.aggregate([
     }
   ]);
   
-db.divisions.insertOne(
-    {
-        name: "LCT",
-        director: "",
-        documentCount: 0,
-        userCount: 0,
-    }
-)

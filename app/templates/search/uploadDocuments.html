@@ -278,8 +278,7 @@
                         <tr>
                             <td><span class="fw-normal">{{number_of_documents_per_page * current_page + i + 1}}</span>
                             </td>
-                            <td><span class="fw-normal">{{uploadedDocuments[i]["uploaded_at"].strftime("%d/%m/%Y,
-                                    %H:%M:%S")}}</span></td>
+                            <td><span class="fw-normal">{{uploadedDocuments[i]["uploaded_at"].strftime("%d/%m/%Y")}}</span></td>
 
                             {% if uploadedDocuments[i]["document_number"] == "" %}
                             <td><span class="fw-bold">-</span></td>
@@ -460,6 +459,8 @@
         }
 
     }
+
+
 </script>
 <script src="{{ url_for('static', filename='assets/js/toastScript.js') }}"></script>
 {% endblock javascripts %}
