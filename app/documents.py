@@ -240,6 +240,41 @@ def search():
             )
     else:
         # DEFAULT VIEW: Recently uploaded documents
+        searchMetaData["division"] = session["userDivision"]
+        secondarySearchMetaData = searchMetaData.copy()
+        secondarySearchMetaData.pop("division", None)
+        secondarySearchMetaData["reportTypeDetails.isCommonToAllDivisions"] = True
+
+        search_results = list(
+            document_collection.aggregate(
+                [
+                    {
+                        "$lookup": {
+                            "from": "reportType",
+                            "localField": "reportTypeID",
+                            "foreignField": "_id",
+                            "as": "reportTypeDetails"
+                        }
+                    },
+                    {
+                        "$match": {
+                            "$or": [
+                                searchMetaData,
+                                secondarySearchMetaData
+                            ]
+                        }
+                    },
+                    {
+                        "$project": {
+                            "reportTypeDetails": 0,
+                            "content": 0,
+                            "summary": 0,
+                            "summaryHTML": 0
+                        }
+                    }
+                ]
+            )
+        )
         search_results = list(document_collection.find(
                 searchMetaData,
                 { "content": 0, "summary": 0, "summaryHTML": 0 }
