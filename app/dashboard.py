@@ -1,7 +1,7 @@
 import os
 import datetime
 import math
-from flask import render_template, redirect, request, url_for, Blueprint, flash, session, make_response, Response
+from flask import render_template, redirect, request, url_for, Blueprint, flash, session, make_response, Response, jsonify
 from flask_login import (
     current_user,
     login_user,
@@ -450,3 +450,102 @@ def serve_slideshow_images(file_id):
   except:
       # Return a default image if the file is not found
       return Response(open('static/default_profile.png', 'rb').read(), content_type='image/png')
+
+def generate_year_ranges(start_year, end_year, interval):
+    """Generates year ranges based on the given interval."""
+    return [(year, year + interval) for year in range(start_year, end_year, interval)]
+
+@bp.route("/graphYear", methods=["GET"])
+@login_required
+def graphYear():
+    db = get_db()
+    division_collection = db["divisions"]
+
+    # Get the divisions
+    division_wind_tunnel = division_collection.find_one({"name": "WT"})
+    division_hstt = division_collection.find_one({"name": "HSTT"})
+    division_smb = division_collection.find_one({"name": "SMB"})
+    division_ct = division_collection.find_one({"name": "CT"})
+    division_cfd = division_collection.find_one({"name": "CFD"})
+    division_lct = division_collection.find_one({"name": "LCT"})
+    document_collection = db["documents"]
+    report_type_collection = db["reportType"]
+
+      # Step 1: Get all non-common reportType IDs
+    non_common_report_type_ids = [
+        rt["_id"] for rt in report_type_collection.find(
+            {"isCommonToAllDivisions": {"$ne": True}},
+            {"_id": 1}
+        )
+    ]
+
+    # Get zoom_index from request and convert to int (with a fallback default)
+    zoom_index = request.args.get("zoom_index", default=0, type=int)
+
+    # Define zoom levels
+    ZOOM_LEVELS = [10, 5, 2]  # Available zoom levels
+
+    # Validate zoom_index to prevent out-of-range errors
+    if zoom_index < 0 or zoom_index >= len(ZOOM_LEVELS):
+        return jsonify({"error": "Invalid zoom index"}), 400
+
+    # Generate year ranges based on the zoom level
+    start_year, end_year = 1970, 2025
+    year_ranges = generate_year_ranges(start_year, end_year, ZOOM_LEVELS[zoom_index])
+
+    # Generate labels for the graph
+    if ZOOM_LEVELS[zoom_index] == 10:
+        choosen_years = [f"{start}-{end}" for start, end in year_ranges]
+    elif ZOOM_LEVELS[zoom_index] == 5:
+        choosen_years = []
+        for start, end in year_ranges:
+            start_formatted = f"{start % 100:02d}"  # Ensures two-digit format (e.g., 85 instead of 1985, 05 instead of 2005)
+            end_formatted = f"{end % 100:02d}"      # Same formatting for the end year
+            choosen_years.append(f"{start_formatted}-{end_formatted}")
+    else:
+        choosen_years = []
+        for start, end in year_ranges:
+            start_formatted = f"{start % 100:02d}"
+            choosen_years.append(f"{start_formatted}")
+
+
+
+    def count_documents_by_year_ranges(division_id):
+        """Counts documents for a given division across the generated year ranges."""
+        return [
+            document_collection.count_documents(
+                {
+                    "divisionID": ObjectId(division_id),
+                    "year": {"$gt": start, "$lte": end},
+                    "reportTypeID": {"$in": non_common_report_type_ids}
+                }
+            )
+            for start, end in year_ranges
+        ]
+
+    # Generate document counts for each division
+    wt_uploads_by_year = count_documents_by_year_ranges(division_wind_tunnel["_id"])
+    cfd_uploads_by_year = count_documents_by_year_ranges(division_cfd["_id"])
+    lct_uploads_by_year = count_documents_by_year_ranges(division_lct["_id"])
+    ct_uploads_by_year = count_documents_by_year_ranges(division_ct["_id"])
+    smb_uploads_by_year = count_documents_by_year_ranges(division_smb["_id"])
+    hstt_uploads_by_year = count_documents_by_year_ranges(division_hstt["_id"])
+
+    # Reverse lists to maintain chronological order
+    # choosen_years.reverse()
+    # wt_uploads_by_year.reverse()
+    # cfd_uploads_by_year.reverse()
+    # lct_uploads_by_year.reverse()
+    # ct_uploads_by_year.reverse()
+    # smb_uploads_by_year.reverse()
+    # hstt_uploads_by_year.reverse()
+
+    return jsonify({
+        "wt_uploads_by_year": wt_uploads_by_year,
+        "cfd_uploads_by_year": cfd_uploads_by_year,
+        "lct_uploads_by_year": lct_uploads_by_year,
+        "ct_uploads_by_year": ct_uploads_by_year,
+        "smb_uploads_by_year": smb_uploads_by_year,
+        "hstt_uploads_by_year": hstt_uploads_by_year,
+        "choosen_years": choosen_years
+    })

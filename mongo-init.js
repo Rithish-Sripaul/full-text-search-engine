@@ -1,4 +1,4 @@
-use flaskdb;
+// use flaskdb;
 db.createUser({
   user: "admin",
   pwd: "1234",
@@ -18,45 +18,49 @@ db.createCollection("searchHistory");
 db.createCollection("actionLogs");
 db.createCollection("slideshowImages");
 
-
 db.documents.createIndex({ title: "text", content: "text" });
 
 db.divisions.insertMany([
   {
-    name: "Wind Tunnel",
+    name: "WT",
     director: "",
     documentCount: 0,
+    common_document_count: 0,
     userCount: 0,
   },
   {
     name: "HSTT",
     director: "",
     documentCount: 0,
+    common_document_count: 0,
     userCount: 0,
   },
   {
     name: "SMB",
     director: "",
     documentCount: 0,
+    common_document_count: 0,
     userCount: 0,
   },
   {
     name: "CT",
     director: "",
     documentCount: 0,
+    common_document_count: 0,
     userCount: 0,
   },
   {
     name: "CFD",
     director: "",
     documentCount: 0,
+    common_document_count: 0,
     userCount: 0,
   },
   {
     name: "LCT",
     director: "",
     documentCount: 0,
+    common_document_count: 0,
     userCount: 0,
   },
 ]);
-

@@ -69,7 +69,7 @@ def search():
                 { "isSubReportType": False, "divisionID": ObjectId(session["userDivisionID"]) },
                 { "isSubReportType": False, "isCommonToAllDivisions": True, }
                 ]
-            }
+            },
         ).sort("name", 1)
     )
 
@@ -147,7 +147,6 @@ def search():
         searchMetaData.pop("subReportType", None)
     
     # CONSTRUCTING SORTING META DATA
-    searchMetaData["division"] = userDivision
     sortMetaData = {}
     refreshSortData = {}
 
@@ -179,9 +178,76 @@ def search():
         sortCollapse = "show"
     print(sortCollapse)
     print(searchMetaData)
-    # DEFAULT VIEW: Recently uploaded documents
-    search_results = list(document_collection.find(searchMetaData))
 
+    # If searchMetaData is empty, show all common reportType documents from every division
+    if (searchMetaData == {}) or (len(searchMetaData) == 1 and "division" in searchMetaData and searchMetaData["division"] != session["userDivision"]):
+        if "division" in searchMetaData and searchMetaData["division"] != session["userDivision"]:
+            searchDivisionType = searchMetaData["division"]
+            search_results = list(
+                document_collection.aggregate([
+                    {
+                        "$lookup": {
+                            "from": "reportType",
+                            "localField": "reportTypeID",
+                            "foreignField": "_id",
+                            "as": "reportTypeDetails"
+                        }
+                    },
+                    {
+                        "$match": {
+                            "reportTypeDetails.isCommonToAllDivisions": True,
+                            "division": searchDivisionType
+                        }
+                    },
+                    {
+                        "$project": {
+                            "reportTypeDetails": 0,
+                            "content": 0,
+                            "summary": 0,
+                            "summaryHTML": 0
+                        }
+                    }
+                ])
+            )
+        else:
+            search_results = list(
+                document_collection.aggregate([
+                    {
+                        "$lookup": {
+                            "from": "reportType",
+                            "localField": "reportTypeID",
+                            "foreignField": "_id",
+                            "as": "reportTypeDetails"
+                        }
+                    },
+                    {
+                        "$match": {
+                            "$or": [
+                                { "division": session["userDivision"] },
+                                { "reportTypeDetails.isCommonToAllDivisions": True }
+                            ]
+                        }
+                    },
+                    {
+                        "$project": {
+                            "reportTypeDetails": 0,
+                            "content": 0,
+                            "summary": 0,
+                            "summaryHTML": 0
+                        }
+                    }
+                ])
+            )
+    else:
+        # DEFAULT VIEW: Recently uploaded documents
+        search_results = list(document_collection.find(
+                searchMetaData,
+                { "content": 0, "summary": 0, "summaryHTML": 0 }
+            )
+        )
+
+
+    print(search_results)
     totalNumberOfDocuments = len(search_results)
     
     # Setting up pagination details
@@ -191,12 +257,76 @@ def search():
     current_page = request.args.get('page', default=0, type=int)
     number_of_pages = math.ceil(totalNumberOfDocuments / number_of_documents_per_page)
 
-    searchResultsTrimmed = list(document_collection.find(
-        searchMetaData,
-        skip = number_of_documents_per_page * current_page,
-        limit = number_of_documents_per_page,
-        sort = sortMetaData
-    ))
+    if (searchMetaData == {}) or (len(searchMetaData) == 1 and "division" in searchMetaData and searchMetaData["division"] != session["userDivision"]):
+        if "division" in searchMetaData and searchMetaData["division"] != session["userDivision"]:
+            searchResultsTrimmed = list(
+                document_collection.aggregate([
+                    {
+                        "$lookup": {
+                            "from": "reportType",
+                            "localField": "reportTypeID",
+                            "foreignField": "_id",
+                            "as": "reportTypeDetails"
+                        }
+                    },
+                    {
+                        "$match": {
+                            "reportTypeDetails.isCommonToAllDivisions": True,
+                            "division": searchMetaData["division"]
+                        }
+                    },
+                    {
+                        "$project": {
+                            "content": 0,
+                            "summary": 0,
+                            "summaryHTML": 0
+                        }
+                    },
+                    { "$sort" : sortMetaData },
+                    { "$skip" : number_of_documents_per_page * current_page },
+                    { "$limit" : number_of_documents_per_page },
+                ])
+            )
+        else:
+            searchResultsTrimmed = list(
+                document_collection.aggregate([
+                    {
+                        "$lookup": {
+                            "from": "reportType",
+                            "localField": "reportTypeID",
+                            "foreignField": "_id",
+                            "as": "reportTypeDetails"
+                        }
+                    },
+                    {
+                        "$match": {
+                            "$or": [
+                                { "division": session["userDivision"] },
+                                { "reportTypeDetails.isCommonToAllDivisions": True }
+                            ]
+                        }
+                    },
+                    {
+                        "$project": {
+                            "content": 0,
+                            "summary": 0,
+                            "summaryHTML": 0
+                        }
+                    },
+                    { "$sort" : sortMetaData },
+                    { "$skip" : number_of_documents_per_page * current_page },
+                    { "$limit" : number_of_documents_per_page },
+                ])
+            )
+
+    else:
+        searchResultsTrimmed = list(document_collection.find(
+            searchMetaData,
+            { "content": 0, "summary": 0, "summaryHTML": 0 },
+            sort = sortMetaData,
+            skip = number_of_documents_per_page * current_page,
+            limit = number_of_documents_per_page,
+        ))
 
     searchResultsTrimmedLen = len(searchResultsTrimmed)
     print(refreshSortData.get("document_title", ""))
@@ -907,6 +1037,7 @@ def editDocument(id = None):
                         }
                     }
                 )
+
             
         if newParentReportType["isCommonToAllDivisions"] == False:
             divisions_collection.update_one(
@@ -952,7 +1083,7 @@ def editDocument(id = None):
                     }
                 }
             )
-        if subReportType != None:
+        if subReportType != currentDocument["subReportType"]:
             report_type_collection.update_one(
                 {
                     "name": currentDocument["subReportType"]
@@ -1149,10 +1280,31 @@ def details(id=None):
     )
 
 
-# ----------------- DOWNLOAD DOCUMENT -----------------
 @bp.route("/download/<id>")
 @login_required
-def download(id = None):
+def download(id=None):
+    db = get_db()
+    grid_fs = GridFS(db)
+    file_data = grid_fs.find_one({'_id': ObjectId(id)})
+    
+    # Read the file content
+    file_stream = io.BytesIO(file_data.read())
+
+    # Send the file as a response with 'attachment' to force download
+    response = send_file(
+        file_stream,
+        as_attachment=True,  # Force download
+        download_name=file_data.filename,
+        mimetype=file_data.content_type
+    )
+    
+    return response
+
+
+# ----------------- VIEW FILE -----------------
+@bp.route("/viewFile/<id>")
+@login_required
+def viewFile(id = None):
     db = get_db()
     grid_fs = GridFS(db)
     file_data = grid_fs.find_one({'_id': ObjectId(id)})
@@ -1170,7 +1322,6 @@ def download(id = None):
     # Force the file to open in a new tab with the correct name
     response.headers["Content-Disposition"] = f"inline; filename={file_data.filename}"
     return response
-
 
 # ----------------- SEARCH HISTORY -----------------
 @bp.route("/search/searchHistory/")

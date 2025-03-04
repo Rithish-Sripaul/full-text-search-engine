@@ -38,19 +38,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="post">
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <div>
-                                <label for="deleteConfirmInput">This process <b>CANNOT</b> be undone.</label>
-                                <p>If you still want to delete the document, type 'delete' below.</p>
-                                <input name="deleteConfirmInput" class="form-control" id="first_name" type="text"
-                                    placeholder="Type 'delete' here" required>
-                            </div>
-
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div>
+                            <label for="deleteConfirmInput">This process <b>CANNOT</b> be undone.</label>
+                            <p>If you still want to delete the document, type 'delete' below.</p>
+                            <input name="deleteConfirmInput" class="form-control" id="first_name" type="text"
+                                placeholder="Type 'delete' here" required>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
@@ -129,7 +126,42 @@
     <!-- DOWNLOAD & EDIT/DELETE -->
     <div class="col-12 col-xl-4">
         <div class="row">
-            <div class="col-12">
+            <div class="col-6">
+                <div class="card card-body border-0 shadow mb-4 text-center align-items-center">
+                    <h2 class="display-4 mb-4 text-center">View</h2>
+                    <div class="d-flex align-items-center">
+                        <div class="file-field">
+                            <div class="d-flex justify-content-xl-center ms-xl-3">
+                                <div class="d-flex">
+                                    <a class="btn animate-up-2"
+                                        href="{{ url_for('documents.viewFile', id=searchResults['file_id']) }}"
+                                        target="_blank">
+                                        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                            fill="currentColor" class="bi bi-download" viewBox="0 0 20 20">
+                                            <path
+                                                d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                                            <path
+                                                d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />
+                                        </svg> -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                            fill="currentColor" class="bi bi-eye" viewBox="0 0 20 20">
+                                            <path
+                                                d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                                            <path
+                                                d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                                        </svg>
+                                        <div class="d-md-block text-left">
+                                            <div class="fw-normal text-dark mb-1">Click here to View</div>
+                                        </div>
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
                 <div class="card card-body border-0 shadow mb-4 text-center align-items-center">
                     <h2 class="display-4 mb-4">Download</h2>
                     <div class="d-flex align-items-center">
@@ -137,7 +169,8 @@
                             <div class="d-flex justify-content-xl-center ms-xl-3">
                                 <div class="d-flex">
                                     <a class="btn animate-up-2"
-                                        href="{{url_for('documents.download', id=searchResults['file_id'])}}" target="_blank">
+                                        href="{{url_for('documents.download', id=searchResults['file_id'])}}"
+                                        target="_blank">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
                                             fill="currentColor" class="bi bi-download" viewBox="0 0 20 20">
                                             <path
@@ -229,7 +262,7 @@
             var toastList = toastElList.map(function (toastEl) {
                 return new bootstrap.Toast(toastEl, { delay: 5000, autohide: true, animation: true })
             })
-            toastList.forEach(toast => toast.show())
+            toastList.forEach(toast = x > toast.show())
         }
     });
 </script>

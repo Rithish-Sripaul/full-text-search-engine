@@ -21,7 +21,7 @@
         {% elif isAdmin %}
         <div class="fw-bold text-end me-4">ADMIN</div>
         {% endif %}
-        
+
         {% if isMaster == False %}
         <h4 class="fw-light text-end me-4">{{session["userDivision"]}}</h4>
         {% endif %}
@@ -262,7 +262,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- RESOURCES -->
     <div class="col mx-1 mb-4">
         <div class="card border-0 shadow">
@@ -301,7 +301,8 @@
 
 <div class="row mb-2">
     <!-- CAROUSEL - FOR DIVISIONS -->
-    <div id="carouselExampleIndicators" class="carousel carousel-dark slide col-12 col-xl-8 d-flex flex-row align-items-center" data-bs-ride="carousel">
+    <div id="carouselExampleIndicators"
+        class="carousel carousel-dark slide col-12 col-xl-8 d-flex flex-row align-items-center" data-bs-ride="carousel">
         <!-- <div class="carousel-indicators">
           <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
           <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -314,9 +315,9 @@
             <!-- WT -->
             <div class="carousel-item active">
                 <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
-                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
-                        <div class="d-block mb-3 mb-sm-0">
-                            <div class="fs-5 fw-normal mb-2">WT</div>
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0 pb-0">
+                        <div class="d-block mb-1 mb-sm-0">
+                            <div class="fs-5 fw-normal">WT</div>
                             <h2 class="fs-3 fw-extrabold">{{ division_wind_tunnel["documentCount"] | int }}</h2>
                             <!-- <div class="small mt-2">
                                 <span class="fw-normal me-2">Yesterday</span>
@@ -324,9 +325,21 @@
                                 <span class="text-success fw-bold">2</span>
                             </div> -->
                         </div>
-                        <div class="d-flex ms-auto">
-                            <button class="btn btn-secondary text-dark btn-sm me-2" id="month-wt">Month</button>
-                            <button class="btn btn-sm btn-outline-secondary me-2" id="year-wt">Published Year</button>
+                        <div class="row ms-auto">
+                            <div class="d-flex ms-auto justify-content-end">
+                                <button class="btn btn-secondary text-dark btn-sm me-2" id="month-wt">Month</button>
+                                <button class="btn btn-sm btn-outline-secondary me-2" id="year-wt">Published
+                                    Year</button>
+                            </div>
+
+                            <div class="d-flex flex-row justify-content-end">
+                                <button class="zoomOutGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    -
+                                </button>
+                                <button class="zoomInGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -338,14 +351,25 @@
             <!-- HSTT -->
             <div class="carousel-item">
                 <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
-                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
-                        <div class="d-block mb-3 mb-sm-0">
-                            <div class="fs-5 fw-normal mb-2">HSTT</div>
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0 pb-0">
+                        <div class="d-block mb-1 mb-sm-0">
+                            <div class="fs-5 fw-normal">HSTT</div>
                             <h2 class="fs-3 fw-extrabold">{{ division_hstt["documentCount"] | int }}</h2>
                         </div>
-                        <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2" id="month-hstt">Month</a>
-                            <a href="#" class="btn btn-sm btn-outline-secondary me-2" id="year-hstt">Published Year</a>
+                        <div class="row ms-auto">
+                            <div class="d-flex ms-auto justify-content-end">
+                                <button class="btn btn-secondary text-dark btn-sm me-2" id="month-hstt">Month</button>
+                                <button class="btn btn-sm btn-outline-secondary me-2" id="year-hstt">Published
+                                    Year</button>
+                            </div>
+                            <div class="d-flex flex-row justify-content-end">
+                                <button class="zoomOutGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    -
+                                </button>
+                                <button class="zoomInGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -354,17 +378,28 @@
                 </div>
             </div>
 
-            <!-- SMB -->            
+            <!-- SMB -->
             <div class="carousel-item">
                 <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
-                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
-                        <div class="d-block mb-3 mb-sm-0">
-                            <div class="fs-5 fw-normal mb-2">SMB</div>
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0 pb-0">
+                        <div class="d-block mb-1 mb-sm-0">
+                            <div class="fs-5 fw-normal">SMB</div>
                             <h2 class="fs-3 fw-extrabold">{{ division_smb["documentCount"] | int }}</h2>
                         </div>
-                        <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2" id="month-smb">Month</a>
-                            <a href="#" class="btn btn-sm btn-outline-secondary me-2" id="year-smb">Published Year</a>
+                        <div class="row ms-auto">
+                            <div class="d-flex ms-auto justify-content-end">
+                                <button class="btn btn-secondary text-dark btn-sm me-2" id="month-smb">Month</button>
+                                <button class="btn btn-sm btn-outline-secondary me-2" id="year-smb">Published
+                                    Year</button>
+                            </div>
+                            <div class="d-flex flex-row justify-content-end">
+                                <button class="zoomOutGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    -
+                                </button>
+                                <button class="zoomInGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -376,9 +411,9 @@
             <!-- CT -->
             <div class="carousel-item">
                 <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
-                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
-                        <div class="d-block mb-3 mb-sm-0">
-                            <div class="fs-5 fw-normal mb-2">CT</div>
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0 pb-0">
+                        <div class="d-block mb-1 mb-sm-0">
+                            <div class="fs-5 fw-normal">CT</div>
                             <h2 class="fs-3 fw-extrabold">{{ division_ct["documentCount"] | int }}</h2>
                             <!-- <div class="small mt-2">
                                 <span class="fw-normal me-2">Yesterday</span>
@@ -386,9 +421,20 @@
                                 <span class="text-success fw-bold">2</span>
                             </div> -->
                         </div>
-                        <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2" id="month-ct">Month</a>
-                            <a href="#" class="btn btn-sm btn-outline-secondary me-2" id="year-ct">Published Year</a>
+                        <div class="row ms-auto">
+                            <div class="d-flex ms-auto justify-content-end">
+                                <button class="btn btn-secondary text-dark btn-sm me-2" id="month-ct">Month</button>
+                                <button class="btn btn-sm btn-outline-secondary me-2" id="year-ct">Published
+                                    Year</button>
+                            </div>
+                            <div class="d-flex flex-row justify-content-end">
+                                <button class="zoomOutGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    -
+                                </button>
+                                <button class="zoomInGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -400,9 +446,9 @@
             <!-- CFD -->
             <div class="carousel-item">
                 <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
-                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
-                        <div class="d-block mb-3 mb-sm-0">
-                            <div class="fs-5 fw-normal mb-2">CFD</div>
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0 pb-0">
+                        <div class="d-block mb-1 mb-sm-0">
+                            <div class="fs-5 fw-normal">CFD</div>
                             <h2 class="fs-3 fw-extrabold">{{ division_cfd["documentCount"] | int }}</h2>
                             <!-- <div class="small mt-2">
                                 <span class="fw-normal me-2">Yesterday</span>
@@ -410,9 +456,20 @@
                                 <span class="text-success fw-bold">2</span>
                             </div> -->
                         </div>
-                        <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2" id="month-cfd">Month</a>
-                            <a href="#" class="btn btn-sm btn-outline-secondary me-2" id="year-cfd">Published Year</a>
+                        <div class="row ms-auto">
+                            <div class="d-flex ms-auto justify-content-end">
+                                <button class="btn btn-secondary text-dark btn-sm me-2" id="month-cfd">Month</button>
+                                <button class="btn btn-sm btn-outline-secondary me-2" id="year-cfd">Published
+                                    Year</button>
+                            </div>
+                            <div class="d-flex flex-row justify-content-end">
+                                <button class="zoomOutGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    -
+                                </button>
+                                <button class="zoomInGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -424,9 +481,9 @@
             <!-- LCT -->
             <div class="carousel-item">
                 <div class="card bg-white-100 shadow mx-auto" style="width: 80%;">
-                    <div class="card-header d-sm-flex flex-row align-items-center flex-0">
-                        <div class="d-block mb-3 mb-sm-0">
-                            <div class="fs-5 fw-normal mb-2">LCT</div>
+                    <div class="card-header d-sm-flex flex-row align-items-center flex-0 pb-0">
+                        <div class="d-block mb-1 mb-sm-0">
+                            <div class="fs-5 fw-normal">LCT</div>
                             <h2 class="fs-3 fw-extrabold">{{ division_lct["documentCount"] | int }}</h2>
                             <!-- <div class="small mt-2">
                                 <span class="fw-normal me-2">Yesterday</span>
@@ -434,9 +491,20 @@
                                 <span class="text-success fw-bold">2</span>
                             </div> -->
                         </div>
-                        <div class="d-flex ms-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm me-2" id="month-lct">Month</a>
-                            <a href="#" class="btn btn-sm btn-outline-secondary me-2" id="year-lct">Published Year</a>
+                        <div class="row ms-auto">
+                            <div class="d-flex ms-auto justify-content-end">
+                                <button class="btn btn-secondary text-dark btn-sm me-2" id="month-lct">Month</button>
+                                <button class="btn btn-sm btn-outline-secondary me-2" id="year-lct">Published
+                                    Year</button>
+                            </div>
+                            <div class="d-flex flex-row justify-content-end">
+                                <button class="zoomOutGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    -
+                                </button>
+                                <button class="zoomInGraph btn p-0 text-dark me-3" style="font-size: 24px;">
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-2">
@@ -447,51 +515,64 @@
         </div>
 
         <!-- NEXT AND PREVIOUS BUTTONS -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-          <span class="" aria-hidden="true" style="color: black;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-              </svg>
-          </span>
-          <span class="visually-hidden">Previous</span>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+            data-bs-slide="prev">
+            <span class="" aria-hidden="true" style="color: black;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                    class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
+                </svg>
+            </span>
+            <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-          <span class="" aria-hidden="true" style="color: black;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
-            class="bi bi-arrow-right" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
-            </svg>
-        </span>
-          <span class="visually-hidden">Next</span>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+            data-bs-slide="next">
+            <span class="" aria-hidden="true" style="color: black;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                    class="bi bi-arrow-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                </svg>
+            </span>
+            <span class="visually-hidden">Next</span>
         </button>
-      </div>
-    
+    </div>
+
     <div class="col-12 col-xl-4 d-flex align-items-center">
         <div class="card h-100 w-100">
             <div class="card-body p-0">
-                <div id="slideshow_carousel" class="carousel slide carousel-dark h-100" data-bs-ride="carousel" style="height: 300px">
+                <div id="slideshow_carousel" class="carousel slide carousel-dark h-100" data-bs-ride="carousel"
+                    style="height: 300px">
                     <div class="carousel-inner h-100 rounded">
                         {% for i in range(slideshowImagesLen) %}
                         <div class="carousel-item {% if i == 0 %}active{% endif %} h-100">
-                            <img src="{{ url_for('dashboard.serve_slideshow_images', file_id=slideshowImages[i]['gridfs_id']) }}" class="img-fluid d-block w-100 h-100 object-fit-cover" style="object-fit: cover; object-position: center;">
-                        </div>        
+                            <img src="{{ url_for('dashboard.serve_slideshow_images', file_id=slideshowImages[i]['gridfs_id']) }}"
+                                class="img-fluid d-block w-100 h-100 object-fit-cover"
+                                style="object-fit: cover; object-position: center;">
+                        </div>
                         {% endfor %}
-                        
+
 
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#slideshow_carousel" data-bs-slide="prev">
+                    <button class="carousel-control-prev" type="button" data-bs-target="#slideshow_carousel"
+                        data-bs-slide="prev">
                         <span aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                                class="bi bi-arrow-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
                             </svg>
                         </span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#slideshow_carousel" data-bs-slide="next">
+                    <button class="carousel-control-next" type="button" data-bs-target="#slideshow_carousel"
+                        data-bs-slide="next">
                         <span aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                                class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
                             </svg>
                         </span>
                         <span class="visually-hidden">Next</span>
@@ -500,8 +581,8 @@
             </div>
         </div>
     </div>
-    
-      
+
+
     <!-- TOTAL DOCUMENTS -->
     <!-- <div class="col-12 col-xl-4 mb-4">
 
@@ -1263,107 +1344,66 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Initialize carousels
-    var myCarousel = new bootstrap.Carousel(document.querySelector('#carouselExampleIndicators'), {
-        interval: 10000
-    });
-    var imageCarousel = new bootstrap.Carousel(document.querySelector('#slideshow_carousel'), {
-        interval: 10000
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize carousels
+        var myCarousel = new bootstrap.Carousel(document.querySelector('#carouselExampleIndicators'), {
+            interval: 10000
+        });
+        var imageCarousel = new bootstrap.Carousel(document.querySelector('#slideshow_carousel'), {
+            interval: 10000
+        });
 
-    // Chartist data and options
-    const wt_data = {
-        labels: {{chosen_months_alphabet|tojson}},
+        // Chartist data and options
+        const wt_data = {
+            labels: {{ chosen_months_alphabet| tojson
+    }},
         series: [
-        {{wind_tunnel_monthly_uploads|tojson}},
-        ]
+        {{ wind_tunnel_monthly_uploads| tojson}},
+    ]
     };
 
     const cfd_data = {
-        labels: {{chosen_months_alphabet|tojson}},
-        series: [
-        {{cfd_monthly_uploads|tojson}},
-        ]
+        labels: {{ chosen_months_alphabet| tojson}},
+    series: [
+        {{ cfd_monthly_uploads| tojson}},
+    ]
     };
 
     const smb_data = {
-        labels: {{chosen_months_alphabet|tojson}},
-        series: [
-        {{smb_monthly_uploads|tojson}},
-        ]
+        labels: {{ chosen_months_alphabet| tojson}},
+    series: [
+        {{ smb_monthly_uploads| tojson}},
+    ]
     }
 
     const hstt_data = {
-        labels: {{chosen_months_alphabet|tojson}},
-        series: [
-        {{hstt_monthly_uploads|tojson}},
-        ]
+        labels: {{ chosen_months_alphabet| tojson}},
+    series: [
+        {{ hstt_monthly_uploads| tojson}},
+    ]
     }
 
     const ct_data = {
-        labels: {{chosen_months_alphabet|tojson}},
-        series: [
-        {{ct_monthly_uploads|tojson}},
-        ]
+        labels: {{ chosen_months_alphabet| tojson}},
+    series: [
+        {{ ct_monthly_uploads| tojson}},
+    ]
     }
 
     const lct_data = {
-        labels: {{chosen_months_alphabet|tojson}},
-        series: [
-        {{lct_monthly_uploads|tojson}},
-        ]
+        labels: {{ chosen_months_alphabet| tojson}},
+    series: [
+        {{ lct_monthly_uploads| tojson}},
+    ]
     }
 
-    // Yearly data
-    const wt_data_year = {
-        labels: {{choosen_years|tojson}},
-        series: [
-        {{wt_uploads_by_year|tojson}},
-        ]
-    };
-
-    const cfd_data_year = {
-        labels: {{choosen_years|tojson}},
-        series: [
-        {{cfd_uploads_by_year|tojson}},
-        ]
-    };
-
-    const smb_data_year = {
-        labels: {{choosen_years|tojson}},
-        series: [
-        {{smb_uploads_by_year|tojson}},
-        ]
-    }
-
-    const hstt_data_year = {
-        labels: {{choosen_years|tojson}},
-        series: [
-        {{hstt_uploads_by_year|tojson}},
-        ]
-    }
-
-    const ct_data_year = {
-        labels: {{choosen_years|tojson}},
-        series: [
-        {{ct_uploads_by_year|tojson}},
-        ]
-    }
-
-    const lct_data_year = {
-        labels: {{choosen_years|tojson}},
-        series: [
-        {{lct_uploads_by_year|tojson}},
-        ]
-    }
 
     const options = {
         low: 0,
         showArea: true,
         fullWidth: true,
         chartPadding: {
-        right: 20
+            right: 20
         },
         lineSmooth: Chartist.Interpolation.none(),
         plugins: [
@@ -1371,6 +1411,7 @@
         ]
 
     };
+
     const options_bar = {
         axisX: {
             showGrid: false, // Hide vertical grid lines
@@ -1384,7 +1425,7 @@
             right: 30,
         },
         lineSmooth: false,
-        seriesBarDistance: 10,
+        seriesBarDistance: 5,
         plugins: [
             Chartist.plugins.tooltip()
         ]
@@ -1396,6 +1437,11 @@
         stroke-width: 25px;   /* Thicker bar width */
         stroke-linecap: square; /* Sharp edges */
     }
+
+    .ct-series .ct-bar {
+        transform: translateX(-10px); /* Adjust bar alignment */
+
+    }
     `;
     const styleSheet = document.createElement("style");
     styleSheet.type = "text/css";
@@ -1403,7 +1449,7 @@
     document.head.appendChild(styleSheet);
 
     function animateChart(chart) {
-        chart.on('draw', function(data) {
+        chart.on('draw', function (data) {
             // Only animate non-zero bars
             if (data.type === 'bar') {
 
@@ -1441,7 +1487,7 @@
     }
 
     function animateLineChart(chart) {
-        chart.on('draw', function(data) {
+        chart.on('draw', function (data) {
             // Animate line drawing from left to right
             if (data.type === 'line') {
                 data.element.animate({
@@ -1497,7 +1543,100 @@
         });
     }
 
-    window.onload = function() {
+    let zoomLevel = 0;
+    let ZOOM_LEVELS = [10, 5, 2]
+    async function fetchGraphData() {
+        try {
+            const response = await fetch(`/graphYear?zoom_index=${zoomLevel}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            updateCharts(data, zoomLevel);
+        } catch (error) {
+            console.error("Error fetching graph data:", error);
+        }
+    }
+
+    function updateChartStyle(zoom) {
+        console.log(zoom)
+        let chartStyle = "";
+        if (zoom == 10) {
+            chartStyle = `
+            .ct-bar {
+                stroke-width: 25px;   /* Thicker bar width */
+                stroke-linecap: square; /* Sharp edges */
+            }
+
+            .ct-series .ct-bar {
+                transform: translateX(-10px); /* Adjust bar alignment */
+            }
+            `;
+        } else if (zoom == 5) {
+            chartStyle = `
+            .ct-bar {
+                stroke-width: 25px;   /* Thicker bar width */
+                stroke-linecap: square; /* Sharp edges */
+            }
+
+            .ct-series .ct-bar {
+                transform: translateX(-10px); /* Adjust bar alignment */
+            }
+            `;
+        } else {
+            chartStyle = `
+            .ct-bar {
+                stroke-width: 10px;   /* Thicker bar width */
+                stroke-linecap: square; /* Sharp edges */
+            }
+
+            .ct-series .ct-bar {
+                transform: translateX(-10px); /* Adjust bar alignment */
+            }
+            `;
+        }
+
+
+        let styleSheet = document.getElementById("chart-style");
+        if (!styleSheet) {
+            styleSheet = document.createElement("style");
+            styleSheet.id = "chart-style";
+            document.head.appendChild(styleSheet);
+        }
+        styleSheet.innerText = chartStyle;
+    }
+
+    function updateCharts(data, zoomLevel) {
+        updateChartStyle(ZOOM_LEVELS[zoomLevel]);
+        const divisions = ['wt', 'cfd', 'smb', 'hstt', 'ct', 'lct'];
+        divisions.forEach(div => {
+            const chartData = {
+                labels: data.choosen_years,
+                series: [data[`${div}_uploads_by_year`]]
+            };
+
+            document.querySelector(`.ct-chart-${div}`).innerHTML = '';
+            var chart = new Chartist.Bar(`.ct-chart-${div}`, chartData, options_bar);
+            animateChart(chart);
+        });
+    }
+    // Attach event listeners to all zoom-in buttons
+    document.querySelectorAll(".zoomInGraph").forEach(button => {
+        button.addEventListener("click", function () {
+            zoomLevel = Math.min(zoomLevel + 1, 3);
+            fetchGraphData();
+        });
+    });
+
+    // Attach event listeners to all zoom-out buttons
+    document.querySelectorAll(".zoomOutGraph").forEach(button => {
+        button.addEventListener("click", function () {
+            zoomLevel = Math.max(zoomLevel - 1, 0);
+            fetchGraphData();
+        });
+    });
+
+    window.onload = function () {
         // Function to initialize and animate charts
         function initializeCharts() {
             const lineChartSelectors = [
@@ -1530,21 +1669,20 @@
 
         // Redraw charts when the slide changes
         var carouselElement = document.querySelector('#carouselExampleIndicators');
-        carouselElement.addEventListener('slid.bs.carousel', function() {
+        carouselElement.addEventListener('slid.bs.carousel', function () {
             initializeCharts();
         });
     };
 
     // WT Buttons
-    document.querySelector("#year-wt").addEventListener("click", function() {
+    document.querySelector("#year-wt").addEventListener("click", function () {
         document.querySelector("#month-wt").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#year-wt").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-wt').innerHTML = '';
-        var chart = new Chartist.Bar('.ct-chart-wt', wt_data_year, options_bar);
-        animateChart(chart);
+        fetchGraphData();
     });
 
-    document.querySelector("#month-wt").addEventListener("click", function() {
+    document.querySelector("#month-wt").addEventListener("click", function () {
         document.querySelector("#year-wt").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#month-wt").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-wt').innerHTML = '';
@@ -1553,15 +1691,14 @@
     });
 
     // CFD Buttons
-    document.querySelector("#year-cfd").addEventListener("click", function() {
+    document.querySelector("#year-cfd").addEventListener("click", function () {
         document.querySelector("#month-cfd").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#year-cfd").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-cfd').innerHTML = '';
-        var chart = new Chartist.Bar('.ct-chart-cfd', cfd_data_year, options_bar);
-        animateChart(chart);
+        fetchGraphData();
     });
 
-    document.querySelector("#month-cfd").addEventListener("click", function() {
+    document.querySelector("#month-cfd").addEventListener("click", function () {
         document.querySelector("#year-cfd").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#month-cfd").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-cfd').innerHTML = '';
@@ -1570,15 +1707,14 @@
     });
 
     // SMB Buttons
-    document.querySelector("#year-smb").addEventListener("click", function() {
+    document.querySelector("#year-smb").addEventListener("click", function () {
         document.querySelector("#month-smb").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#year-smb").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-smb').innerHTML = '';
-        var chart = new Chartist.Bar('.ct-chart-smb', smb_data_year, options_bar);
-        animateChart(chart);
+        fetchGraphData();
     });
 
-    document.querySelector("#month-smb").addEventListener("click", function() {
+    document.querySelector("#month-smb").addEventListener("click", function () {
         document.querySelector("#year-smb").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#month-smb").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-smb').innerHTML = '';
@@ -1587,15 +1723,14 @@
     });
 
     // HSTT Buttons
-    document.querySelector("#year-hstt").addEventListener("click", function() {
+    document.querySelector("#year-hstt").addEventListener("click", function () {
         document.querySelector("#month-hstt").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#year-hstt").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-hstt').innerHTML = '';
-        var chart = new Chartist.Bar('.ct-chart-hstt', hstt_data_year, options_bar);
-        animateChart(chart);
+        fetchGraphData();
     });
 
-    document.querySelector("#month-hstt").addEventListener("click", function() {
+    document.querySelector("#month-hstt").addEventListener("click", function () {
         document.querySelector("#year-hstt").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#month-hstt").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-hstt').innerHTML = '';
@@ -1604,15 +1739,14 @@
     });
 
     // CT Buttons
-    document.querySelector("#year-ct").addEventListener("click", function() {
+    document.querySelector("#year-ct").addEventListener("click", function () {
         document.querySelector("#month-ct").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#year-ct").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-ct').innerHTML = '';
-        var chart = new Chartist.Bar('.ct-chart-ct', ct_data_year, options_bar);
-        animateChart(chart);
+        fetchGraphData();
     });
 
-    document.querySelector("#month-ct").addEventListener("click", function() {
+    document.querySelector("#month-ct").addEventListener("click", function () {
         document.querySelector("#year-ct").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#month-ct").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-ct').innerHTML = '';
@@ -1621,19 +1755,18 @@
     });
 
     // LCT Buttons
-    document.querySelector("#year-lct").addEventListener("click", function() {
+    document.querySelector("#year-lct").addEventListener("click", function () {
         document.querySelector("#month-lct").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#year-lct").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-lct').innerHTML = '';
-        var chart = new Chartist.Bar('.ct-chart-lct', lct_data_year, options_bar);
-        animateChart(chart);
+        fetchGraphData();
     });
 
-    document.querySelector("#month-lct").addEventListener("click", function() {
+    document.querySelector("#month-lct").addEventListener("click", function () {
         document.querySelector("#year-lct").classList = "btn btn-sm btn-outline-secondary me-2";
         document.querySelector("#month-lct").classList = "btn btn-sm btn-secondary me-2";
         document.querySelector('.ct-chart-lct').innerHTML = '';
-        var chart = new Chartist.Line('.ct-chart-lct', lct_data, options);
+        var chart = new Chartist.Line('.ct-chart-lct', ct_data, options);
         animateLineChart(chart);
     });
 
@@ -1660,7 +1793,7 @@
 
     // Reset all the buttons when the carousel changes using the above function
     var carouselElement = document.querySelector('#carouselExampleIndicators');
-    carouselElement.addEventListener('slid.bs.carousel', function() {
+    carouselElement.addEventListener('slid.bs.carousel', function () {
         resetButtons();
     });
 
@@ -1673,6 +1806,6 @@
     // Initial draw for the active slide
   });
 
-  </script>
+</script>
 <script src="{{ url_for('static', filename='assets/js/toastScript.js') }}"></script>
 {% endblock javascripts %}
