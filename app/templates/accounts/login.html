@@ -15,7 +15,7 @@
         object-fit: cover;
         z-index: -1;
     }
-    
+
     /* To ensure form content is above the video */
     .content-wrapper {
         position: relative;
@@ -34,8 +34,10 @@
     }
 
     .glass-card {
-        background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
-        backdrop-filter: blur(20px) brightness(1.2); /* Blur with brightness adjustment */
+        background: rgba(255, 255, 255, 0.2);
+        /* Semi-transparent white */
+        backdrop-filter: blur(20px) brightness(1.2);
+        /* Blur with brightness adjustment */
         -webkit-backdrop-filter: blur(20px) brightness(1.2);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -49,7 +51,9 @@
 {% block content %}
 <!-- Background Video -->
 <video class="background-video" autoplay loop muted>
-    <source src="{{ url_for('static', filename='assets/videos/Navy Blue Animated Business Company Presentation Video.mp4') }}" type="video/mp4">
+    <source
+        src="{{ url_for('static', filename='assets/videos/Navy Blue Animated Business Company Presentation Video.mp4') }}"
+        type="video/mp4">
     Your browser does not support the video tag.
 </video>
 
@@ -62,7 +66,8 @@
                 <div class="col-12 d-flex align-items-center justify-content-start">
                     <div class="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
                         <div class="text-center text-md-center mb-4 mt-md-0">
-                            <img class="mb-4" src="{{ url_for('static', filename='assets/img/logo/nstl_logo.jpg') }}" alt="" style="width: 150px; height: 150px;">
+                            <img class="mb-4" src="{{ url_for('static', filename='assets/img/logo/nstl_logo.jpeg') }}"
+                                alt="" style="width: 250px; height: 170px; padding-left: 20px">
                             <h1 class="mb-0 h3">
                                 NSTL - Sign In
                             </h1>

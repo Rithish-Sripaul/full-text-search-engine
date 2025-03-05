@@ -240,46 +240,66 @@ def search():
             )
     else:
         # DEFAULT VIEW: Recently uploaded documents
+        print("I'm here")
+
+        # Start by checking if searchMetaData has a text search
+        text_query = None
+        if "$text" in searchMetaData:
+            text_query = {"$text": searchMetaData["$text"]}
+            del searchMetaData["$text"]  # Remove text search from further filters
+
+        # Default filters: User's division + Common report type documents
         searchMetaData["division"] = session["userDivision"]
         secondarySearchMetaData = searchMetaData.copy()
         secondarySearchMetaData.pop("division", None)
         secondarySearchMetaData["reportTypeDetails.isCommonToAllDivisions"] = True
 
-        search_results = list(
-            document_collection.aggregate(
-                [
-                    {
-                        "$lookup": {
-                            "from": "reportType",
-                            "localField": "reportTypeID",
-                            "foreignField": "_id",
-                            "as": "reportTypeDetails"
-                        }
-                    },
-                    {
-                        "$match": {
-                            "$or": [
-                                searchMetaData,
-                                secondarySearchMetaData
-                            ]
-                        }
-                    },
-                    {
-                        "$project": {
-                            "reportTypeDetails": 0,
-                            "content": 0,
-                            "summary": 0,
-                            "summaryHTML": 0
-                        }
-                    }
-                ]
-            )
-        )
-        search_results = list(document_collection.find(
-                searchMetaData,
-                { "content": 0, "summary": 0, "summaryHTML": 0 }
-            )
-        )
+        # Step 1: If there is a text search, apply it separately
+        if text_query:
+            pre_search_results = document_collection.find(text_query, {"_id": 1})  # Fetch only document IDs
+            matching_ids = [doc["_id"] for doc in pre_search_results]
+
+            # Ensure we only fetch matching documents in the aggregation
+            searchMetaData["_id"] = {"$in": matching_ids}
+            secondarySearchMetaData["_id"] = {"$in": matching_ids}
+
+        # Step 2: Aggregation Pipeline (without $text search)
+        pipeline = [
+            {
+                "$lookup": {
+                    "from": "reportType",
+                    "localField": "reportTypeID",
+                    "foreignField": "_id",
+                    "as": "reportTypeDetails"
+                }
+            },
+            {
+                "$match": {
+                    "$or": [
+                        searchMetaData,
+                        secondarySearchMetaData
+                    ]
+                }
+            },
+            {
+                "$project": {
+                    "reportTypeDetails": 0,
+                    "content": 0,
+                    "summary": 0,
+                    "summaryHTML": 0
+                }
+            }
+        ]
+
+        # Execute aggregation
+        search_results = list(document_collection.aggregate(pipeline))
+
+
+        # search_results = list(document_collection.find(
+        #         searchMetaData,
+        #         { "content": 0, "summary": 0, "summaryHTML": 0 }
+        #     )
+        # )
 
 
     print(search_results)
@@ -291,7 +311,7 @@ def search():
     number_of_documents_per_page = session["number_of_documents_per_page"]
     current_page = request.args.get('page', default=0, type=int)
     number_of_pages = math.ceil(totalNumberOfDocuments / number_of_documents_per_page)
-
+    print(searchMetaData)
     if (searchMetaData == {}) or (len(searchMetaData) == 1 and "division" in searchMetaData and searchMetaData["division"] != session["userDivision"]):
         if "division" in searchMetaData and searchMetaData["division"] != session["userDivision"]:
             searchResultsTrimmed = list(
@@ -355,13 +375,70 @@ def search():
             )
 
     else:
-        searchResultsTrimmed = list(document_collection.find(
-            searchMetaData,
-            { "content": 0, "summary": 0, "summaryHTML": 0 },
-            sort = sortMetaData,
-            skip = number_of_documents_per_page * current_page,
-            limit = number_of_documents_per_page,
-        ))
+        print("I got here too")
+
+        # Step 1: Handle text search separately
+        text_query = None
+        if "$text" in searchMetaData:
+            text_query = {"$text": searchMetaData["$text"]}
+            del searchMetaData["$text"]  # Remove text search from further filters
+
+        # Default filters: User's division + Common report type documents
+        searchMetaData["division"] = session["userDivision"]
+        secondarySearchMetaData = searchMetaData.copy()
+        secondarySearchMetaData.pop("division", None)
+        secondarySearchMetaData["reportTypeDetails.isCommonToAllDivisions"] = True
+
+        # Step 2: If text search exists, pre-fetch matching document IDs
+        if text_query:
+            pre_search_results = document_collection.find(text_query, {"_id": 1})  # Fetch only IDs
+            matching_ids = [doc["_id"] for doc in pre_search_results]
+
+            # Ensure we only fetch matching documents in the aggregation
+            searchMetaData["_id"] = {"$in": matching_ids}
+            secondarySearchMetaData["_id"] = {"$in": matching_ids}
+
+        # Step 3: Build aggregation pipeline with pagination
+        pipeline = [
+            {
+                "$lookup": {
+                    "from": "reportType",
+                    "localField": "reportTypeID",
+                    "foreignField": "_id",
+                    "as": "reportTypeDetails"
+                }
+            },
+            {
+                "$match": {
+                    "$or": [
+                        searchMetaData,
+                        secondarySearchMetaData
+                    ]
+                }
+            },
+            {
+                "$project": {
+                    "reportTypeDetails": 0,
+                    "content": 0,
+                    "summary": 0,
+                    "summaryHTML": 0
+                }
+            },
+            { "$sort": sortMetaData },
+            { "$skip": number_of_documents_per_page * current_page },
+            { "$limit": number_of_documents_per_page }
+        ]
+
+        # Step 4: Execute the aggregation
+        searchResultsTrimmed = list(document_collection.aggregate(pipeline))
+
+        # searchResultsTrimmed = list(document_collection.find(
+        #     searchMetaData,
+        #     { "content": 0, "summary": 0, "summaryHTML": 0 },
+        #     sort = sortMetaData,
+        #     skip = number_of_documents_per_page * current_page,
+        #     limit = number_of_documents_per_page,
+        # ))
 
     searchResultsTrimmedLen = len(searchResultsTrimmed)
     print(refreshSortData.get("document_title", ""))

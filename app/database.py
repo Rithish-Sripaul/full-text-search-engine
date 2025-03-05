@@ -13,14 +13,14 @@ def get_db():
         g.db = mongo.db
 
         # Flask Development Server
-        # client = MongoClient(
-        #     port=27017,
-        #     username="admin",
-        #     password="1234",
-        #     authSource="testDB"
-        # )
-        # g.db = client["testDB"]
-    return g.db
+    #     client = MongoClient(
+    #         port=27017,
+    #         username="admin",
+    #         password="1234",
+    #         authSource="testDB"
+    #     )
+    #     g.db = client["testDB"]
+    # return g.db
 
 def get_llm():
     llm = OllamaLLM(

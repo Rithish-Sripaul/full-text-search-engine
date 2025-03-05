@@ -11,68 +11,68 @@
 
 
 <h1 class="fw-bold mb-1 mt-2 d-flex flex-row justify-content-between">
-    <div class="d-inline">
-        Settings
-        <h4 class="fw-light mb-3"></h4>
-    </div>
-    <div class="d-flex flex-column">
-        <h4 class="fw-light text-end me-4">{{session["userDivision"]}}</h4>
-    </div>
+  <div class="d-inline">
+    Settings
+    <h4 class="fw-light mb-3"></h4>
+  </div>
+  <div class="d-flex flex-column">
+    <h4 class="fw-light text-end me-4">{{session["userDivision"]}}</h4>
+  </div>
 
 </h1>
 
 <div class="row">
-    <!-- PROFILE SETTINGS -->
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Profile Settings</h5>
-          <p class="card-text">Change your profile image, password and more.</p>
-          <a href="{{ url_for('settings.profile') }}" class="btn btn-primary">Profile Settings</a>
-        </div>
+  <!-- PROFILE SETTINGS -->
+  <div class="col-sm-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Profile Settings</h5>
+        <p class="card-text">Change your profile image, password and more.</p>
+        <a href="{{ url_for('settings.profile') }}" class="btn btn-primary">Profile Settings</a>
       </div>
     </div>
+  </div>
 
-    <!-- REPORT TYPE SETTINGS -->
-    {% if session["isAdmin"] %}
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Report Types</h5>
-          <p class="card-text">Add or edit report types in specific division or common to all.</p>
-          <a href="{{ url_for('settings.reportType') }}" class="btn btn-primary">Report Types</a>
-        </div>
+  <!-- REPORT TYPE SETTINGS -->
+  {% if session["isAdmin"] %}
+  <div class="col-sm-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Report Types</h5>
+        <p class="card-text">Add or edit report types in specific division or common to all.</p>
+        <a href="{{ url_for('settings.reportType') }}" class="btn btn-primary">Report Types</a>
       </div>
     </div>
-    {% endif %}
-    
+  </div>
+  {% endif %}
 
 
-    <!-- SLIDESHOW SETTINGS -->
-    {% if session["isAdmin"] %}
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Slideshow Images</h5>
-          <p class="card-text">Change the slideshow images shown in the dashboard.</p>
-          <a href="{{ url_for('settings.slideshow_images') }}" class="btn btn-primary">Slideshow settings</a>
-        </div>
+
+  <!-- SLIDESHOW SETTINGS -->
+  {% if session["isAdmin"] %}
+  <div class="col-sm-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Slideshow Images</h5>
+        <p class="card-text">Change the slideshow images shown in the dashboard.</p>
+        <a href="{{ url_for('settings.slideshow_images') }}" class="btn btn-primary">Slideshow settings</a>
       </div>
     </div>
-    {% endif %}
+  </div>
+  {% endif %}
 
-    <!-- REGISTER ACCOUNT -->
-    {% if session["isAdmin"] %}
-    <div class="col-sm-3">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Register New User</h5>
-          <p class="card-text">As a admin, register new users under you anytime.</p>
-          <a href="{{ url_for('authentication.register') }}" class="btn btn-primary">Register</a>
-        </div>
+  <!-- REGISTER ACCOUNT -->
+  {% if session["isAdmin"] %}
+  <div class="col-sm-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Register New User</h5>
+        <p class="card-text">As a admin, register new users under you anytime.</p>
+        <a href="{{ url_for('authentication.register') }}" class="btn btn-primary">Register</a>
       </div>
     </div>
-    {% endif %}
+  </div>
+  {% endif %}
 </div>
 
 {% endblock content %}
