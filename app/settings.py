@@ -315,16 +315,21 @@ def actionLogs():
   db = get_db()
   action_collection = db["actionLogs"]
 
-  actionLogList = list(
-    action_collection.find(
-      {
-        "$or": [
-          { "adminID": ObjectId(session["user_id"]) },
-          { "user_id": ObjectId(session["user_id"]) }
-        ]
-      }
+  if session["isMaster"]:
+    actionLogList = list(
+      action_collection.find()
     )
-  )
+  else:
+    actionLogList = list(
+      action_collection.find(
+        {
+          "$or": [
+            { "adminID": ObjectId(session["user_id"]) },
+            { "user_id": ObjectId(session["user_id"]) }
+          ]
+        }
+      )
+    )
 
   actionLogListLen = len(actionLogList)
 
@@ -336,19 +341,28 @@ def actionLogs():
   current_page = request.args.get('page', default=0, type=int)
   number_of_pages = math.ceil(actionLogListLen / number_of_documents_per_page)
 
-  actionLogList = list(
-    action_collection.find(
-      {
-        "$or": [
-          { "adminID": ObjectId(session["user_id"]) },
-          { "user_id": ObjectId(session["user_id"]) }
-        ]
-      },
-      sort=[("timestamp", pymongo.DESCENDING)],
-      skip=number_of_documents_per_page * current_page,
-      limit=number_of_documents_per_page
+  if session["isMaster"]:
+    actionLogList = list(
+      action_collection.find(
+        sort=[("timestamp", pymongo.DESCENDING)],
+        skip=number_of_documents_per_page * current_page,
+        limit=number_of_documents_per_page
+      )
     )
-  )
+  else:
+    actionLogList = list(
+      action_collection.find(
+        {
+          "$or": [
+            { "adminID": ObjectId(session["user_id"]) },
+            { "user_id": ObjectId(session["user_id"]) }
+          ]
+        },
+        sort=[("timestamp", pymongo.DESCENDING)],
+        skip=number_of_documents_per_page * current_page,
+        limit=number_of_documents_per_page
+      )
+    )
   actionLogListLen = len(actionLogList)
 
 

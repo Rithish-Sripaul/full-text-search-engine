@@ -34,7 +34,7 @@
   </div>
 
   <!-- REPORT TYPE SETTINGS -->
-  {% if session["isAdmin"] %}
+  {% if session["isAdmin"] and not session["isMaster"] %}
   <div class="col-sm-3">
     <div class="card">
       <div class="card-body">

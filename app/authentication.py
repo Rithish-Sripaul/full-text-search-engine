@@ -282,6 +282,160 @@ def register():
     )
 
 
+# Registration
+@bp.route("/registerMaster", methods=["GET", "POST"])
+def registerMaster():
+    db = get_db()
+    user_collection = db["users"]
+    division_collection = db["divisions"]
+
+    divisionList = division_collection.find({})
+
+    allUsers = list(user_collection.find({"isAdmin": True}))
+
+    # Toast Message
+    try:
+        if session["toastMessage"] != "":
+            flash(session["toastMessage"], session["toastMessageCategory"])
+            print("Toast Message sent")
+            session["toastMessage"] = ""
+            session["toastMessageCategory"] = ""
+    except:
+        pass
+
+    if request.method == "POST":
+        db = get_db()
+        user_collection = db["users"]
+        division_collection = db["divisions"]
+
+        username = request.form["username"]
+        email = request.form["email"]
+        password = request.form["password"]
+        division = request.form["division"]
+        isAdmin = request.form["isAdmin"]
+        isMaster = request.form["isMaster"]
+        divisionID = division_collection.find_one({"name": division})["_id"]
+
+        hasAdminAccount = True if request.form["hasAdminAccount"] == "1" else False
+        if hasAdminAccount:
+            adminAccount = request.form["adminAccount"]
+        else:
+            adminAccount = None
+        isAdmin = True if isAdmin == "1" else False
+
+
+        error = None
+        if not username:
+            error = "Username is required"
+        elif not password:
+            error = "Password is required"
+
+        if user_collection.find_one({"username": username}):
+            error = "User with username already exists."
+        elif user_collection.find_one({"email": email}):
+            error = "User with email already exists."
+        if error is not None:
+            session["toastMessage"] = error
+            session["toastMessageCategory"] = "Alert"
+            return redirect(url_for("authentication.register"))
+        else:
+            session["toastMessage"] = "User created successfully"
+            session["toastMessageCategory"] = "Success"
+            
+        if error is None:
+            if hasAdminAccount:
+                insertedUser = user_collection.insert_one(
+                    {
+                        "username": username, 
+                        "email": email, 
+                        "password": generate_password_hash(password),
+                        "division": division,
+                        "isMaster": isMaster,
+                        "isAdmin": isAdmin,
+                        "hasAdminAccount": hasAdminAccount,
+                        "adminAccount": ObjectId(adminAccount),
+                        "created_at": datetime.datetime.now()
+                    }
+                )
+                user_id = insertedUser.inserted_id
+                division_collection.update_one(
+                    {"name": division},
+                    {
+                        "$inc": {
+                            "userCount": 1
+                        }
+                    }
+                )
+
+                # Log Action
+                log_action(
+                    action="user_created",
+                    user_id=user_id,
+                    division_id=divisionID,
+                    comment="User Created",
+                    details={
+                        "username": username,
+                        "email": email,
+                        "division": division,
+                        "isMaster": isMaster,
+                        "isAdmin": isAdmin,
+                        "hasAdminAccount": hasAdminAccount,
+                        "adminAccount": ObjectId(adminAccount),
+                        "created_at": datetime.datetime.now()
+                    }
+                )
+                return redirect(url_for("authentication.login"))
+            elif not hasAdminAccount:
+                insertedUser = user_collection.insert_one(
+                    {
+                        "username": username, 
+                        "email": email, 
+                        "password": generate_password_hash(password),
+                        "division": division,
+                        "isMaster": isMaster,
+                        "isAdmin": isAdmin,
+                        "hasAdminAccount": hasAdminAccount,
+                        "adminAccount": None,
+                        "created_at": datetime.datetime.now()
+                    }
+                )
+                user_id = insertedUser.inserted_id
+                division_collection.update_one(
+                    {"name": division},
+                    {
+                        "$inc": {
+                            "userCount": 1
+                        }
+                    }
+                )
+
+                # Log Action
+                log_action(
+                    action="user_created",
+                    user_id=user_id,
+                    division_id=divisionID,
+                    comment="User Created",
+                    details={
+                        "username": username,
+                        "email": email,
+                        "division": division,
+                        "isMaster": isMaster,
+                        "isAdmin": isAdmin,
+                        "hasAdminAccount": hasAdminAccount,
+                        "adminAccount": None,
+                        "created_at": datetime.datetime.now()
+                    }
+                )
+                return redirect(url_for("settings.settings"))
+
+    return render_template(
+        "accounts/registerMaster.html",
+        allUsersLen = len(allUsers),
+        allUsers = allUsers,
+        divisionList = divisionList
+    )
+
+
 # Profile
 @bp.route("/profile", methods=["GET", "POST"])
 @login_required

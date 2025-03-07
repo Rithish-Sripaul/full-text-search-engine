@@ -271,10 +271,6 @@ def home():
         )
     )
 
-    print(datetime.datetime(year, month, 1))
-    print(datetime.datetime(next_year, next_month, 1))
-
-
 
 
   # UPLOADED YEAR GRAPH
@@ -489,7 +485,7 @@ def graphYear():
         return jsonify({"error": "Invalid zoom index"}), 400
 
     # Generate year ranges based on the zoom level
-    start_year, end_year = 1970, 2025
+    start_year, end_year = 1990, 2025
     year_ranges = generate_year_ranges(start_year, end_year, ZOOM_LEVELS[zoom_index])
 
     # Generate labels for the graph
@@ -504,6 +500,7 @@ def graphYear():
     else:
         choosen_years = []
         for start, end in year_ranges:
+            print(start, end)
             start_formatted = f"{start % 100:02d}"
             choosen_years.append(f"{start_formatted}")
 
@@ -515,7 +512,7 @@ def graphYear():
             document_collection.count_documents(
                 {
                     "divisionID": ObjectId(division_id),
-                    "year": {"$gt": start, "$lte": end},
+                    "year": {"$gte": start, "$lt": end},
                     "reportTypeID": {"$in": non_common_report_type_ids}
                 }
             )
@@ -538,6 +535,8 @@ def graphYear():
     # ct_uploads_by_year.reverse()
     # smb_uploads_by_year.reverse()
     # hstt_uploads_by_year.reverse()
+    print(choosen_years)
+    print(wt_uploads_by_year)
 
     return jsonify({
         "wt_uploads_by_year": wt_uploads_by_year,

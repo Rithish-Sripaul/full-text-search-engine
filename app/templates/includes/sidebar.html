@@ -73,6 +73,8 @@
           <span class="sidebar-text">Search</span>
         </a>
       </li>
+
+      {% if not session["isMaster"] %}
       <li class="nav-item {% if 'uploadDocuments' in segment %} active {% endif %}">
         <a href="{{ url_for('documents.upload')}}" class="nav-link">
           <span class="sidebar-icon">
@@ -86,6 +88,9 @@
           <span class="sidebar-text">Upload</span>
         </a>
       </li>
+      {% endif %}
+
+
 
       <!-- <li class="nav-item {% if 'transactions' in segment %} active {% endif %}">
                 <a href="/transactions.html" class="nav-link">
@@ -269,7 +274,7 @@
         </a>
       </li>
 
-      {% if session["isAdmin"] or session["isMaster"] %}
+      {% if session["isAdmin"] and not session["isMaster"] %}
       <li class="nav-item">
         <a href="{{url_for('settings.reportType')}}" class="nav-link d-flex align-items-center">
           <span class="sidebar-icon">

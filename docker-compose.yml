@@ -67,7 +67,8 @@ networks:
   frontend:
     driver: bridge
   backend:
-    driver: bridge
+    internal: true
+
 volumes:
   mongodbdata:
     driver: local
